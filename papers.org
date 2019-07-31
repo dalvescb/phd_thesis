@@ -1,0 +1,7 @@
+* Scheduling
+  - [[https://arxiv.org/pdf/1804.02452.pdf][Combining Register Allocation and Instruction Scheduling]]
+  - [[https://cs.uwaterloo.ca/research/tr/2005/CS-2005-19.pdf][Optimal Basic Block Instruction Scheduling for Multiple Issue Processors Using Constraint Programming]] (IBM guys)
+  - [[http://delivery.acm.org/10.1145/160000/155114/p248-pinter.pdf?ip=130.113.109.215&id=155114&acc=ACTIVE%20SERVICE&key=FD0067F557510FFB%2ED816932E3DB0B89D%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&__acm__=1564584969_261ecbe26f943fdf33018f2f39ebfbd2][Register Allocation with Instruction Scheduling: A New Approach]]
+  - [[https://ieeexplore.ieee.org/document/947006][Evaluating the Use of Register Queues in Software Pipelined Loops]]
+  - [[https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=4336198][Software Pipelining on Multi-core Architectures]]
+  - [[https://link.springer.com/content/pdf/10.1007%2F978-1-4899-7797-7_6.pdf][Multi-Loop: Efficient Software Piplining for Modern Hardware]] (Anand,Kahl)
