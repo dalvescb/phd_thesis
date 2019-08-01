@@ -1,3 +1,16 @@
+#+TITLE:     Writing Beamer presentations in org-mode
+#+AUTHOR:    Eric S Fraga
+#+EMAIL:     e.fraga@ucl.ac.uk
+#+DATE:      2010-10-02 Sat
+#+LANGUAGE:  en
+#+OPTIONS:    H:3 num:t toc:t \n:nil ::t |:t ^:t -:t f:t *:t tex:t d:(HIDE) tags:not-in-toc
+
+#+OPTIONS:   <:t d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:https://orgmode.org/org-info.js
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+#+STARTUP: oddeven
+
 * Scheduling
   - [[https://arxiv.org/pdf/1804.02452.pdf][Combining Register Allocation and Instruction Scheduling]]
   - [[https://cs.uwaterloo.ca/research/tr/2005/CS-2005-19.pdf][Optimal Basic Block Instruction Scheduling for Multiple Issue Processors Using Constraint Programming]] (IBM guys)
