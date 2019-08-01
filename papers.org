@@ -1,16 +1,3 @@
-#+TITLE:     Writing Beamer presentations in org-mode
-#+AUTHOR:    Eric S Fraga
-#+EMAIL:     e.fraga@ucl.ac.uk
-#+DATE:      2010-10-02 Sat
-#+LANGUAGE:  en
-#+OPTIONS:    H:3 num:t toc:t \n:nil ::t |:t ^:t -:t f:t *:t tex:t d:(HIDE) tags:not-in-toc
-
-#+OPTIONS:   <:t d:nil todo:t pri:nil tags:not-in-toc
-#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:https://orgmode.org/org-info.js
-#+SELECT_TAGS: export
-#+EXCLUDE_TAGS: noexport
-#+STARTUP: oddeven
-
 * Scheduling
   - [[https://arxiv.org/pdf/1804.02452.pdf][Combining Register Allocation and Instruction Scheduling]]
   - [[https://cs.uwaterloo.ca/research/tr/2005/CS-2005-19.pdf][Optimal Basic Block Instruction Scheduling for Multiple Issue Processors Using Constraint Programming]] (IBM guys)
@@ -19,6 +6,7 @@
   - [[https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=4336198][Software Pipelining on Multi-core Architectures]]
   - [[https://link.springer.com/content/pdf/10.1007%2F978-1-4899-7797-7_6.pdf][Multi-Loop: Efficient Software Piplining for Modern Hardware]] (Anand,Kahl)
   - [[http://delivery.acm.org/10.1145/2870000/2863701/p114-schkufza.pdf?ip=130.113.109.215&id=2863701&acc=ACTIVE%20SERVICE&key=FD0067F557510FFB%2ED816932E3DB0B89D%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&__acm__=1564586602_105c24f842dcdd9a6b420b8bd3191e66][Stochastic Program Optimization]]
+  - [[https://macsphere.mcmaster.ca/bitstream/11375/18865/2/costa_kriston_p_201602_msc.pdf][Approximation Algorithm based Approach Instruction Scheduling]] (kriton's thesis
 
 * Pull Parameters
   Gives a map from $R^n$ to schedules

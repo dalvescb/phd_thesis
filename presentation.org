@@ -1,31 +1,12 @@
-#+TITLE: Example Presentation
-#+AUTHOR: Carsten Dominik
+#+TITLE: Overview of Instruction Scheduling (a Ph.d Proposal Primer)
+#+AUTHOR: Curtis D'Alves
 #+OPTIONS: H:2 toc:t num:t
 #+LATEX_CLASS: beamer
 #+LATEX_CLASS_OPTIONS: [presentation]
 #+BEAMER_THEME: Madrid
 #+COLUMNS: %45ITEM %10BEAMER_ENV(Env) %10BEAMER_ACT(Act) %4BEAMER_COL(Col)
 
-* This is the first structural section
+* Instruction Scheduling Intro
 
-** Frame 1
-*** Thanks to Eric Fraga                                           :B_block:
-    :PROPERTIES:
-    :BEAMER_COL: 0.48
-    :BEAMER_ENV: block
-    :END:
-    for the first viable Beamer setup in Org
-*** Thanks to everyone else                                        :B_block:
-    :PROPERTIES:
-    :BEAMER_COL: 0.48
-    :BEAMER_ACT: <2->
-    :BEAMER_ENV: block
-    :END:
-    for contributing to the discussion
-**** This will be formatted as a beamer note                       :B_note:
-     :PROPERTIES:
-     :BEAMER_env: note
-     :END:
-** Frame 2 (where we will not use columns)
-*** Request
-    Please test this stuff!
+** Instruction Scheduling
+   
