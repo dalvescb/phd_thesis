@@ -3,10 +3,109 @@
 #+OPTIONS: H:2 toc:t num:t
 #+LATEX_CLASS: beamer
 #+LATEX_CLASS_OPTIONS: [presentation]
-#+BEAMER_THEME: Madrid
+#+BEAMER_THEME: Boadilla
 #+COLUMNS: %45ITEM %10BEAMER_ENV(Env) %10BEAMER_ACT(Act) %4BEAMER_COL(Col)
+#+LATEX_HEADER_EXTRA: \usepackage{amsmath, amssymb}
+#+LATEX_HEADER: \usepackage[backend=bibtex]{biblatex}
+#+LATEX_HEADER: \bibliography{bib-file}
 
 * Instruction Scheduling Intro
 
 ** Instruction Scheduling
+*** Column 1                                                  :BMCOL:B_block:
+:PROPERTIES:
+:BEAMER_col: 0.45
+:BEAMER_env: block
+:END:
+- item 1
+- item 2
+
+*** Column 2                                                  :BMCOL:B_block:
+    :PROPERTIES:
+    :BEAMER_col: 0.45
+    :BEAMER_env: block
+    :END:
+    #+ATTR_LATEX: width=\textwidth
+    [[file:figures/bubbles.png]]
+
+
+** Register Remapping
    
+** Grouping
+   #+BEGIN_SRC ditaa :file figures/hello-world.png
+   /--------------\      /-------------\
+   | Instr 0.     | ...  | Instr. n    |
+   \--------------/      \-------------/
+         |           |         |
+   /--------------\      /-------------\
+   | Fetcher 0.   | ...  | Fetcher n   |
+   \--------------/      \-------------/
+         |           |         |
+         |           |         |
+         \---------------------/
+                     |
+                     v
+            /-----------------\
+            | cBLU Grouper    |           Register Remapping
+            \-----------------/
+                     |
+                     |
+                     v 
+            /-----------------\
+            | cBLU Dispather  |
+            \-----------------/
+                     |
+     -------------------------------------
+     |      |                     |      |
+   /----\ /----\               /----\ /----\
+   |cRED| |cRED|     ....      |cRED| |cRED|    OoO Exection
+   \----/ \----/               \----/ \----/
+     |      |                     |      |
+     -------------------------------------
+                     |
+                     v 
+            /-----------------\
+            | cBLU Retire     |           Register UnMapping
+            \-----------------/
+   #+END_SRC
+
+   #+ATTR_LATEX: :height 200px
+   #+RESULTS:
+   [[file:figures/hello-world.png]]
+
+* Previous Works
+
+** Optimial Basic Block Instruction Scheduling With Constraint Programming
+   [[https://cs.uwaterloo.ca/research/tr/2005/CS-2005-19.pdf][Optimal Basic Block Instruction Scheduling for Multiple Issue Processors Using Constraint Programming]]
+   \footcite{malik2008optimal}
+
+* Proposed Research
+
+** Constrained Optimization Model For Modulo Scheduling
+
+#+BEGIN_LATEX
+\begin{align*}
+    \text{\color{cyan} Objective Variables \qquad} & t_i, b_i, f_i:& \mathbb{R} \\
+    \text{\color{cyan} Constants \qquad} & \textrm{II} :& \mathbb{R} \\
+    \text{\color{cyan} Indicator Function \qquad} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
+    & t_i :& \text{dispatch time} \\
+    & b_i :& \text{completion time} \\
+    & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
+    & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
+\end{align*}
+#+END_LATEX
+
+** Constrained Optimization Model
+#+BEGIN_LATEX
+\begin{align}
+    \text{\color{cyan} Hard Constraints \qquad}  & t_i + \epsilon \leq t_j \qquad & \forall i,j \cdot i \rightarrow j \\
+								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  & \\
+								 & b_i + \epsilon \leq t_i + \textrm{II} \\
+    \text{\color{cyan} Objective Function \qquad}   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
+\end{align}    
+#+END_LATEX
+*Key Idea:* Encode choice heuristics as penalties, adjust preference by
+between heuristics scaling
+
+* Frame with references
+  \printbibliography
