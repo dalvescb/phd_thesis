@@ -12,25 +12,104 @@
 * Instruction Scheduling Intro
 
 ** Instruction Scheduling
-*** Column 1                                                  :BMCOL:B_block:
-:PROPERTIES:
-:BEAMER_col: 0.45
-:BEAMER_env: block
-:END:
-- item 1
-- item 2
+*** Problem
+    Given a set of instructions and dependencies, designate an order 
+    (find a *schedule*) satisfying the dependencies and optimizing performance
+*** Known NP-Complete 
+    Practically solved by
+    - *Heuristics*
+    - *Approximation Algorithms*
 
-*** Column 2                                                  :BMCOL:B_block:
-    :PROPERTIES:
-    :BEAMER_col: 0.45
-    :BEAMER_env: block
-    :END:
-    #+ATTR_LATEX: width=\textwidth
-    [[file:figures/bubbles.png]]
+** Example Instruction Dependency DAG
+   #+BEGIN_LATEX
+   \begin{figure}
+   \includegraphics[scale=0.085]{figures/graph}
+   \caption{Vector Instruction Dep. Graph}
+   \end{figure}
+   #+END_LATEX
 
+** Types of Scheduling Algorithms
+   - *Basic Block:* break code into blocks within branches (most commonly performed scheduling)
+	 - *Global Scheduling:* schedule across basic block boundaries
+	 - *Modulo Scheduling:* schedules basic blocks inside of a loop, seeking to
+     optimize by interleaving iterations
+	 - *Trace Scheduling:* tries to optimize control flow by predicting routes
+     taken on branches
+
+** Register Allocation
+*** Problem   
+    Given a schedule, assign registers keeping in mind
+    - limited number of registers
+    - can't rewrite a register until consumed by dependent instructions
+*** Knonw NP-Complete
+    Practically solved using non-optimal *Graph Coloring* algorithms and done
+    seperately from instruction scheduling (before or afterwords)
+
+** Graph Colouring
+   #+BEGIN_LATEX
+   \begin{figure}
+   \includegraphics[scale=0.5]{figures/nshape}
+   \caption{Register Allocation via Graph Coloring}
+   \end{figure}
+   #+END_LATEX
+   Find a *k-Colouring* for the dependency graph, where *$k = \#Registers$*
+
+** Spilling
+   - What if a *k-Coloring* can't be found? Must *Spill* memory
+	 - Simply insert new *Load / Store* instructions as needed
+   - Potentially *creates new stalls* in the pipeline, need to re-perform scheduling 
+   - An *Ideal Schedule* has no spilling
+ 
+* Instruction Pipelining
+** Classic RISC Pipeline
+  #+BEGIN_LATEX
+  \begin{figure}
+  \includegraphics[scale=0.4]{figures/pipeline}
+  \caption{Example Pipeline}
+  \end{figure}
+  #+END_LATEX
+ Simple example pipeline with no stalls and a single instruction fetch per
+ "cycle"
+
+** SuperScalar Pipelining
+   #+BEGIN_LATEX
+   \begin{figure}
+   \includegraphics[scale=0.3]{figures/superscaler}
+   \caption{Example SuperScaler Pipeline}
+   \end{figure}
+   #+END_LATEX
+   Superscalar architectures can fetch multiple instructions per "cycle" and
+   require more thought about resource restriction (such as limits on ALU's)
+
+** Pipeline Stalls
+   #+BEGIN_LATEX
+   \begin{figure}
+   \includegraphics[scale=0.4]{figures/bubbles}
+   \includegraphics[scale=0.4]{figures/bubbles2}
+   \caption{Pipeline Stall}
+   \end{figure}
+   #+END_LATEX
+   An *Ideal Schedule* (like in the previous figures) contains NO stalls (often
+   not possible)
+
+** Hazards
+		- *Data Hazards*
+			- read after write *(RAW)*
+			- write after read *(WAR)*
+			- write after write *(WAW)*
+		- *Structural Hazards* occurs when an aspect of hardware is accessed at the same time
+		- *Control Hazards* caused by branching, next instruction unknown
+    Hardware encountering hazards causees stalls in the pipeline
 
 ** Register Remapping
-   
+   When executing machine code, hardware maps *Logical Registers* to *Physical Registers*
+   - *Logical Registers* are a set of registers usable directly when
+     writing/generating assembly code (limited by system architecture)
+   - *Physical Registers* are a set of registers actually available in hardware
+   Having a larger number of Physical registers than Logical registers gives
+   hardware extra flexibility when dispatching instructions for *Out of Order
+   Execution*
+
 ** Grouping
    #+BEGIN_SRC ditaa :file figures/hello-world.png
    /--------------\      /-------------\
@@ -73,7 +152,20 @@
    #+RESULTS:
    [[file:figures/hello-world.png]]
 
+
 * Previous Works
+** List Scheduling (most commonly performed scheduling)
+   	Simple heuristic.  Choose a prioritized topological order that
+    - Respects the edges in the data-dependence graph (*topological*)
+    - Heuristic choice among options, e.g pick first the node with the longest path extending from that node *prioritized*
+    Most commonly used method for scheduling. Efficient but yields far less than
+    optimal schedules
+
+** Issues with List Scheduling
+    - Many factors to consider when constructing a schedule (everything listed in this presentation and more!)    
+    - Difficult (or more accurately impossible!) to consider all these aspects into a single choice heuristic        
+    - Combinations of heuristics can be used, and multiple iterations performed,
+      but each will usually undo the work of the other
 
 ** Optimial Basic Block Instruction Scheduling With Constraint Programming
    [[https://cs.uwaterloo.ca/research/tr/2005/CS-2005-19.pdf][Optimal Basic Block Instruction Scheduling for Multiple Issue Processors Using Constraint Programming]]
@@ -104,8 +196,10 @@
     \text{\color{cyan} Objective Function \qquad}   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
 \end{align}    
 #+END_LATEX
-*Key Idea:* Encode choice heuristics as penalties, adjust preference by
-between heuristics scaling
+*Key Idea:* Encode choice heuristics as penalties, adjust preference
+between heuristics by scaling
 
-* Frame with references
-  \printbibliography
+* References
+** References
+
+  \printbibliography[heading=none]
