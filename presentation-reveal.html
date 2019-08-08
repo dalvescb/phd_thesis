@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Ph.d Proposal</title>
+<meta name="author" content="Curtis D'Alves"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/league.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Ph.d Proposal</h1><h2 class="author">Curtis D'Alves</h2><h2 class="date">2019-08-08</h2>
+</section>
+
+<section>
+<section id="slide-org7a8f4fd">
+<h2 id="org7a8f4fd">Instruction Scheduling Intro</h2>
+<div class="outline-text-2" id="text-org7a8f4fd">
+</div>
+</section>
+<section id="slide-org4e71f93">
+<h3 id="org4e71f93">Instruction Scheduling</h3>
+<ul>
+<li>Given a set of instructions and dependencies, designate an order 
+(find a <font color="lightblue">schedule</font>) satisfying the dependencies and optimizing performance</li>
+<li>Known NP-Complete 
+Practically solved by
+<ul>
+<li><font color="lightblue">Heuristics</font></li>
+<li><font color="lightblue">Approximation Algorithms</font></li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section id="slide-org578efc0">
+<h3 id="org578efc0">Types of Scheduling Algorithms</h3>
+<ul>
+<li><font color="lightblue">Basic Block:</font> break code into blocks within branches (most commonly performed scheduling)</li>
+<li><font color="lightblue">Global Scheduling:</font> schedule across basic block boundaries</li>
+<li><font color="lightblue">Modulo Scheduling:</font> schedules basic blocks inside of a loop, seeking to
+optimize by interleaving iterations</li>
+<li><font color="lightblue">Trace Scheduling:</font> tries to optimize control flow by predicting routes
+taken on branches</li>
+
+</ul>
+
+</section>
+<section id="slide-orgd8e28ed">
+<h3 id="orgd8e28ed">Register Allocation</h3>
+<ul>
+<li>Given a schedule, assign registers keeping in mind
+<ul>
+<li>limited number of registers</li>
+<li>can't rewrite a register until consumed by dependent instructions</li>
+
+</ul></li>
+<li>Known NP-Complete
+<ul>
+<li>Practically solved using non-optimal <font color="lightblue">Graph Coloring</font> algorithms</li>
+<li>done seperately from instruction scheduling (before or afterwords)</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section id="slide-orgd2284f8">
+<h3 id="orgd2284f8">Graph Colouring</h3>
+
+<div class="figure">
+<p><img src="figures/nshape.png" alt="nshape.png" />
+</p>
+</div>
+
+<p>
+Find a <font color="lightblue">k-Colouring</font> for the dependency graph, where <b>\(k = \#Registers\)</b>
+</p>
+
+</section>
+<section id="slide-org3bd1ab4">
+<h3 id="org3bd1ab4">Spilling</h3>
+<ul>
+<li>What if a <font color="lightblue">k-Coloring</font> can't be found? Must <font color="lightblue">Spill</font> memory</li>
+<li>Simply insert new <font color="lightblue">Load / Store</font> instructions as needed</li>
+<li>Potentially <font color="lightblue">creates new stalls</font> in the pipeline, need to re-perform
+scheduling</li>
+<li>May use up dispatch slots</li>
+<li>An <font color="lightblue">Ideal Schedule</font> has no spilling</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org92ec4d5">
+<h2 id="org92ec4d5">Instruction Pipelining</h2>
+<div class="outline-text-2" id="text-org92ec4d5">
+</div>
+</section>
+<section id="slide-org1d0a578">
+<h3 id="org1d0a578">Classic RISC Pipeline</h3>
+
+<div class="figure">
+<p><img src="figures/pipeline.png" alt="pipeline.png" />
+</p>
+</div>
+
+<p>
+Simple example pipeline with no stalls and a single instruction fetch per
+"cycle"
+</p>
+
+</section>
+<section id="slide-org21ab788">
+<h3 id="org21ab788">SuperScalar Pipelining</h3>
+
+<div class="figure">
+<p><img src="figures/superscaler.png" alt="superscaler.png" />
+</p>
+</div>
+
+<p>
+Superscalar architectures can fetch multiple instructions per "cycle" and
+require more thought about resource restriction (such as limits on ALU's)
+</p>
+
+</section>
+<section id="slide-org6c51a92">
+<h3 id="org6c51a92">Pipeline Stalls</h3>
+<p>
+<img src="figures/bubbles.png" alt="bubbles.png" />
+<img src="figures/bubbles2.png" alt="bubbles2.png" />
+</p>
+
+<p>
+An <font color="lightblue">Ideal Schedule</font> (like in the previous figures) contains <b>NO</b> stalls (often
+not possible)
+</p>
+
+</section>
+<section id="slide-org1de5a0b">
+<h3 id="org1de5a0b">Hazards</h3>
+<ul>
+<li><font color="lightblue">Data Hazards</font>
+<ul>
+<li>read after write <font color="lightblue">RAW</font></li>
+<li>write after read <font color="lightblue">WAR</font></li>
+<li>write after write <font color="lightblue">WAW)</font></li>
+
+</ul></li>
+<li><font color="lightblue">Structural Hazards</font> occurs when an aspect of hardware is accessed at the same time</li>
+<li><font color="lightblue">Control Hazards</font> caused by branching, next instruction unknown</li>
+
+</ul>
+<p>
+Hardware encountering hazards causees stalls in the pipeline
+</p>
+
+</section>
+<section id="slide-orgb025b1a">
+<h3 id="orgb025b1a">Staging : Example 3 Staged Loop</h3>
+
+<div class="figure">
+<p><img src="figures/staging.png" alt="staging.png" />
+</p>
+</div>
+
+<p>
+When performing <font color="lightblue">modulo scheduling</font>, a basic block of a loop can be broken
+into stages and the loop can be <font color="lightblue">unrolled</font> to interleave stages between
+iterations
+</p>
+
+</section>
+<section id="slide-org334228d">
+<h3 id="org334228d">Iteration Interval</h3>
+<p>
+TODO
+</p>
+
+</section>
+<section id="slide-org1a2301e">
+<h3 id="org1a2301e">Register Remapping</h3>
+<p>
+When executing machine code, hardware maps <font color="lightblue">Logical Registers</font> to <font color="lightblue">Physical Registers</font>
+</p>
+<ul>
+<li><font color="lightblue">Logical Registers</font> are a set of registers usable directly when
+writing/generating assembly code (limited by system architecture)</li>
+<li><font color="lightblue">Physical Registers</font> are a set of registers actually available in hardware</li>
+
+</ul>
+<p>
+Having a larger number of Physical registers than Logical registers gives
+hardware extra flexibility when dispatching instructions for <font color="lightblue">Out of Order Execution</font>
+</p>
+
+</section>
+<section id="slide-orgcdbb065">
+<h3 id="orgcdbb065">Out-Of-Order Dispatcher Example (IBM)</h3>
+
+<div class="figure">
+<p><img src="figures/hello-world.png" alt="hello-world.png" />
+</p>
+</div>
+
+
+
+</section>
+</section>
+<section>
+<section id="slide-org5bbb1c4">
+<h2 id="org5bbb1c4">Previous Works</h2>
+<div class="outline-text-2" id="text-org5bbb1c4">
+</div>
+</section>
+<section id="slide-org15df82b">
+<h3 id="org15df82b">List Scheduling (most commonly performed scheduling)</h3>
+<p>
+Simple heuristic.  Choose a prioritized topological order that
+</p>
+<ul>
+<li>Respects the edges in the data-dependence graph (<b>topological</b>)</li>
+<li>Heuristic choice among options, e.g pick first the node with the longest path extending from that node <b>prioritized</b></li>
+
+</ul>
+<p>
+Most commonly used method for scheduling. Efficient but yields far less than
+optimal schedules
+</p>
+
+</section>
+<section id="slide-org7cd8fb6">
+<h3 id="org7cd8fb6">Issues with List Scheduling</h3>
+<ul>
+<li>Many factors to consider when constructing a schedule (everything listed in this presentation and more!)</li>
+<li>Difficult (or more accurately impossible!) to consider all these aspects into a single choice heuristic</li>
+<li>Combinations of heuristics can be used, and multiple iterations performed,
+but each will usually undo the work of the other</li>
+
+</ul>
+
+</section>
+<section id="slide-orgc8ce3d3">
+<h3 id="orgc8ce3d3">Optimial Basic Block Instruction Scheduling With Constraint Programming</h3>
+<p>
+Malik,Mcinnes,Beek (Waterloo,IBM).  Found provably optimal schedules for basic blocks using constraint
+  programming, using the following types of constraints
+</p>
+<ul>
+<li><font color="lightblue">Latency Constraints</font>, i.e
+<ul>
+<li>Given a labeled dependency DAG \(G = (N,E)\) fir each pair \((i,j) \in E\)
+constrain \(j \geq i + l(i,j)\)</li>
+
+</ul></li>
+<li><font color="lightblue">Resource Constraints</font> that ensured functinonal units were not exceded</li>
+<li><font color="lightblue">Distance Contstraints</font>, i.e
+<ul>
+<li>Given a labeled dependency <b>DAG</b>  \(G = (N,E)\) fir each pair \((i,j) \in E\)
+constrain \(j \geq i + d(i,j)\)</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section id="slide-org91fe00c">
+<h3 id="org91fe00c">Optimial Basic Block Instruction Scheduling With Constraint Programming (Limitations)</h3>
+<p>
+The hard constraints on latency would not account for <font color="lightblue">Register Remapping</font> in
+<font color="lightblue">Out Of Order Execution</font> that would be able to find more optimal schedules
+despite the fact that latencies in normal execution would create <font color="lightblue">pipeline stalls</font>
+</p>
+<pre class="example">
+fma r3,r3,r4
+fma r2,r2,r4
+fma r1,r1,r4
+fma r0,r0,r4
+</pre>
+<p>
+On a system with only 5 registers and an instruction fma of large enough
+latency, the scheduler would push these instructions apart. However a machine
+could use register remapping to execute these instructions efficiently <b>OoO</b>
+making that constraint unnecessary
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-org1878422">
+<h2 id="org1878422">Proposed Research</h2>
+<div class="outline-text-2" id="text-org1878422">
+</div>
+</section>
+<section id="slide-orgace077a">
+<h3 id="orgace077a">Constrained Optimization Model For Modulo Scheduling</h3>
+<div>
+\begin{align*}
+    \text{Objective Variables } & t_i, b_i, f_i:& \mathbb{R} \\
+    \text{Constants } & \textrm{II} :& \mathbb{R} \\
+    \text{Indicator Function } & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
+    & t_i :& \text{dispatch time} \\
+    & b_i :& \text{completion time} \\
+    & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
+    & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
+\end{align*}
+
+</div>
+
+</section>
+<section id="slide-orgbed0f1a">
+<h3 id="orgbed0f1a">Constrained Optimization Model</h3>
+<div>
+\begin{align}
+    \text{Hard Constraints } \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
+								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  \\
+								 & b_i + \epsilon \leq t_i + \textrm{II} \\
+    \text{Objective Function } \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
+\end{align}    
+
+</div>
+
+<p>
+<font color="lightblue">Key Idea:</font> Encode choice heuristics as penalties, adjust preference
+between heuristics by scaling
+</p>
+
+</section>
+<section id="slide-orgab4fa9a">
+<h3 id="orgab4fa9a">IO Penalty</h3>
+<ul>
+<li><font color="lightblue">IDEA</font> penalize dispatch time of instructions based on the quantity and
+latencies of it's dependencies</li>
+<li><font color="lightblue">Note</font> This is a <b>penalty</b> not a <b>hard</b> constraint on latencies</li>
+
+</ul>
+
+<div>
+\begin{align*}
+         \text{Given } \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
+         \text{For each i } \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
+         \qquad & \qquad & \qquad \\
+         \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
+ \end{align*}
+
+</div>
+
+</section>
+<section id="slide-orgd692265">
+<h3 id="orgd692265">Stochastic Scaling</h3>
+<ul>
+<li>The scaling \(\frac{1}{N_j}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
+<li><p>
+<font color="lightblue">IDEA</font> scale the <font color="lightblue">IO penalty</font> stochastically
+</p>
+
+<div>
+\begin{align*}
+    \text{Define a Clustering} \qquad & \mathbb{C} = \text{Cluster}(\forall i \mid i \rightarrow j) \\
+    \text{For each Cluster i} \qquad & c_i \in \mathbb{RAND(R)} \\
+    \text{Stochastic Penalty} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
+  \end{align*}
+
+</div></li>
+
+</ul>
+
+</section>
+<section id="slide-org1cd9bd3">
+<h3 id="org1cd9bd3">Topology Analysis</h3>
+<ul>
+<li><b>TODO</b> prove stochastic scaling of spans the topology of all schedules</li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'convex', // see README of reveal.js for options
+transitionSpeed: 'default',
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+
+});
+</script>
+</body>
+</html>
