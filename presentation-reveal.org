@@ -75,7 +75,7 @@
  "cycle"
 
 ** SuperScalar Pipelining
-
+   #+ATTR_HTML: :width 50% :height 50%
    [[file:figures/superscaler.png]]
    
    Superscalar architectures can fetch multiple instructions per "cycle" and
@@ -98,6 +98,7 @@
     Hardware encountering hazards causees stalls in the pipeline
 
 ** Staging : Example 3 Staged Loop
+   #+ATTR_HTML: :width 50% :height 50%
    [[file:figures/staging.png]]
 
    When performing {{{alert(modulo scheduling)}}}, a basic block of a loop can be broken
@@ -153,7 +154,7 @@
             \-----------------/
    #+END_SRC
 
-   #+ATTR_LATEX: :height 200px
+   #+ATTR_HTML: :width 50% :height 50%
    #+RESULTS:
    [[file:figures/hello-world.png]]
 
@@ -173,16 +174,17 @@
     - Combinations of heuristics can be used, and multiple iterations performed,
       but each will usually undo the work of the other
 
+* Previous Works Constraint Programming
 ** Optimial Basic Block Instruction Scheduling With Constraint Programming
-   Malik,Mcinnes,Beek (Waterloo,IBM).  Found provably optimal schedules for basic blocks using constraint
+   Malik,Mcinnesm,Beek (Waterloo,IBM).  Found provably optimal schedules for basic blocks using constraint
      programming, using the following types of constraints
    - {{{alert(Latency Constraints)}}}, i.e
-     - Given a labeled dependency DAG $G = (N,E)$ fir each pair $(i,j) \in E$
-       constrain $j \geq i + l(i,j)$ 
+     - Given a labeled dependency DAG $G = (N,E)$ 
+       - $\forall (i,j) \in E \cdot j \geq i + l(i,j)$ 
    - {{{alert(Resource Constraints)}}} that ensured functinonal units were not exceded
    - {{{alert(Distance Contstraints)}}}, i.e
-     - Given a labeled dependency *DAG*  $G = (N,E)$ fir each pair $(i,j) \in E$
-       constrain $j \geq i + d(i,j)$
+     - Given a labeled dependency *DAG*  $G = (N,E)$ 
+        - $\forall (i,j) \in E \cdot j \geq i + d(i,j)$
 
 ** Optimial Basic Block Instruction Scheduling With Constraint Programming (Limitations)
    The hard constraints on latency would not account for {{{alert(Register Remapping)}}} in
@@ -199,10 +201,39 @@
    could use register remapping to execute these instructions efficiently *OoO*
    making that constraint unnecessary
 
+* Previous Works Program Optimization Through Stochastic Search
+** Program Optimization through Stochastic Search
+  - Eric Schkufza, Rahul Sharma, Alex Aiken Stanford University
+  - Suitable for {{{alert(Short Basic Block)}}} assembly code sequences
+  - Utilizes a multiple pass {{{alert(Stochastic Algorithm)}}}
+  - Encodes constraints as a {{{alert(Cost Function)}}} and uses a
+    {{{alert(Markov Chain Monte Carlo Sampler)}}} to explore space of all
+    possible schedules
+
+** Program Optimization through Stochastic Search
+   Each pass of the optimization minimizes the cost function
+  \begin{equation*}
+    cost(R; T) = w_e \times eq(R; T) + w_p \times perf(R; T)
+  \end{equation*}
+  | $\boldsymbol{R}$   | any rewrite of the program                    |
+  | $\boldsymbol{T}$   | the input program sequence                    |
+  | $eq(\cdot)$        | the equivalence function (0 if $R \equiv T$ ) |
+  | $perf(\cdot)$      | a metric for performance                      |
+  | $\boldsymbol{w_e}$ | weight for the equivalence term               |
+  | $\boldsymbol{w_p}$ | weight for the performance term               |
+
+** Program Optimization through Stochastic Search (Limitations)
+   - Only optimizes basic blocks ({{{alert(no loops)}}})
+   - Extremely innefficent (only practical for very short scheduling)
+   - Performed in multiple passes with model checking
+   - Cost function doesn't model the space of valid checking (hence model
+     checking is required per each rewrite)
+
 * Proposed Research
 
 ** Constrained Optimization Model For Modulo Scheduling
 
+#+HTML: <small>
 \begin{align*}
     \text{Objective Variables } & t_i, b_i, f_i:& \mathbb{R} \\
     \text{Constants } & \textrm{II} :& \mathbb{R} \\
@@ -212,14 +243,17 @@
     & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
     & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
 \end{align*}
+#+HTML: </small>
 
 ** Constrained Optimization Model
+#+HTML: <small>
 \begin{align}
     \text{Hard Constraints } \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
 								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  \\
 								 & b_i + \epsilon \leq t_i + \textrm{II} \\
     \text{Objective Function } \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
 \end{align}    
+#+HTML: </small>
 
 {{{alert(Key Idea:)}}} Encode choice heuristics as penalties, adjust preference
 between heuristics by scaling
@@ -228,23 +262,35 @@ between heuristics by scaling
    - {{{alert(IDEA)}}} penalize dispatch time of instructions based on the quantity and
     latencies of it's dependencies
    - {{{alert(Note)}}} This is a *penalty* not a *hard* constraint on latencies
-     
+#+HTML: <small>   
    \begin{align*}
             \text{Given } \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
             \text{For each i } \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
             \qquad & \qquad & \qquad \\
             \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
     \end{align*}
+#+HTML: </small>
 
 ** Stochastic Scaling
    - The scaling $\frac{1}{N_j}$ may be a good *guess*, but not necessarily effective in practice
    - {{{alert(IDEA)}}} scale the {{{alert(IO penalty)}}} stochastically
-
+#+HTML: <small>
       \begin{align*}
           \text{Define a Clustering} \qquad & \mathbb{C} = \text{Cluster}(\forall i \mid i \rightarrow j) \\
           \text{For each Cluster i} \qquad & c_i \in \mathbb{RAND(R)} \\
           \text{Stochastic Penalty} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
         \end{align*}
+#+HTML: </small>
+
+** Schedule Topology
+   {{{alert(Assertion)}}} For each scaling $c_i \in \mathbb{RAND(R)}$, there exists an $\epsilon \in
+     \mathbb(R)$ such that $c_i + \epsilon$
+   produces a distinct schedule from $c_i$
+   - {{{alert(Questions)}}}
+   - If the assertion fails, the clustering is useless (possible to avoid such
+     clusterings?)
+   - What does this topology look like?
+   - Do all valid schedules span this topology?
 
 ** Topology Analysis
    - *TODO* prove stochastic scaling of spans the topology of all schedules
