@@ -9,6 +9,7 @@
 #+MACRO: color @@html:<font color="$1">$2</font>@@
 #+MACRO: alert @@html:<font color="lightblue">$1</font>@@
 
+#+REVEAL_EXTRA_CSS: ./mystyle.css
 # #+REVEAL_EXTRA_CSS: /Users/curtis/reveal.js/css/theme/night.css
 
 # To load Org-reveal, type “M-x load-library”, then type “ox-reveal”.
@@ -106,7 +107,12 @@
    iterations
 
 ** Iteration Interval
-   TODO
+   #+BEGIN_cmath 
+   $$ \frac{\text{latency height}}{\# \text{stages}} \leq \textrm{II} $$
+   #+END_cmath
+   - the maximum {{{alert(number of cyles)}}} to complete a loop iteration
+   - exact number is complicated {{{alert(Out of Order Execution)}}} / {{{alert(Staging)}}}
+*** TODO COMMENT finish II explanation
 
 ** Register Remapping
    When executing machine code, hardware maps {{{alert(Logical Registers)}}} to {{{alert(Physical Registers)}}}
@@ -116,7 +122,7 @@
    Having a larger number of Physical registers than Logical registers gives
    hardware extra flexibility when dispatching instructions for {{{alert(Out of Order Execution)}}}
 
-** Out-Of-Order Dispatcher Example (IBM)
+** Out-Of-Order Dispatcher Example
    #+BEGIN_SRC ditaa :file figures/hello-world.png
    /--------------\      /-------------\
    | Instr 0.     | ...  | Instr. n    |
@@ -158,7 +164,7 @@
    #+RESULTS:
    [[file:figures/hello-world.png]]
 
-
+   
    
 * Previous Works
 ** List Scheduling (most commonly performed scheduling)
@@ -203,7 +209,7 @@
 
 * Previous Works Program Optimization Through Stochastic Search
 ** Program Optimization through Stochastic Search
-  - Eric Schkufza, Rahul Sharma, Alex Aiken Stanford University
+   Eric Schkufza, Rahul Sharma, Alex Aiken Stanford University
   - Suitable for {{{alert(Short Basic Block)}}} assembly code sequences
   - Utilizes a multiple pass {{{alert(Stochastic Algorithm)}}}
   - Encodes constraints as a {{{alert(Cost Function)}}} and uses a
@@ -212,15 +218,17 @@
 
 ** Program Optimization through Stochastic Search
    Each pass of the optimization minimizes the cost function
+#+BEGIN_cmath
   \begin{equation*}
     cost(R; T) = w_e \times eq(R; T) + w_p \times perf(R; T)
   \end{equation*}
-  | $\boldsymbol{R}$   | any rewrite of the program                    |
-  | $\boldsymbol{T}$   | the input program sequence                    |
-  | $eq(\cdot)$        | the equivalence function (0 if $R \equiv T$ ) |
-  | $perf(\cdot)$      | a metric for performance                      |
-  | $\boldsymbol{w_e}$ | weight for the equivalence term               |
-  | $\boldsymbol{w_p}$ | weight for the performance term               |
+#+END_cmath
+  | $\color{lightgreen}{\boldsymbol{R}}$   | any rewrite of the program                                        |
+  | $\color{lightgreen}{\boldsymbol{T}}$   | the input program sequence                                        |
+  | $\color{lightgreen}{eq(\cdot)}$        | the equivalence function (0 if $\color{lightgreen}{R \equiv T}$ ) |
+  | $\color{lightgreen}{perf(\cdot)}$      | a metric for performance                                          |
+  | $\color{lightgreen}{\boldsymbol{w_e}}$ | weight for the equivalence term                                   |
+  | $\color{lightgreen}{\boldsymbol{w_p}}$ | weight for the performance term                                   |
 
 ** Program Optimization through Stochastic Search (Limitations)
    - Only optimizes basic blocks ({{{alert(no loops)}}})
@@ -233,27 +241,31 @@
 
 ** Constrained Optimization Model For Modulo Scheduling
 
+#+BEGIN_cmath
 #+HTML: <small>
 \begin{align*}
-    \text{Objective Variables } & t_i, b_i, f_i:& \mathbb{R} \\
-    \text{Constants } & \textrm{II} :& \mathbb{R} \\
-    \text{Indicator Function } & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
+    \color{lightblue}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
+    \color{lightblue}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
+    \color{lightblue}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
     & t_i :& \text{dispatch time} \\
     & b_i :& \text{completion time} \\
     & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
     & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
 \end{align*}
 #+HTML: </small>
+#+END_cmath
 
 ** Constrained Optimization Model
+#+BEGIN_cmath
 #+HTML: <small>
 \begin{align}
-    \text{Hard Constraints } \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
+    \color{lightblue}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
 								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  \\
 								 & b_i + \epsilon \leq t_i + \textrm{II} \\
-    \text{Objective Function } \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
-\end{align}    
-#+HTML: </small>
+    \color{lightblue}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
+\end{align}
+#+HTML: </small>    
+#+END_cmath
 
 {{{alert(Key Idea:)}}} Encode choice heuristics as penalties, adjust preference
 between heuristics by scaling
@@ -262,31 +274,35 @@ between heuristics by scaling
    - {{{alert(IDEA)}}} penalize dispatch time of instructions based on the quantity and
     latencies of it's dependencies
    - {{{alert(Note)}}} This is a *penalty* not a *hard* constraint on latencies
-#+HTML: <small>   
+
+#+BEGIN_cmath
+#+HTML: <small>
    \begin{align*}
-            \text{Given } \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
-            \text{For each i } \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
+            \color{lightblue}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
+            \color{lightblue}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
             \qquad & \qquad & \qquad \\
             \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
     \end{align*}
 #+HTML: </small>
+#+END_cmath
 
 ** Stochastic Scaling
-   - The scaling $\frac{1}{N_j}$ may be a good *guess*, but not necessarily effective in practice
+   - The scaling $\color{lightgreen}{\frac{1}{N_j}}$ may be a good *guess*, but not necessarily effective in practice
    - {{{alert(IDEA)}}} scale the {{{alert(IO penalty)}}} stochastically
+#+BEGIN_cmath
 #+HTML: <small>
       \begin{align*}
-          \text{Define a Clustering} \qquad & \mathbb{C} = \text{Cluster}(\forall i \mid i \rightarrow j) \\
-          \text{For each Cluster i} \qquad & c_i \in \mathbb{RAND(R)} \\
-          \text{Stochastic Penalty} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
+          \color{lightblue}{\text{Define a Clustering}} \qquad & \mathbb{C} = \text{Cluster}(\forall i \mid i \rightarrow j) \\
+          \color{lightblue}{\text{For each Cluster i}} \qquad & c_i \in \mathbb{RAND(R)} \\
+          \color{lightblue}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
         \end{align*}
 #+HTML: </small>
+#+END_cmath
 
 ** Schedule Topology
-   {{{alert(Assertion)}}} For each scaling $c_i \in \mathbb{RAND(R)}$, there exists an $\epsilon \in
-     \mathbb(R)$ such that $c_i + \epsilon$
-   produces a distinct schedule from $c_i$
-   - {{{alert(Questions)}}}
+   {{{alert(Assertion)}}} For each scaling $\color{lightgreen}{c_i \in \mathbb{RAND(R)}}$, there exists an $\color{lightgreen}{\epsilon \in
+     \mathbb(R)}$ such that $\color{lightgreen}{c_i + \epsilon}$
+   produces a distinct schedule from $\color{lightgreen}{c_i}$
    - If the assertion fails, the clustering is useless (possible to avoid such
      clusterings?)
    - What does this topology look like?
