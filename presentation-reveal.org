@@ -54,7 +54,6 @@
    - Known NP-Complete
      - Practically solved using non-optimal {{{alert(Graph Coloring)}}} algorithms
      - done seperately from instruction scheduling (before or afterwords)
-
 ** Graph Colouring
    [[file:figures/nshape.png]]
    
@@ -68,6 +67,14 @@
    - May use up dispatch slots
    - An {{{alert(Ideal Schedule)}}} has no spilling
  
+** Combining Register Allocation and Instruciton Scheduling
+   - Register Allocation is generally done after instruction scheduling
+   - This can {{{alert(make spilling necessary)}}}
+   - Register allocation can be performed before instruction schedule, but will
+     {{{alert(constrain the space of valid schedules)}}}
+   - Attempts to {{{alert(combine register allocation and scheduling)}}} are
+     rare and yield an {{{alert(NP-hard)}}} problem cite:motwani1995combining cite:Pinter:1993:RAI:173262.155114
+
 * Instruction Pipelining
 ** Classic RISC Pipeline
   [[file:figures/pipeline.png]]
@@ -165,7 +172,17 @@
    [[file:figures/hello-world.png]]
 
    
-   
+** Register Pressure In Staged Loops
+   - Staging can {{{alert(increase pipeline throughput)}}} by enabling more instructions to
+     be scheduled between high latency operations and subsequent use
+   - However this also increases the number of {{{alert(live instances of loop
+     variables)}}} and thus requires more registers to accommodate the schedule
+   - To deal with the access number of registers required that may not be
+     available, {{{alert(Register Queuing)}}} (what we term FIFO's) may be
+     necessary
+   - Existing works have explored schemes of register queuing such as
+     {{{alert(Modulo Variable Expansion)}}} and {{{alert(Rotating Register
+     File)}}} cite:tyson2001evaluating
 * Previous Works
 ** List Scheduling (most commonly performed scheduling)
    	Simple heuristic.  Choose a prioritized topological order that
@@ -182,7 +199,7 @@
 
 * Previous Works Constraint Programming
 ** Optimial Basic Block Instruction Scheduling With Constraint Programming
-   Malik,Mcinnesm,Beek (Waterloo,IBM).  Found provably optimal schedules for basic blocks using constraint
+   cite:malik2008optimal  Found provably optimal schedules for basic blocks using constraint
      programming, using the following types of constraints
    - {{{alert(Latency Constraints)}}}, i.e
      - Given a labeled dependency DAG $G = (N,E)$ 
@@ -209,7 +226,7 @@
 
 * Previous Works Program Optimization Through Stochastic Search
 ** Program Optimization through Stochastic Search
-   Eric Schkufza, Rahul Sharma, Alex Aiken Stanford University
+   cite:Schkufza:2016:SPO:2886013.2863701
   - Suitable for {{{alert(Short Basic Block)}}} assembly code sequences
   - Utilizes a multiple pass {{{alert(Stochastic Algorithm)}}}
   - Encodes constraints as a {{{alert(Cost Function)}}} and uses a
@@ -309,4 +326,10 @@ between heuristics by scaling
    - Do all valid schedules span this topology?
 
 ** Topology Analysis
-   - *TODO* prove stochastic scaling of spans the topology of all schedules
+   - Prove stochastic scaling spans the topology of all schedules
+   - Use PCA analysis to select useful pull parameters
+   - Develop clustering methods for assigning pull parameters
+
+* References
+  bibliographystyle:alphadin
+  bibliography:bib-file.bib

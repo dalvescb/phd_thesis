@@ -33,13 +33,13 @@
 </section>
 
 <section>
-<section id="slide-org4a10b6f">
-<h2 id="org4a10b6f">Instruction Scheduling Intro</h2>
-<div class="outline-text-2" id="text-org4a10b6f">
+<section id="slide-orgb362a97">
+<h2 id="orgb362a97">Instruction Scheduling Intro</h2>
+<div class="outline-text-2" id="text-orgb362a97">
 </div>
 </section>
-<section id="slide-orge993c2b">
-<h3 id="orge993c2b">Instruction Scheduling</h3>
+<section id="slide-org9b4f32a">
+<h3 id="org9b4f32a">Instruction Scheduling</h3>
 <ul>
 <li>Given a set of instructions and dependencies, designate an order 
 (find a <font color="lightblue">schedule</font>) satisfying the dependencies and optimizing performance</li>
@@ -54,8 +54,8 @@ Practically solved by
 </ul>
 
 </section>
-<section id="slide-org94da2fa">
-<h3 id="org94da2fa">Types of Scheduling Algorithms</h3>
+<section id="slide-org5d1442d">
+<h3 id="org5d1442d">Types of Scheduling Algorithms</h3>
 <ul>
 <li><font color="lightblue">Basic Block:</font> break code into blocks within branches (most commonly performed scheduling)</li>
 <li><font color="lightblue">Global Scheduling:</font> schedule across basic block boundaries</li>
@@ -67,8 +67,8 @@ taken on branches</li>
 </ul>
 
 </section>
-<section id="slide-org38c1bf8">
-<h3 id="org38c1bf8">Register Allocation</h3>
+<section id="slide-org90e5643">
+<h3 id="org90e5643">Register Allocation</h3>
 <ul>
 <li>Given a schedule, assign registers keeping in mind
 <ul>
@@ -84,10 +84,9 @@ taken on branches</li>
 </ul></li>
 
 </ul>
-
 </section>
-<section id="slide-org114dcad">
-<h3 id="org114dcad">Graph Colouring</h3>
+<section id="slide-org98e8ad0">
+<h3 id="org98e8ad0">Graph Colouring</h3>
 
 <div class="figure">
 <p><img src="figures/nshape.png" alt="nshape.png" />
@@ -99,8 +98,8 @@ Find a <font color="lightblue">k-Colouring</font> for the dependency graph, wher
 </p>
 
 </section>
-<section id="slide-org8af5bf7">
-<h3 id="org8af5bf7">Spilling</h3>
+<section id="slide-orgc3fd0fd">
+<h3 id="orgc3fd0fd">Spilling</h3>
 <ul>
 <li>What if a <font color="lightblue">k-Coloring</font> can't be found? Must <font color="lightblue">Spill</font> memory</li>
 <li>Simply insert new <font color="lightblue">Load / Store</font> instructions as needed</li>
@@ -112,15 +111,28 @@ scheduling</li>
 </ul>
 
 </section>
+<section id="slide-org085c312">
+<h3 id="org085c312">Combining Register Allocation and Instruciton Scheduling</h3>
+<ul>
+<li>Register Allocation is generally done after instruction scheduling</li>
+<li>This can <font color="lightblue">make spilling necessary</font></li>
+<li>Register allocation can be performed before instruction schedule, but will
+<font color="lightblue">constrain the space of valid schedules</font></li>
+<li>Attempts to <font color="lightblue">combine register allocation and scheduling</font> are
+rare and yield an <font color="lightblue">NP-hard</font> problem [<a href="#motwani1995combining">motwani1995combining</a>,<a href="#Pinter:1993:RAI:173262.155114">Pinter:1993:RAI:173262.155114</a>]</li>
+
+</ul>
+
+</section>
 </section>
 <section>
-<section id="slide-org2f3bb70">
-<h2 id="org2f3bb70">Instruction Pipelining</h2>
-<div class="outline-text-2" id="text-org2f3bb70">
+<section id="slide-orgdd18e2b">
+<h2 id="orgdd18e2b">Instruction Pipelining</h2>
+<div class="outline-text-2" id="text-orgdd18e2b">
 </div>
 </section>
-<section id="slide-org7112246">
-<h3 id="org7112246">Classic RISC Pipeline</h3>
+<section id="slide-org5356a4a">
+<h3 id="org5356a4a">Classic RISC Pipeline</h3>
 
 <div class="figure">
 <p><img src="figures/pipeline.png" alt="pipeline.png" />
@@ -133,8 +145,8 @@ Simple example pipeline with no stalls and a single instruction fetch per
 </p>
 
 </section>
-<section id="slide-orged2f43c">
-<h3 id="orged2f43c">SuperScalar Pipelining</h3>
+<section id="slide-org28b52b8">
+<h3 id="org28b52b8">SuperScalar Pipelining</h3>
 
 <div class="figure">
 <p><img src="figures/superscaler.png" alt="superscaler.png" width="50%" height="50%" />
@@ -147,8 +159,8 @@ require more thought about resource restriction (such as limits on ALU's)
 </p>
 
 </section>
-<section id="slide-org894fff9">
-<h3 id="org894fff9">Pipeline Stalls</h3>
+<section id="slide-org1428b72">
+<h3 id="org1428b72">Pipeline Stalls</h3>
 <p>
 <img src="figures/bubbles.png" alt="bubbles.png" />
 <img src="figures/bubbles2.png" alt="bubbles2.png" />
@@ -160,8 +172,8 @@ not possible)
 </p>
 
 </section>
-<section id="slide-org5406a1d">
-<h3 id="org5406a1d">Hazards</h3>
+<section id="slide-org662ae16">
+<h3 id="org662ae16">Hazards</h3>
 <ul>
 <li><font color="lightblue">Data Hazards</font>
 <ul>
@@ -179,8 +191,8 @@ Hardware encountering hazards causees stalls in the pipeline
 </p>
 
 </section>
-<section id="slide-org5a01648">
-<h3 id="org5a01648">Staging : Example 3 Staged Loop</h3>
+<section id="slide-orgc82493d">
+<h3 id="orgc82493d">Staging : Example 3 Staged Loop</h3>
 
 <div class="figure">
 <p><img src="figures/staging.png" alt="staging.png" width="50%" height="50%" />
@@ -194,8 +206,8 @@ iterations
 </p>
 
 </section>
-<section id="slide-org8005e69">
-<h3 id="org8005e69">Iteration Interval</h3>
+<section id="slide-org96ac1ad">
+<h3 id="org96ac1ad">Iteration Interval</h3>
 <div class="cmath">
 <p>
 \[ \frac{\text{latency height}}{\# \text{stages}} \leq \textrm{II} \]
@@ -208,8 +220,8 @@ iterations
 
 </ul>
 </section>
-<section id="slide-org94ebad5">
-<h3 id="org94ebad5">Register Remapping</h3>
+<section id="slide-org19cf535">
+<h3 id="org19cf535">Register Remapping</h3>
 <p>
 When executing machine code, hardware maps <font color="lightblue">Logical Registers</font> to <font color="lightblue">Physical Registers</font>
 </p>
@@ -225,8 +237,8 @@ hardware extra flexibility when dispatching instructions for <font color="lightb
 </p>
 
 </section>
-<section id="slide-orgdbf7a4e">
-<h3 id="orgdbf7a4e">Out-Of-Order Dispatcher Example</h3>
+<section id="slide-org20868ce">
+<h3 id="org20868ce">Out-Of-Order Dispatcher Example</h3>
 
 <div class="figure">
 <p><img src="figures/hello-world.png" alt="hello-world.png" width="50%" height="50%" />
@@ -234,17 +246,30 @@ hardware extra flexibility when dispatching instructions for <font color="lightb
 </div>
 
 
+</section>
+<section id="slide-org51e6a46">
+<h3 id="org51e6a46">Register Pressure In Staged Loops</h3>
+<ul>
+<li>Staging can <font color="lightblue">increase pipeline throughput</font> by enabling more instructions to
+be scheduled between high latency operations and subsequent use</li>
+<li>However this also increases the number of <font color="lightblue">live instances of loop variables</font> and thus requires more registers to accommodate the schedule</li>
+<li>To deal with the access number of registers required that may not be
+available, <font color="lightblue">Register Queuing</font> (what we term FIFO's) may be
+necessary</li>
+<li>Existing works have explored schemes of register queuing such as
+<font color="lightblue">Modulo Variable Expansion</font> and <font color="lightblue">Rotating Register File</font> [<a href="#tyson2001evaluating">tyson2001evaluating</a>]</li>
 
+</ul>
 </section>
 </section>
 <section>
-<section id="slide-org4125d18">
-<h2 id="org4125d18">Previous Works</h2>
-<div class="outline-text-2" id="text-org4125d18">
+<section id="slide-orgd034277">
+<h2 id="orgd034277">Previous Works</h2>
+<div class="outline-text-2" id="text-orgd034277">
 </div>
 </section>
-<section id="slide-org612d8ee">
-<h3 id="org612d8ee">List Scheduling (most commonly performed scheduling)</h3>
+<section id="slide-org9c05de3">
+<h3 id="org9c05de3">List Scheduling (most commonly performed scheduling)</h3>
 <p>
 Simple heuristic.  Choose a prioritized topological order that
 </p>
@@ -259,8 +284,8 @@ optimal schedules
 </p>
 
 </section>
-<section id="slide-org74ab14b">
-<h3 id="org74ab14b">Issues with List Scheduling</h3>
+<section id="slide-org97acf20">
+<h3 id="org97acf20">Issues with List Scheduling</h3>
 <ul>
 <li>Many factors to consider when constructing a schedule (everything listed in this presentation and more!)</li>
 <li>Difficult (or more accurately impossible!) to consider all these aspects into a single choice heuristic</li>
@@ -272,15 +297,15 @@ but each will usually undo the work of the other</li>
 </section>
 </section>
 <section>
-<section id="slide-orgdd0b84b">
-<h2 id="orgdd0b84b">Previous Works Constraint Programming</h2>
-<div class="outline-text-2" id="text-orgdd0b84b">
+<section id="slide-org4a4f4a4">
+<h2 id="org4a4f4a4">Previous Works Constraint Programming</h2>
+<div class="outline-text-2" id="text-org4a4f4a4">
 </div>
 </section>
-<section id="slide-orgd1d3289">
-<h3 id="orgd1d3289">Optimial Basic Block Instruction Scheduling With Constraint Programming</h3>
+<section id="slide-orge5261eb">
+<h3 id="orge5261eb">Optimial Basic Block Instruction Scheduling With Constraint Programming</h3>
 <p>
-Malik,Mcinnesm,Beek (Waterloo,IBM).  Found provably optimal schedules for basic blocks using constraint
+[<a href="#malik2008optimal">malik2008optimal</a>]  Found provably optimal schedules for basic blocks using constraint
   programming, using the following types of constraints
 </p>
 <ul>
@@ -307,8 +332,8 @@ Malik,Mcinnesm,Beek (Waterloo,IBM).  Found provably optimal schedules for basic 
 </ul>
 
 </section>
-<section id="slide-org5c81082">
-<h3 id="org5c81082">Optimial Basic Block Instruction Scheduling With Constraint Programming (Limitations)</h3>
+<section id="slide-orgf202e7f">
+<h3 id="orgf202e7f">Optimial Basic Block Instruction Scheduling With Constraint Programming (Limitations)</h3>
 <p>
 The hard constraints on latency would not account for <font color="lightblue">Register Remapping</font> in
 <font color="lightblue">Out Of Order Execution</font> that would be able to find more optimal schedules
@@ -330,16 +355,15 @@ making that constraint unnecessary
 </section>
 </section>
 <section>
-<section id="slide-org5022143">
-<h2 id="org5022143">Previous Works Program Optimization Through Stochastic Search</h2>
-<div class="outline-text-2" id="text-org5022143">
+<section id="slide-orgfa96c6c">
+<h2 id="orgfa96c6c">Previous Works Program Optimization Through Stochastic Search</h2>
+<div class="outline-text-2" id="text-orgfa96c6c">
 </div>
 </section>
-<section id="slide-org5d57411">
-<h3 id="org5d57411">Program Optimization through Stochastic Search</h3>
+<section id="slide-orge021c52">
+<h3 id="orge021c52">Program Optimization through Stochastic Search</h3>
 <p>
-Eric Schkufza, Rahul Sharma, Alex Aiken Stanford University
-</p>
+[<a href="#Schkufza:2016:SPO:2886013.2863701">Schkufza:2016:SPO:2886013.2863701</a>]</p>
 <ul>
 <li>Suitable for <font color="lightblue">Short Basic Block</font> assembly code sequences</li>
 <li>Utilizes a multiple pass <font color="lightblue">Stochastic Algorithm</font></li>
@@ -350,8 +374,8 @@ possible schedules</li>
 </ul>
 
 </section>
-<section id="slide-orgc16c09b">
-<h3 id="orgc16c09b">Program Optimization through Stochastic Search</h3>
+<section id="slide-org448793b">
+<h3 id="org448793b">Program Optimization through Stochastic Search</h3>
 <p>
 Each pass of the optimization minimizes the cost function
 </p>
@@ -406,8 +430,8 @@ Each pass of the optimization minimizes the cost function
 </table>
 
 </section>
-<section id="slide-orgd2d352c">
-<h3 id="orgd2d352c">Program Optimization through Stochastic Search (Limitations)</h3>
+<section id="slide-orga644af8">
+<h3 id="orga644af8">Program Optimization through Stochastic Search (Limitations)</h3>
 <ul>
 <li>Only optimizes basic blocks (<font color="lightblue">no loops</font>)</li>
 <li>Extremely innefficent (only practical for very short scheduling)</li>
@@ -420,13 +444,13 @@ checking is required per each rewrite)</li>
 </section>
 </section>
 <section>
-<section id="slide-org474c76a">
-<h2 id="org474c76a">Proposed Research</h2>
-<div class="outline-text-2" id="text-org474c76a">
+<section id="slide-org3a8f79d">
+<h2 id="org3a8f79d">Proposed Research</h2>
+<div class="outline-text-2" id="text-org3a8f79d">
 </div>
 </section>
-<section id="slide-org8e7d390">
-<h3 id="org8e7d390">Constrained Optimization Model For Modulo Scheduling</h3>
+<section id="slide-orgf2c31fa">
+<h3 id="orgf2c31fa">Constrained Optimization Model For Modulo Scheduling</h3>
 <div class="cmath">
 <small>
 <div>
@@ -446,8 +470,8 @@ checking is required per each rewrite)</li>
 </div>
 
 </section>
-<section id="slide-orgb3fb512">
-<h3 id="orgb3fb512">Constrained Optimization Model</h3>
+<section id="slide-orgc754391">
+<h3 id="orgc754391">Constrained Optimization Model</h3>
 <div class="cmath">
 <small>
 <div>
@@ -469,8 +493,8 @@ between heuristics by scaling
 </p>
 
 </section>
-<section id="slide-org8fc52d5">
-<h3 id="org8fc52d5">IO Penalty</h3>
+<section id="slide-orgc44338f">
+<h3 id="orgc44338f">IO Penalty</h3>
 <ul>
 <li><font color="lightblue">IDEA</font> penalize dispatch time of instructions based on the quantity and
 latencies of it's dependencies</li>
@@ -494,8 +518,8 @@ latencies of it's dependencies</li>
 </div>
 
 </section>
-<section id="slide-orga1d0bd8">
-<h3 id="orga1d0bd8">Stochastic Scaling</h3>
+<section id="slide-org4ff3f36">
+<h3 id="org4ff3f36">Stochastic Scaling</h3>
 <ul>
 <li>The scaling \(\color{lightgreen}{\frac{1}{N_j}}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
 <li><font color="lightblue">IDEA</font> scale the <font color="lightblue">IO penalty</font> stochastically</li>
@@ -516,8 +540,8 @@ latencies of it's dependencies</li>
 </div>
 
 </section>
-<section id="slide-org85e5b11">
-<h3 id="org85e5b11">Schedule Topology</h3>
+<section id="slide-org2996061">
+<h3 id="org2996061">Schedule Topology</h3>
 <p>
 <font color="lightblue">Assertion</font> For each scaling \(\color{lightgreen}{c_i \in \mathbb{RAND(R)}}\), there exists an \(\color{lightgreen}{\epsilon \in
      \mathbb(R)}\) such that \(\color{lightgreen}{c_i + \epsilon}\)
@@ -532,12 +556,30 @@ clusterings?)</li>
 </ul>
 
 </section>
-<section id="slide-org249e2c3">
-<h3 id="org249e2c3">Topology Analysis</h3>
+<section id="slide-org50b432f">
+<h3 id="org50b432f">Topology Analysis</h3>
 <ul>
-<li><b>TODO</b> prove stochastic scaling of spans the topology of all schedules</li>
+<li>Prove stochastic scaling spans the topology of all schedules</li>
+<li>Use PCA analysis to select useful pull parameters</li>
+<li>Develop clustering methods for assigning pull parameters</li>
 
 </ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgb623097">
+<h2 id="orgb623097">References</h2>
+<p>
+
+<h1 class='org-ref-bib-h1'>Bibliography</h1>
+<ul class='org-ref-bib'><li><a id="motwani1995combining">[motwani1995combining]</a> <a name="motwani1995combining"></a>Motwani, Palem, Sarkar & Reyen, Combining register allocation and instruction scheduling, <i>Courant Institute, New York University</i>,  (1995).</li>
+<li><a id="Pinter:1993:RAI:173262.155114">[Pinter:1993:RAI:173262.155114]</a> <a name="Pinter:1993:RAI:173262.155114"></a>Pinter, Register Allocation with Instruction Scheduling, <i>SIGPLAN Not.</i>, <b>28(6)</b>, 248-257 (1993). <a href="http://doi.acm.org/10.1145/173262.155114">link</a>. <a href="http://dx.doi.org/10.1145/173262.155114">doi</a>.</li>
+<li><a id="tyson2001evaluating">[tyson2001evaluating]</a> <a name="tyson2001evaluating"></a>Tyson, Smelyanskiy & Davidson, Evaluating the use of register queues in software pipelined loops, <i>IEEE Transactions on Computers</i>, <b>50(8)</b>, 769-783 (2001).</li>
+<li><a id="malik2008optimal">[malik2008optimal]</a> <a name="malik2008optimal"></a>Malik, McInnes & Van Beek, Optimal basic block instruction scheduling for multiple-issue processors using constraint programming, <i>International Journal on Artificial Intelligence Tools</i>, <b>17(01)</b>, 37-54 (2008).</li>
+<li><a id="Schkufza:2016:SPO:2886013.2863701">[Schkufza:2016:SPO:2886013.2863701]</a> <a name="Schkufza:2016:SPO:2886013.2863701"></a>Schkufza, Sharma & Aiken, Stochastic Program Optimization, <i>Commun. ACM</i>, <b>59(2)</b>, 114-122 (2016). <a href="http://doi.acm.org/10.1145/2863701">link</a>. <a href="http://dx.doi.org/10.1145/2863701">doi</a>.</li>
+</ul>
+</p>
 </section>
 </section>
 </div>
