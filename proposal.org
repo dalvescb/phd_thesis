@@ -1,0 +1,199 @@
+#+TITLE: Thesis Proposal Title
+#+DESCRIPTION: Thesis proposal for Curtis D'Alves; McMaster University 2019.
+#+AUTHOR: [[mailto:dalvescb@mcmaster.ca][Curtis D'Alves]]
+#+EMAIL: curtis.dalves@gmail.com
+#+OPTIONS: toc:nil d:nil title:nil
+#+PROPERTY: header-args :tangle no :comments link
+
+# At the end of a section, explain why the section is there,
+# and what the reader should take away from it.
+
+# MA: LaTeX pads colons, :, with spacing.
+# For inline typing annotations, use ghost colon “\:” to avoid this issue.
+
+* Preamble & title page :ignore:
+
+# Top level editorial comments.
+#+MACRO: remark  @@latex: \fbox{\textbf{Comment: $1 }}@@
+
+** Minted setup -- colouring code blocks                            :ignore:
+
+#+LATEX_HEADER: \usepackage[]{minted}
+#+LATEX_HEADER: \usepackage{tcolorbox}
+#+LATEX_HEADER: \usepackage{etoolbox}
+#+LATEX_HEADER: \def\mytitle{??? Program Code ???}
+#+LATEX_HEADER: \BeforeBeginEnvironment{minted}{\begin{tcolorbox}[title=\hfill \mytitle]}%
+#+LATEX_HEADER: \AfterEndEnvironment{minted}{\end{tcolorbox}}%
+
+# Before a code block, write {{{code(title-of-block)}}}
+#
+#+MACRO: code     #+LaTeX: \def\mytitle{$1}
+
+#+LaTeX: \setminted[haskell]{fontsize=\footnotesize}
+#+LaTeX: \setminted[agda]{fontsize=\footnotesize}
+
+# Removing the red box that appears in "minted" when using unicode.
+# Src: https://tex.stackexchange.com/questions/343494/minted-red-box-around-greek-characters
+#
+#+LATEX_HEADER: \makeatletter
+#+LATEX_HEADER: \AtBeginEnvironment{minted}{\dontdofcolorbox}
+#+LATEX_HEADER: \def\dontdofcolorbox{\renewcommand\fcolorbox[4][]{##4}}
+#+LATEX_HEADER: \makeatother
+** LaTeX setup                                                      :ignore:
+
+# Hijacking \date to add addtional text to the frontmatter of a ‘report’.
+#
+#
+# DATE: \today\vfill \centerline{---Supervisors---} \newline [[mailto:carette@mcmaster.ca][Jacques Carette]] and [[mailto:kahl@cas.mcmaster.ca][Wolfram Kahl]]
+
+#+LATEX_HEADER: \usepackage[hmargin=25mm,vmargin=25mm]{geometry}
+#+LaTeX_HEADER: \setlength{\parskip}{1em}
+#+latex_class_options: [12pt]
+#+LATEX_CLASS: report-noparts
+# Defined below.
+#
+# Double spacing:
+# LaTeX: \setlength{\parskip}{3em}\renewcommand{\baselinestretch}{2.0}
+#
+#+LATEX_HEADER: \setlength{\parskip}{1em}
+
+#+LATEX_HEADER: \usepackage[backend=biber,style=alphabetic]{biblatex}
+#+LATEX_HEADER: \addbibresource{References.bib}
+
+#+LATEX_HEADER: \usepackage{MyUnicodeSymbols}
+
+#+LATEX_HEADER: \usepackage[dvipsnames]{xcolor} % named colours
+#+LATEX_HEADER: \usepackage{color}
+#+LATEX_HEADER: \definecolor{darkred}{rgb}{0.3, 0.0, 0.0}
+#+LATEX_HEADER: \definecolor{darkgreen}{rgb}{0.0, 0.3, 0.1}
+#+LATEX_HEADER: \definecolor{darkblue}{rgb}{0.0, 0.1, 0.3}
+#+LATEX_HEADER: \definecolor{darkorange}{rgb}{1.0, 0.55, 0.0}
+#+LATEX_HEADER: \definecolor{sienna}{rgb}{0.53, 0.18, 0.09}
+#+LATEX_HEADER: \hypersetup{colorlinks,linkcolor=darkblue,citecolor=darkblue,urlcolor=darkgreen}
+
+#+NAME: symbols for itemisation environment
+#+BEGIN_EXPORT latex
+\def\labelitemi{$\diamond$}
+\def\labelitemii{$\circ$}
+\def\labelitemiii{$\star$}
+
+% Level 0                 Level 0
+% + Level 1               ⋄ Level 1
+%   - Level 2       --->      ∘ Level 2
+%     * Level 3                   ⋆ Level 3
+%
+#+END_EXPORT
+
+# Having small-font code blocks.
+# LATEX_HEADER: \RequirePackage{fancyvrb}
+# LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\scriptsize}
+
+** ~reports-noparts~ LaTeX Class                                    :noexport:
+
+A custom version of the reports class which makes the outermost headings chapters, rather than parts.
+#+NAME: make-reports-class
+#+BEGIN_SRC emacs-lisp :results none
+(add-to-list
+  'org-latex-classes
+    '("report-noparts"
+      "\\documentclass{report}"
+      ("\\chapter{%s}" . "\\chapter*{%s}")
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+#+END_SRC
+
+Source: Mark Armstrong --github ~armkeh~
+** Personal title page                                              :ignore:
+
+#+begin_center org
+
+#+begin_export latex
+\thispagestyle{empty}
+
+{\color{white}{.}}
+
+\vspace{5em}
+
+{\Huge Thesis Proposal Title}
+
+\vspace{1em}
+
+{\Large Possibly some more bullshit here}
+
+\vspace{2em}
+
+Department of Computing and Software
+
+McMaster University
+
+\vspace{2em}
+\href{mailto:curtis.dalves@gmail.com}{Curtis D'Alves}
+
+\vspace{2em}
+\today
+#+end_export
+
+\vfill
+
+{{{code({\sc Thesis Proposal \hspace{12em} \color{grey}{.} })}}}
+#+begin_src haskell
+-- Supervisors                                       -- Emails
+Christopher Anand                                    anandc@mcmaster.ca
+Wolfram Kahl                                         kahl@cas.mcmaster.ca
+#+end_src
+#+end_center
+
+# LaTeX: \centerline{\sc Draft}
+
+* Abstract and toc                                                   :ignore:
+:PROPERTIES:
+:CUSTOM_ID: abstract
+:END:
+
+# Use:  x vs.{{{null}}} ys
+# This informs LaTeX not to put the normal space necessary after a period.
+#
+#+MACRO: null  @@latex:\null{}@@
+
+#+begin_abstract
+
+part of an abstract
+
+\vspace{1em}
+
+some more abstract
+
+#+begin_center org
+#+begin_small
+---Source: https://github.com/dalvescb/phd_thesis ---
+#+end_small
+#+end_center
+#+end_abstract
+
+\newpage
+\thispagestyle{empty}
+\tableofcontents
+\newpage
+
+* Introduction (Background)
+** TODO COMMENT Instrucion Scheduling Background 
+
+* Current/Previous Approaches
+** TODO COMMENT Current/Previous Approaches
+
+* Proposed Approaches
+** TODO COMMENT Proposed Approaches
+
+* Timeline
+** TODO COMMENT Timeline
+
+* COMMENT footer                                                     :ignore:
+
+# Local Variables:
+# eval: (progn (org-babel-goto-named-src-block "make-reports-class") (org-babel-execute-src-block) (outline-hide-sublevels 1))
+# eval: (progn (org-babel-goto-named-src-block "make-readme") (org-babel-execute-src-block) (outline-hide-sublevels 1))
+# compile-command: (progn (org-babel-tangle) (org-latex-export-to-pdf) (async-shell-command "open thesis-proposal.pdf"))
+# End:

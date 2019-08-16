@@ -7,7 +7,7 @@
 #+COLUMNS: %45ITEM %10BEAMER_ENV(Env) %10BEAMER_ACT(Act) %4BEAMER_COL(Col)
 #+LATEX_HEADER_EXTRA: \usepackage{amsmath, amssymb}
 #+LATEX_HEADER: \usepackage[backend=bibtex]{biblatex}
-#+LATEX_HEADER: \bibliography{bib-file}
+#+LATEX_HEADER: \bibliography{References}
 
 * Instruction Scheduling Intro
 

@@ -332,4 +332,4 @@ between heuristics by scaling
 
 * References
   bibliographystyle:alphadin
-  bibliography:bib-file.bib
+  bibliography:References.bib
