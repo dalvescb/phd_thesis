@@ -160,7 +160,6 @@ Wolfram Kahl                                         kahl@cas.mcmaster.ca
 
 #+begin_abstract
 
-part of an abstract
 
 \vspace{1em}
 
@@ -179,8 +178,9 @@ some more abstract
 \newpage
 
 * Introduction (Background)
+  \parencite{malik2008optimal}
 ** TODO COMMENT Instrucion Scheduling Background 
-
+   
 * Current/Previous Approaches
 ** TODO COMMENT Current/Previous Approaches
 
@@ -190,10 +190,14 @@ some more abstract
 * Timeline
 ** TODO COMMENT Timeline
 
+* Bib                                                                :ignore:
+# LaTeX: \addcontentsline{toc}{section}{References}
+#+LaTeX: \addcontentsline{toc}{part}{References}
+#+LaTeX: \printbibliography
+
 * COMMENT footer                                                     :ignore:
 
 # Local Variables:
 # eval: (progn (org-babel-goto-named-src-block "make-reports-class") (org-babel-execute-src-block) (outline-hide-sublevels 1))
-# eval: (progn (org-babel-goto-named-src-block "make-readme") (org-babel-execute-src-block) (outline-hide-sublevels 1))
-# compile-command: (progn (org-babel-tangle) (org-latex-export-to-pdf) (async-shell-command "open thesis-proposal.pdf"))
+# compile-command: (progn (org-babel-tangle) (org-latex-export-to-pdf) (async-shell-command "evince proposal.pdf"))
 # End:
