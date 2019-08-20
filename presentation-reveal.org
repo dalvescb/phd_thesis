@@ -171,7 +171,6 @@
    #+RESULTS:
    [[file:figures/hello-world.png]]
 
-   
 ** Register Pressure In Staged Loops
    - Staging can {{{alert(increase pipeline throughput)}}} by enabling more instructions to
      be scheduled between high latency operations and subsequent use
