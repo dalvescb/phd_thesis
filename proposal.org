@@ -216,8 +216,14 @@ functions.
     Practically solved by
     - *Heuristics*
     - *Approximation Algorithms*
+  These algorithms take a model of the program (typically represented as a
+  dependency DAG \parencite{gibbons1986efficient}) as input and return an
+  ordering as output. 
+
 *** TODO COMMENT finish introduction (background) heading
 ** Types of Scheduling
+   \parencite{rau1993instruction} TODO REFERENCE HISTORY OF INSTRUCTION-LEVEL
+   PARALLEL PROCESSING
    - *Basic Block:* break code into blocks within branches (most commonly performed scheduling)
 	 - *Global Scheduling:* schedule across basic block boundaries
 	 - *Modulo Scheduling:* schedules basic blocks inside of a loop, seeking to
@@ -226,6 +232,7 @@ functions.
      taken on branches
 *** TODO COMMENT update types of scheduling from beamer
 ** Register Allocation
+   \parencite{Chaitin:1982:RAS:872726.806984} TODO REFERENCE REGISTER ALLOC
    - Given a schedule, assign registers keeping in mind
     - limited number of registers
     - can't rewrite a register until consumed by dependent instructions
@@ -263,6 +270,7 @@ functions.
  "cycle"
 *** TODO COMMENT update instruction pipelining from beamer
 ** SuperScalar Architectures
+   \parencite{bernstein1991global} USE REFERENCE ABOUT SUPERSCALAR PIPELINE SCHEDULING
    #+ATTR_LATEX: :width 0.5\textwidth
       [[file:figures/superscaler.png]]
    

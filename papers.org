@@ -61,6 +61,70 @@
    :END:
 [[https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=4336198][Software Pipelining on Multi-core Architectures]]
 
+** Global instruction scheduling for superscalar machines
+   :PROPERTIES:
+   :TITLE:    Global instruction scheduling for superscalar machines
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: bernstein1991global
+   :AUTHOR:   Bernstein, David and Rodeh, Michael
+   :BOOKTITLE: ACM SIGPLAN Notices
+   :VOLUME:   26
+   :NUMBER:   6
+   :PAGES:    241--255
+   :YEAR:     1991
+   :ORGANIZATION: ACM
+   :END:
+[[http://pages.cs.wisc.edu/~fischer/cs701.f06/berstein_rodeh.pdf][Global instruction scheduling for superscalar machines]]
+
+** Efficient instruction scheduling for a pipelined architecture
+   :PROPERTIES:
+   :TITLE:    Efficient instruction scheduling for a pipelined architecture
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: gibbons1986efficient
+   :AUTHOR:   Gibbons, Philip B and Muchnick, Steven S
+   :BOOKTITLE: Acm sigplan notices
+   :VOLUME:   21
+   :NUMBER:   7
+   :PAGES:    11--16
+   :YEAR:     1986
+   :ORGANIZATION: ACM
+   :END:
+[[http://delivery.acm.org.libaccess.lib.mcmaster.ca/10.1145/20000/13312/p11-gibbons.pdf?ip=130.113.111.210&id=13312&acc=ACTIVE%20SERVICE&key=FD0067F557510FFB%2ED816932E3DB0B89D%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&__acm__=1566799515_cd89aab9c480dc291845f8e0ab01483f][Efficient scheduling for pipelined architectures]]
+** Instruction-level parallel processing: history, overview, and perspective
+   :PROPERTIES:
+   :TITLE:    Instruction-level parallel processing: history, overview, and perspective
+   :BTYPE:    incollection
+   :CUSTOM_ID: rau1993instruction
+   :AUTHOR:   Rau, B Ramakrishna and Fisher, Joseph A
+   :BOOKTITLE: Instruction-Level Parallelism
+   :PAGES:    9--50
+   :YEAR:     1993
+   :PUBLISHER: Springer
+   :END:
+[[http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.799.7976&rep=rep1&type=pdf][Instruction-level parallel processing]]
+** Register Allocation \& Spilling via Graph Coloring
+   :PROPERTIES:
+   :TITLE:    Register Allocation \& Spilling via Graph Coloring
+   :BTYPE:    article
+   :CUSTOM_ID: Chaitin:1982:RAS:872726.806984
+   :AUTHOR:   Chaitin, G. J.
+   :JOURNAL:  SIGPLAN Not.
+   :ISSUE_DATE: June 1982
+   :VOLUME:   17
+   :NUMBER:   6
+   :MONTH:    jun
+   :YEAR:     1982
+   :ISSN:     0362-1340
+   :PAGES:    98--101
+   :NUMPAGES: 4
+   :URL:      http://doi.acm.org.libaccess.lib.mcmaster.ca/10.1145/872726.806984
+   :DOI:      10.1145/872726.806984
+   :ACMID:    806984
+   :PUBLISHER: ACM
+   :ADDRESS:  New York, NY, USA
+   :END:
+[[http://delivery.acm.org.libaccess.lib.mcmaster.ca/10.1145/810000/806984/p98-chaitin.pdf?ip=130.113.111.210&id=806984&acc=ACTIVE%20SERVICE&key=FD0067F557510FFB%2ED816932E3DB0B89D%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&__acm__=1566800641_adc76422d7bd921a1521c82893f6dceb][Register Allocation]]
+
 * Previous Approaches
 ** Optimal basic block instruction scheduling for multiple-issue processors using constraint programming
   :PROPERTIES:
