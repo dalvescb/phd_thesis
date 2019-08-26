@@ -162,26 +162,40 @@ Wolfram Kahl                                         kahl@cas.mcmaster.ca
 
 In compiler optimization, *Instruction Scheduling* seeks to optimize the order of
 a sequence of instructions to maximize throughput while preserving semantics.
-As modern pipe-lined architectures become increasing more complex, with
-techniques such as super-scaling, out of order execution, register remapping and
+As modern pipelined multi-core architectures become increasing more complex, with
+techniques such as super-scaling, out of order execution, register remapping,
+VLIW (Very Large Instruction Word) and
 more scheduling software must itself become more sophisticated to fully
 utilize this advanced hardware. However as a known NP-Complete problem, finding
 the optimal schedule for a non-trivial program is too costly. Conventional
 compilers opt to utilize heuristics that by default yield far from optimal schedules in
 exchange for compile time performance. Tuning via compiler flags is complex
-requiring expert insight and often ignored by developers. Statically/Dynamically
+requiring expert insight (often the order of flags causes different heuristics
+to overwrite one another) and is often ignored by developers. Statically/Dynamically
 linked libraries present an opportunity to schedule pre-compiled binaries
 outside of compile time making room to use more costly methods to find better
 schedules for performance critical blocks.  
 
 \vspace{1em}
 
-This proposal describes an attempt to explore techniques for scheduling performance critical code on
+This proposal explores techniques for scheduling performance critical code on
 modern out-of-order architectures. Previous/Current techniques and their
 relevance are detailed, including List Scheduling, Approximation Algorithms,
-Stochastic Algorithms and Linear Programming. Of particular interest, the use of
+Stochastic Algorithms and (Non)Linear Programming. Of particular interest, the use of
 stochastic algorithms presents opportunity to examine the space of feasible
-schedules.  
+schedules. We present a constrained non-linear optimization model that relaxes
+the discrete nature of scheduling problems. By encoding heuristics as penalty
+functions that can be scaled to assign priority and using stochastic-ally
+generated scaling parameters we hope to examine the topology of valid schedules
+in the more flexible space of $\textrm{R}^n$. 
+
+\vspace{1em}
+
+As a testing bed, we schedule the IBM\textsuperscript{\textregistered}
+MASS\texttrademark (Math Acceleration Subsystem) library functions for the
+Z\texttrademark and POWER\texttrademark architectures with already successful results,
+finding schedules that outperform previous iterations of the library for select
+functions.
 
 #+begin_center org
 #+begin_small
@@ -196,10 +210,173 @@ schedules.
 \newpage
 
 * Introduction (Background)
-** TODO COMMENT Instrucion Scheduling Background 
+  - Given a set of instructions and dependencies, designate an order 
+    (find a *schedule*) satisfying the dependencies and optimizing performance
+  - Known NP-Complete 
+    Practically solved by
+    - *Heuristics*
+    - *Approximation Algorithms*
+*** TODO COMMENT finish introduction (background) heading
+** Types of Scheduling
+   - *Basic Block:* break code into blocks within branches (most commonly performed scheduling)
+	 - *Global Scheduling:* schedule across basic block boundaries
+	 - *Modulo Scheduling:* schedules basic blocks inside of a loop, seeking to
+     optimize by interleaving iterations
+	 - *Trace Scheduling:* tries to optimize control flow by predicting routes
+     taken on branches
+*** TODO COMMENT update types of scheduling from beamer
+** Register Allocation
+   - Given a schedule, assign registers keeping in mind
+    - limited number of registers
+    - can't rewrite a register until consumed by dependent instructions
+   - Known NP-Complete
+     - Practically solved using non-optimal *Graph Coloring* algorithms
+     - done seperately from instruction scheduling (before or afterwords)
+*** TODO COMMENT update register allocation from beamer
+** Graph Coloring
+   [[file:figures/nshape.png]]
    
+   Find a *k-Colouring* for the dependency graph, where *$k = \#Registers$*
+*** TODO COMMENT update graph coloring from beamer
+
+** Spilling
+   - What if a *k-Coloring* can't be found? Must *Spill* memory
+	 - Simply insert new *Load / Store* instructions as needed
+   - Potentially *creates new stalls* in the pipeline, need to re-perform
+     scheduling
+   - May use up dispatch slots
+   - An *Ideal Schedule* has no spilling
+*** TODO COMMENT update spilling from beamer
+
+** Combining Register Allocation and Instruction Scheduling
+   - Register Allocation is generally done after instruction scheduling
+   - This can *make spilling necessary*
+   - Register allocation can be performed before instruction schedule, but will
+     *constrain the space of valid schedules*
+   - Attempts to *combine register allocation and scheduling* are
+     rare and yield an *NP-hard* problem \parencite{motwani1995combining} \parencite{Pinter:1993:RAI:173262.155114}
+*** TODO COMMENT update combining register alloc from beamer
+** Instruction Pipelining
+     [[file:figures/pipeline.png]]
+  
+ Simple example pipeline with no stalls and a single instruction fetch per
+ "cycle"
+*** TODO COMMENT update instruction pipelining from beamer
+** SuperScalar Architectures
+   #+ATTR_LATEX: :width 0.5\textwidth
+      [[file:figures/superscaler.png]]
+   
+   Superscalar architectures can fetch multiple instructions per "cycle" and
+   require more thought about resource restriction (such as limits on ALU's)
+*** TODO COMMENT update superscalar architectures from beamer
+** Pipeline Stalls
+   [[file:figures/bubbles.png]]
+   [[file:figures/bubbles2.png]]
+   
+   An ideal shedule (like in the previous figures) contains *NO* stalls (often
+   not possible)
+*** TODO COMMENT update pipeline stalls from beamer
+** Hazards
+		- *Data Hazards*
+			- read after write *RAW*
+			- write after read *WAR*
+			- write after write *WAW*
+		- *Structural Hazards* occurs when an aspect of hardware is accessed at the same time
+		- *Control Hazards* caused by branching, next instruction unknown
+    Hardware encountering hazards causees stalls in the pipeline
+*** TODO COMMENT update hazards from beamer
+** Swing Modulo Scheduling: Staging
+   #+ATTR_LATEX: :width 0.5\textwidth
+   [[file:figures/staging.png]]
+
+   When performing *modulo scheduling*, a basic block of a loop can be broken
+   into stages and the loop can be *unrolled* to interleave stages between
+   iterations
+*** TODO COMMENT update staging from beamer
+** Iteration Interval
+\begin{equation}
+  \frac{\text{latency height}}{\# \text{stages}} \leq \textrm{II}
+\end{equation}
+   - the maximum *number of cyles* to complete a loop iteration
+   - exact number is complicated *Out of Order Execution* / *Staging*
+*** TODO COMMENT update II from beamer
+** Register Remapping
+   When executing machine code, hardware maps *Logical Registers* to *Physical Registers*
+   -  *Logical Registers* are a set of registers usable directly when
+     writing/generating assembly code (limited by system architecture)
+   - *Physical Registers* are a set of registers actually available in hardware
+   Having a larger number of Physical registers than Logical registers gives
+   hardware extra flexibility when dispatching instructions for *Out of Order Execution*
+*** TODO COMMENT update register remapping from beamer
+** Out-of-Order Execution
+   #+BEGIN_SRC ditaa :file figures/OoODiagram.png
+   /--------------\      /-------------\
+   | Instr 0.     | ...  | Instr. n    |
+   \--------------/      \-------------/
+         |           |         |
+   /--------------\      /-------------\
+   | Fetcher 0.   | ...  | Fetcher n   |
+   \--------------/      \-------------/
+         |           |         |
+         |           |         |
+         \---------------------/
+                     |
+                     v
+            /-----------------\
+            | cBLU Grouper    |           Register Remapping
+            \-----------------/
+                     |
+                     |
+                     v 
+            /-----------------\
+            | cBLU Dispather  |
+            \-----------------/
+                     |
+     -------------------------------------
+     |      |                     |      |
+   /----\ /----\               /----\ /----\
+   |cRED| |cRED|     ....      |cRED| |cRED|    OoO Exection
+   \----/ \----/               \----/ \----/
+     |      |                     |      |
+     -------------------------------------
+                     |
+                     v 
+            /-----------------\
+            | cBLU Retire     |           Register UnMapping
+            \-----------------/
+   #+END_SRC
+
+   #+ATTR_LATEX: :width 0.5\textwidth
+   #+RESULTS:
+   [[file:figures/OoODiagram.png]]
+*** TODO COMMENT update out-of-order execution from beamer
+** Register Pressure In Staged Loops
+   - Staging can *increase pipeline throughput* by enabling more instructions to
+     be scheduled between high latency operations and subsequent use
+   - However this also increases the number of *live instances of loop
+     variables* and thus requires more registers to accommodate the schedule
+   - To deal with the access number of registers required that may not be
+     available, *Register Queuing* (what we term FIFO's) may be
+     necessary
+   - Existing works have explored schemes of register queuing such as
+     *Modulo Variable Expansion* and *Rotating Register
+     File* \parencite{tyson2001evaluating}
+*** TODO COMMENT update register pressure from beamer
 * Current/Previous Approaches
 *** TODO COMMENT write intro to current/previous approaches
+** List Scheduling (most commonly performed scheduling)
+   	Simple heuristic.  Choose a prioritized topological order that
+    - Respects the edges in the data-dependence graph (*topological*)
+    - Heuristic choice among options, e.g pick first the node with the longest path extending from that node *prioritized*
+    Most commonly used method for scheduling. Efficient but yields far less than
+    optimal schedules.
+
+    Issues with list scheduling include 
+    - Many factors to consider when constructing a schedule (everything listed in this presentation and more!)    
+    - Difficult (or more accurately impossible!) to consider all these aspects into a single choice heuristic        
+    - Combinations of heuristics can be used, and multiple iterations performed,
+      but each will usually undo the work of the other
+*** TODO COMMENT update list scheduling from beamer
 ** Linear/Constraint Programming
      \parencite{malik2008optimal} Found provably optimal schedules for basic blocks using constraint
      programming, with the following types of constraints
@@ -223,12 +400,92 @@ schedules.
    #+END_SRC
    On a system with only 5 registers and an instruction fma of large enough
    latency, the scheduler would push these instructions apart. However a machine
-   could use register remapping to execute these instructions efficiently *OoO*
-   making that constraint unnecessary
+   could use register remapping to execute these instructions efficiently Out-of-Order
+   making that constraint unnecessary.
 *** TODO COMMENT fix linear/constraint programming from beamer
-* Proposed Approaches
-** TODO COMMENT Proposed Approaches
+** Stochastic Search
+   Work by stanford \parencite{Schkufza:2016:SPO:2886013.2863701}
+  - Suitable for *Short Basic Block* assembly code sequences
+  - Utilizes a multiple pass *Stochastic Algorithm*
+  - Encodes constraints as a *Cost Function* and uses a
+    *Markov Chain Monte Carlo Sampler* to explore space of all
+    possible schedules
 
+  Each pass of the optimization minimizes the cost function
+
+  \begin{equation*}
+    cost(R; T) = w_e \times eq(R; T) + w_p \times perf(R; T)
+  \end{equation*}
+
+  | $\color{lightgreen}{\boldsymbol{R}}$   | any rewrite of the program                                        |
+  | $\color{lightgreen}{\boldsymbol{T}}$   | the input program sequence                                        |
+  | $\color{lightgreen}{eq(\cdot)}$        | the equivalence function (0 if $\color{lightgreen}{R \equiv T}$ ) |
+  | $\color{lightgreen}{perf(\cdot)}$      | a metric for performance                                          |
+  | $\color{lightgreen}{\boldsymbol{w_e}}$ | weight for the equivalence term                                   |
+  | $\color{lightgreen}{\boldsymbol{w_p}}$ | weight for the performance term                                   |
+
+  Limitations with the approach as done by \parencite{Schkufza:2016:SPO:2886013.2863701} include
+   - Only optimizes basic blocks (no loops)
+   - Extremely innefficent (only practical for very short scheduling)
+   - Performed in multiple passes with model checking
+   - Cost function doesn't model the space of valid checking (hence model
+     checking is required per each rewrite)
+*** TODO COMMENT update stochastic search from beamer
+* Proposed Approaches
+** TODO COMMENT write intro to proposed approaches
+** Optimization Model for Modulo Scheduling
+\begin{align*}
+    \color{lightblue}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
+    \color{lightblue}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
+    \color{lightblue}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
+    & t_i :& \text{dispatch time} \\
+    & b_i :& \text{completion time} \\
+    & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
+    & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
+\end{align*}
+
+\begin{align}
+    \color{lightblue}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
+								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  \\
+								 & b_i + \epsilon \leq t_i + \textrm{II} \\
+    \color{lightblue}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
+\end{align}
+
+*Key Idea:* Encode choice heuristics as penalties, adjust preference
+between heuristics by scaling
+*** TODO COMMENT update optimization model from beamer
+** IO Penalty
+   - *IDEA* penalize dispatch time of instructions based on the quantity and
+    latencies of it's dependencies
+   - *Note* This is a *penalty* not a *hard* constraint on latencies
+   \begin{align*}
+            \color{lightblue}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
+            \color{lightblue}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
+            \qquad & \qquad & \qquad \\
+            \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
+    \end{align*}
+*** TODO COMMENT update IO penalty from beamer
+** Stochastic Scaling
+   - The scaling $\frac{1}{N_j}$ may be a good *guess*, but not necessarily effective in practice
+   - *IDEA* scale the *IO penalty* stochastically
+   \begin{align*}
+    \color{lightblue}{\text{Define a Clustering}} \qquad & \mathbb{C} = \text{Cluster}(\forall i \mid i \rightarrow j) \\
+    \color{lightblue}{\text{For each Cluster i}} \qquad & c_i \in \mathbb{RAND(R)} \\
+    \color{lightblue}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
+   \end{align*}
+*** TODO COMMENT update stochastic scaling from beamer
+** Topology Analysis
+      *Assertion* For each scaling $\color{lightgreen}{c_i \in \mathbb{RAND(R)}}$, there exists an $\color{lightgreen}{\epsilon \in
+     \mathbb(R)}$ such that $\color{lightgreen}{c_i + \epsilon}$
+   produces a distinct schedule from $\color{lightgreen}{c_i}$
+   - If the assertion fails, the clustering is useless (possible to avoid such
+     clusterings?)
+   - What does this topology look like?
+   - Do all valid schedules span this topology?
+   - Prove stochastic scaling spans the topology of all schedules
+   - Use PCA analysis to select useful pull parameters
+   - Develop clustering methods for assigning pull parameters
+*** TODO COMMENT update topology analysis from beamer
 * Timeline
 ** TODO COMMENT Timeline
 
