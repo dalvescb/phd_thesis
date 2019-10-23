@@ -221,7 +221,7 @@ functions.
   ordering as output. 
 
 *** TODO COMMENT finish introduction (background) heading
-** Types of Scheduling
+** Types of Instruction Scheduling
    \parencite{rau1993instruction} TODO REFERENCE HISTORY OF INSTRUCTION-LEVEL
    PARALLEL PROCESSING
    - *Basic Block:* break code into blocks within branches (most commonly performed scheduling)
