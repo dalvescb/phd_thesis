@@ -140,7 +140,6 @@ McMaster University
 
 {{{code({\sc Thesis Proposal \hspace{12em} \color{grey}{.} })}}}
 #+begin_src haskell
--- Supervisors                                       -- Emails
 Christopher Anand                                    anandc@mcmaster.ca
 Wolfram Kahl                                         kahl@cas.mcmaster.ca
 #+end_src
@@ -502,6 +501,205 @@ between heuristics by scaling
 #+LaTeX: \addcontentsline{toc}{part}{References}
 #+LaTeX: \printbibliography
 
+* Org-Bibtex                                                         :ignore:
+** COMMENT PUT BIBTEX ENTRIES HERE IN SUBSECTION ENDED WITH IGNORE USING ORG-BIBTEX-YANK COMMAND :ignore:
+** COMMENT EXPORT TO References.bib USING ORG-BIBTEX COMMAND :ignore:
+** Constraint-Based Register Allocation and Instruction Scheduling   :ignore:
+   :PROPERTIES:
+   :TITLE:    Constraint-Based Register Allocation and Instruction Scheduling
+   :BTYPE:    phdthesis
+   :CUSTOM_ID: castaneda2018constraint
+   :AUTHOR:   Casta{\~n}eda Lozano, Roberto
+   :YEAR:     2018
+   :SCHOOL:   KTH Royal Institute of Technology
+   :END:
+*** COMMENT [[http://www.diva-portal.org/smash/get/diva2:1232941/FULLTEXT01.pdf][Constraint Based Register allocation and Instruction Scheduling]]   
+** Combining register allocation and instruction scheduling  :ignore:
+  :PROPERTIES:
+  :TITLE:    Combining register allocation and instruction scheduling
+  :BTYPE:    article
+  :CUSTOM_ID: motwani1995combining
+  :AUTHOR:   Motwani, Rajeev and Palem, Krishna V and Sarkar, Vivek and Reyen, Salem
+  :JOURNAL:  Courant Institute, New York University
+  :YEAR:     1995
+  :END:
+*** COMMENT [[https://arxiv.org/pdf/1804.02452.pdf][Combining Register Allocation and Instruction Scheduling]]
+
+** Register Allocation with Instruction Scheduling :ignore:
+   :PROPERTIES:
+   :TITLE:    Register Allocation with Instruction Scheduling
+   :BTYPE:    article
+   :CUSTOM_ID: Pinter:1993:RAI:173262.155114
+   :AUTHOR:   Pinter, Shlomit S.
+   :JOURNAL:  SIGPLAN Not.
+   :ISSUE_DATE: June 1993
+   :VOLUME:   28
+   :NUMBER:   6
+   :MONTH:    jun
+   :YEAR:     1993
+   :ISSN:     0362-1340
+   :PAGES:    248--257
+   :NUMPAGES: 10
+   :URL:      http://doi.acm.org/10.1145/173262.155114
+   :DOI:      10.1145/173262.155114
+   :ACMID:    155114
+   :PUBLISHER: ACM
+   :ADDRESS:  New York, NY, USA
+   :END:
+*** COMMENT [[http://delivery.acm.org/10.1145/160000/155114/p248-pinter.pdf?ip=130.113.109.215&id=155114&acc=ACTIVE%20SERVICE&key=FD0067F557510FFB%2ED816932E3DB0B89D%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&__acm__=1564584969_261ecbe26f943fdf33018f2f39ebfbd2][Register Allocation with Instruction Scheduling: A New Approach]]
+
+** Evaluating the use of register queues in software pipelined loops :ignore:
+   :PROPERTIES:
+   :TITLE:    Evaluating the use of register queues in software pipelined loops
+   :BTYPE:    article
+   :CUSTOM_ID: tyson2001evaluating
+   :AUTHOR:   Tyson, Gary S and Smelyanskiy, Mikhail and Davidson, Edward S
+   :JOURNAL:  IEEE Transactions on Computers
+   :VOLUME:   50
+   :NUMBER:   8
+   :PAGES:    769--783
+   :YEAR:     2001
+   :PUBLISHER: IEEE
+   :END:
+*** COMMENT [[https://ieeexplore.ieee.org/document/947006][Evaluating the Use of Register Queues in Software Pipelined Loops]]
+
+** Software-pipelining on multi-core architectures :ignore:
+   :PROPERTIES:
+   :TITLE:    Software-pipelining on multi-core architectures
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: douillet2007software
+   :AUTHOR:   Douillet, Alban and Gao, Guang R
+   :BOOKTITLE: Proceedings of the 16th International Conference on Parallel Architecture and Compilation Techniques
+   :PAGES:    39--48
+   :YEAR:     2007
+   :ORGANIZATION: IEEE Computer Society
+   :END:
+*** COMMENT [[https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=4336198][Software Pipelining on Multi-core Architectures]]
+
+** Global instruction scheduling for superscalar machines :ignore:
+   :PROPERTIES:
+   :TITLE:    Global instruction scheduling for superscalar machines
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: bernstein1991global
+   :AUTHOR:   Bernstein, David and Rodeh, Michael
+   :BOOKTITLE: ACM SIGPLAN Notices
+   :VOLUME:   26
+   :NUMBER:   6
+   :PAGES:    241--255
+   :YEAR:     1991
+   :ORGANIZATION: ACM
+   :END:
+*** COMMENT [[http://pages.cs.wisc.edu/~fischer/cs701.f06/berstein_rodeh.pdf][Global instruction scheduling for superscalar machines]]
+
+** Efficient instruction scheduling for a pipelined architecture :ignore:
+   :PROPERTIES:
+   :TITLE:    Efficient instruction scheduling for a pipelined architecture
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: gibbons1986efficient
+   :AUTHOR:   Gibbons, Philip B and Muchnick, Steven S
+   :BOOKTITLE: Acm sigplan notices
+   :VOLUME:   21
+   :NUMBER:   7
+   :PAGES:    11--16
+   :YEAR:     1986
+   :ORGANIZATION: ACM
+   :END:
+*** COMMENT [[http://delivery.acm.org.libaccess.lib.mcmaster.ca/10.1145/20000/13312/p11-gibbons.pdf?ip=130.113.111.210&id=13312&acc=ACTIVE%20SERVICE&key=FD0067F557510FFB%2ED816932E3DB0B89D%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&__acm__=1566799515_cd89aab9c480dc291845f8e0ab01483f][Efficient scheduling for pipelined architectures]]
+** Instruction-level parallel processing: history, overview, and perspective :ignore:
+   :PROPERTIES:
+   :TITLE:    Instruction-level parallel processing: history, overview, and perspective
+   :BTYPE:    incollection
+   :CUSTOM_ID: rau1993instruction
+   :AUTHOR:   Rau, B Ramakrishna and Fisher, Joseph A
+   :BOOKTITLE: Instruction-Level Parallelism
+   :PAGES:    9--50
+   :YEAR:     1993
+   :PUBLISHER: Springer
+   :END:
+*** COMMENT [[http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.799.7976&rep=rep1&type=pdf][Instruction-level parallel processing]]
+** Register Allocation \& Spilling via Graph Coloring :ignore:
+   :PROPERTIES:
+   :TITLE:    Register Allocation \& Spilling via Graph Coloring
+   :BTYPE:    article
+   :CUSTOM_ID: Chaitin:1982:RAS:872726.806984
+   :AUTHOR:   Chaitin, G. J.
+   :JOURNAL:  SIGPLAN Not.
+   :ISSUE_DATE: June 1982
+   :VOLUME:   17
+   :NUMBER:   6
+   :MONTH:    jun
+   :YEAR:     1982
+   :ISSN:     0362-1340
+   :PAGES:    98--101
+   :NUMPAGES: 4
+   :URL:      http://doi.acm.org.libaccess.lib.mcmaster.ca/10.1145/872726.806984
+   :DOI:      10.1145/872726.806984
+   :ACMID:    806984
+   :PUBLISHER: ACM
+   :ADDRESS:  New York, NY, USA
+   :END:
+*** COMMENT [[http://delivery.acm.org.libaccess.lib.mcmaster.ca/10.1145/810000/806984/p98-chaitin.pdf?ip=130.113.111.210&id=806984&acc=ACTIVE%20SERVICE&key=FD0067F557510FFB%2ED816932E3DB0B89D%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&__acm__=1566800641_adc76422d7bd921a1521c82893f6dceb][Register Allocation]]
+
+** Optimal basic block instruction scheduling for multiple-issue processors using constraint programming :ignore:
+  :PROPERTIES:
+  :TITLE:    Optimal basic block instruction scheduling for multiple-issue processors using constraint programming
+  :BTYPE:    article
+  :CUSTOM_ID: malik2008optimal
+  :AUTHOR:   Malik, Abid M and McInnes, Jim and Van Beek, Peter
+  :JOURNAL:  International Journal on Artificial Intelligence Tools
+  :VOLUME:   17
+  :NUMBER:   01
+  :PAGES:    37--54
+  :YEAR:     2008
+  :PUBLISHER: World Scientific
+  :END:
+*** COMMENT [[https://cs.uwaterloo.ca/research/tr/2005/CS-2005-19.pdf][Optimal Basic Block Instruction Scheduling for Multiple Issue Processors Using Constraint Programming]] (IBM guys)
+
+** MultiLoop: Efficient Software Pipelining for Modern Hardware :ignore:
+   :PROPERTIES:
+   :TITLE:    MultiLoop: Efficient Software Pipelining for Modern Hardware
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: Anand:2007:MES:1321211.1321242
+   :AUTHOR:   Anand, Christopher Kumar and Kahl, Wolfram
+   :BOOKTITLE: Proceedings of the 2007 Conference of the Center for Advanced Studies on Collaborative Research
+   :SERIES:   CASCON '07
+   :YEAR:     2007
+   :LOCATION: Richmond Hill, Ontario, Canada
+   :PAGES:    260--263
+   :NUMPAGES: 4
+   :URL:      http://dx.doi.org/10.1145/1321211.1321242
+   :DOI:      10.1145/1321211.1321242
+   :ACMID:    1321242
+   :PUBLISHER: IBM Corp.
+   :ADDRESS:  Riverton, NJ, USA
+   :END:
+*** COMMENT [[https://link.springer.com/content/pdf/10.1007%2F978-1-4899-7797-7_6.pdf][Multi-Loop: Efficient Software Piplining for Modern Hardware]] (Anand,Kahl)
+
+** Stochastic Program Optimization :ignore:
+   :PROPERTIES:
+   :TITLE:    Stochastic Program Optimization
+   :BTYPE:    article
+   :CUSTOM_ID: Schkufza:2016:SPO:2886013.2863701
+   :AUTHOR:   Schkufza, Eric and Sharma, Rahul and Aiken, Alex
+   :JOURNAL:  Commun. ACM
+   :ISSUE_DATE: February 2016
+   :VOLUME:   59
+   :NUMBER:   2
+   :MONTH:    jan
+   :YEAR:     2016
+   :ISSN:     0001-0782
+   :PAGES:    114--122
+   :NUMPAGES: 9
+   :URL:      http://doi.acm.org/10.1145/2863701
+   :DOI:      10.1145/2863701
+   :ACMID:    2863701
+   :PUBLISHER: ACM
+   :ADDRESS:  New York, NY, USA
+   :END:
+*** COMMENT [[http://delivery.acm.org/10.1145/2870000/2863701/p114-schkufza.pdf?ip=130.113.109.215&id=2863701&acc=ACTIVE%20SERVICE&key=FD0067F557510FFB%2ED816932E3DB0B89D%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&__acm__=1564586602_105c24f842dcdd9a6b420b8bd3191e66][Stochastic Program Optimization]]
+
+** Kristons Thesis  :ignore:
+*** COMMENT [[https://macsphere.mcmaster.ca/bitstream/11375/18865/2/costa_kriston_p_201602_msc.pdf][Approximation Algorithm based Approach Instruction Scheduling]] (Kriston's thesis)
 * COMMENT footer                                                     :ignore:
 
 # Local Variables:

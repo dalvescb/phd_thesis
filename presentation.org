@@ -1,4 +1,4 @@
-#+TITLE: Overview of Instruction Scheduling (a Ph.d Proposal Primer)
+#+TITLE: Overview of Instruction Scheduling (a Ph.D Proposal Primer)
 #+AUTHOR: Curtis D'Alves
 #+OPTIONS: H:2 toc:t num:t
 #+LATEX_CLASS: beamer
