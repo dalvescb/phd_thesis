@@ -209,10 +209,10 @@ functions.
 \newpage
 
 * Introduction (Background)
-  - Given a set of instructions and dependencies, designate an order 
-    (find a *schedule*) satisfying the dependencies and optimizing performance
-  - Known NP-Complete 
-    Practically solved by
+  Given a set of instructions and dependencies, designate an order 
+  (find a *schedule*) satisfying the dependencies and optimizing performance.
+    Even simple formulations of optimal instruction scheduling is an NP compelte search problem \parencite{hennessy1983postpass} 
+    As such, practical solutions to instruction scheduling problems are given by either:
     - *Heuristics*
     - *Approximation Algorithms*
   These algorithms take a model of the program (typically represented as a
@@ -504,6 +504,17 @@ between heuristics by scaling
 * Org-Bibtex                                                         :ignore:
 ** COMMENT PUT BIBTEX ENTRIES HERE IN SUBSECTION ENDED WITH IGNORE USING ORG-BIBTEX-YANK COMMAND :ignore:
 ** COMMENT EXPORT TO References.bib USING ORG-BIBTEX COMMAND :ignore:
+** Postpass code optimization of pipeline constraints :ignore:
+   :PROPERTIES:
+   :TITLE:    Postpass code optimization of pipeline constraints
+   :BTYPE:    article
+   :CUSTOM_ID: hennessy1983postpass
+   :AUTHOR:   Hennessy, John and Gross, Thomas
+   :JOURNAL:  ACM Trans. Program. Lang. Syst.;(United States)
+   :VOLUME:   3
+   :YEAR:     1983
+   :PUBLISHER: Stanford Univ., CA
+   :END:
 ** Constraint-Based Register Allocation and Instruction Scheduling   :ignore:
    :PROPERTIES:
    :TITLE:    Constraint-Based Register Allocation and Instruction Scheduling
