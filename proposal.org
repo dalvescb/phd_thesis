@@ -209,15 +209,21 @@ functions.
 \newpage
 
 * Introduction (Background)
+# TODO give an itnro to instruction scheduling as a compiler domain problem
+#+LaTex: \begin{tcolorbox}[title=Problem: Instruction Scheduling]
+#+BEGIN_CENTER
   Given a set of instructions and dependencies, designate an order 
   (find a *schedule*) satisfying the dependencies and optimizing performance.
-    Even simple formulations of optimal instruction scheduling is an NP compelte search problem \parencite{hennessy1983postpass} 
-    As such, practical solutions to instruction scheduling problems are given by either:
+#+END_CENTER
+#+LaTex: \end{tcolorbox}
+
+Even simple formulations of optimal instruction scheduling is an NP compelte
+search problem \parencite{hennessy1983postpass}, so practical solutions to instruction scheduling problems are given by either:
     - *Heuristics*
     - *Approximation Algorithms*
-  These algorithms take a model of the program (typically represented as a
-  dependency DAG \parencite{gibbons1986efficient}) as input and return an
-  ordering as output. 
+These algorithms take a model of the program (typically represented as a
+dependency DAG \parencite{gibbons1986efficient}) as input and return an
+ordering as output. 
 
 *** TODO COMMENT finish introduction (background) heading
 ** Types of Instruction Scheduling
