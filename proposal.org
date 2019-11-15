@@ -217,32 +217,45 @@ functions.
   an instruction cannot occur until it's operands are available). A sequence of
   dependent instructions of sufficient latency may achieve no benefit from ILP.
   That is, unless they can be interleaved with a set of relatively independent
-  instructions. This creates an interesting problem for hardware and/or
-  compilers, selecting a scheduling of instructions.
+  instructions. Furthermore, resource constraints such as the number of
+  available registers and functional units can also delay execution. This
+  creates an interesting problem for hardware and/or compilers, selecting a
+  scheduling of instructions.
 #+LaTex: \begin{tcolorbox}[title=Problem: Instruction Scheduling]
 Given an a dependency graph (DAG) of instructions and resource limitations
-(number of registers, execution units, etc), designate an ordering (find a *schedule*) 
-maximizing execution throughput (i.e fully utilizing Instruction Level Parallelism) 
+(number of registers, functional units, etc), designate an ordering (find a *schedule*) 
+maximizing execution throughput 
 #+LaTex: \end{tcolorbox}
 
-Even simple formulations of optimal instruction scheduling is an NP compelte
-search problem \parencite{hennessy1983postpass}, so practical solutions to instruction scheduling problems are given by either:
-    - *Heuristics*
-    - *Approximation Algorithms*
+Even simple formulations of optimal instruction scheduling is an NP-Complete
+search problem \parencite{hennessy1983postpass}, and problems attempting to
+integrate resource limitations on modern architectures are NP-Hard
+\parencite{motwani1995combining}. Thus practical solutions to instruction
+scheduling problems are given by either:
+    - *Heuristics* most commonly used by conventional compilers
+    - *Approximation Algorithms* some experimental use done for near optimal
+      schedules \parencite{costa2016approx}
 These algorithms take a model of the program (typically represented as a
 dependency DAG \parencite{gibbons1986efficient}) as input and return an
 ordering as output. 
 
-*** TODO COMMENT finish introduction (background) heading
 ** Types of Instruction Scheduling
-   \parencite{rau1993instruction} TODO REFERENCE HISTORY OF INSTRUCTION-LEVEL
-   PARALLEL PROCESSING
-   - *Basic Block:* break code into blocks within branches (most commonly performed scheduling)
-	 - *Global Scheduling:* schedule across basic block boundaries
-	 - *Modulo Scheduling:* schedules basic blocks inside of a loop, seeking to
+   There are two broad criteria that have historically influenced scheduling
+   algorithms: the first being the control flow of the dependency graph, the
+   second being the nature/constraints of the architecture being scheduled for
+   \parencite{rau1993instruction}. The second criteria yields ad-hoc solutions
+   that are difficult to categorize and often forgotten through the evolution of
+   architectures. However an effective scheduling algorithm must consider both criteria.
+
+   Within the first criteria (scheduling based on control flow), the following
+   categories are worth noting \parencite{rau1993instruction}:
+   - *Basic Block:* (local acyclic) break code into blocks within branches (most commonly performed scheduling)
+	 - *Global Scheduling:* (global cyclic) schedule across basic block boundaries
+	 - *Modulo Scheduling:* (local cyclic) schedules basic blocks inside of a loop, seeking to
      optimize by interleaving iterations
-	 - *Trace Scheduling:* tries to optimize control flow by predicting routes
+	 - *Trace Scheduling:* (global acyclic/cyclic) tries to optimize control flow by predicting routes
      taken on branches
+
 *** TODO COMMENT update types of scheduling from beamer
 ** Register Allocation
    \parencite{Chaitin:1982:RAS:872726.806984} TODO REFERENCE REGISTER ALLOC
@@ -254,6 +267,8 @@ ordering as output.
      - done seperately from instruction scheduling (before or afterwords)
 *** TODO COMMENT update register allocation from beamer
 ** Graph Coloring
+  #+CAPTION:Register Allocation via Graph Coloring
+  #+NAME: fig:GraphColor 
    [[file:figures/nshape.png]]
    
    Find a *k-Colouring* for the dependency graph, where *$k = \#Registers$*
@@ -424,6 +439,9 @@ ordering as output.
    could use register remapping to execute these instructions efficiently Out-of-Order
    making that constraint unnecessary.
 *** TODO COMMENT fix linear/constraint programming from beamer
+** Integer Programming
+   reference Optimal integer programming \parencite{wilken2000optimal}
+*** TODO COMMENT write info on Integer Programming
 ** Stochastic Search
    Work by stanford \parencite{Schkufza:2016:SPO:2886013.2863701}
   - Suitable for *Short Basic Block* assembly code sequences
@@ -539,7 +557,7 @@ between heuristics by scaling
    :SCHOOL:   KTH Royal Institute of Technology
    :END:
 *** COMMENT [[http://www.diva-portal.org/smash/get/diva2:1232941/FULLTEXT01.pdf][Constraint Based Register allocation and Instruction Scheduling]]   
-** Combining register allocation and instruction scheduling  :ignore:
+** Combining register allocation and instruction scheduling          :ignore:
   :PROPERTIES:
   :TITLE:    Combining register allocation and instruction scheduling
   :BTYPE:    article
@@ -679,8 +697,21 @@ between heuristics by scaling
   :PUBLISHER: World Scientific
   :END:
 *** COMMENT [[https://cs.uwaterloo.ca/research/tr/2005/CS-2005-19.pdf][Optimal Basic Block Instruction Scheduling for Multiple Issue Processors Using Constraint Programming]] (IBM guys)
-
-** MultiLoop: Efficient Software Pipelining for Modern Hardware :ignore:
+** Optimal instruction scheduling using integer programming :ignore:
+   :PROPERTIES:
+   :TITLE:    Optimal instruction scheduling using integer programming
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: wilken2000optimal
+   :AUTHOR:   Wilken, Kent and Liu, Jack and Heffernan, Mark
+   :BOOKTITLE: Acm sigplan notices
+   :VOLUME:   35
+   :NUMBER:   5
+   :PAGES:    121--133
+   :YEAR:     2000
+   :ORGANIZATION: ACM
+   :END:
+*** COMMENT [[http://web.cs.ucla.edu/~palsberg/course/cs239/S04/papers/WilkenLiuHeffernan00.pdf][Optimal scheduling using Integer Programming]]
+** MultiLoop: Efficient Software Pipelining for Modern Hardware      :ignore:
    :PROPERTIES:
    :TITLE:    MultiLoop: Efficient Software Pipelining for Modern Hardware
    :BTYPE:    inproceedings
@@ -724,6 +755,14 @@ between heuristics by scaling
 *** COMMENT [[http://delivery.acm.org/10.1145/2870000/2863701/p114-schkufza.pdf?ip=130.113.109.215&id=2863701&acc=ACTIVE%20SERVICE&key=FD0067F557510FFB%2ED816932E3DB0B89D%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&__acm__=1564586602_105c24f842dcdd9a6b420b8bd3191e66][Stochastic Program Optimization]]
 
 ** Kristons Thesis  :ignore:
+   :PROPERTIES:
+   :TITLE: Approximation Algorithm based Approach Instruction Scheduling
+   :BTYPE: article
+   :CUSTOM_ID: costa2016approx
+   :AUTHOR: Kriston Costa
+   :URI: http://hdl.handle.net/11375/18865  
+   :PUBLISHER: MacSphere
+   :END:
 *** COMMENT [[https://macsphere.mcmaster.ca/bitstream/11375/18865/2/costa_kriston_p_201602_msc.pdf][Approximation Algorithm based Approach Instruction Scheduling]] (Kriston's thesis)
 * COMMENT footer                                                     :ignore:
 
