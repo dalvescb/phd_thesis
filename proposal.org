@@ -209,12 +209,20 @@ functions.
 \newpage
 
 * Introduction (Background)
-# TODO give an itnro to instruction scheduling as a compiler domain problem
+  Modern processors are built with pipelined architectures capable of
+  Instruction Level Parallelism (ILP). This presents an opportunity to increase
+  execution throughput but a multitude of what would otherwise be the longest
+  latency instruction of the architecture. However maximizing throughput is not
+  always achievable, in part due to instruction dependency (i.e the execution of
+  an instruction cannot occur until it's operands are available). A sequence of
+  dependent instructions of sufficient latency may achieve no benefit from ILP.
+  That is, unless they can be interleaved with a set of relatively independent
+  instructions. This creates an interesting problem for hardware and/or
+  compilers, selecting a scheduling of instructions.
 #+LaTex: \begin{tcolorbox}[title=Problem: Instruction Scheduling]
-#+BEGIN_CENTER
-  Given a set of instructions and dependencies, designate an order 
-  (find a *schedule*) satisfying the dependencies and optimizing performance.
-#+END_CENTER
+Given an a dependency graph (DAG) of instructions and resource limitations
+(number of registers, execution units, etc), designate an ordering (find a *schedule*) 
+maximizing execution throughput (i.e fully utilizing Instruction Level Parallelism) 
 #+LaTex: \end{tcolorbox}
 
 Even simple formulations of optimal instruction scheduling is an NP compelte
