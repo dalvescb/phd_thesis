@@ -210,17 +210,18 @@ functions.
 
 * Introduction (Background)
   Modern processors are built with pipelined architectures capable of
-  Instruction Level Parallelism (ILP). This presents an opportunity to increase
-  execution throughput but a multitude of what would otherwise be the longest
-  latency instruction of the architecture. However maximizing throughput is not
-  always achievable, in part due to instruction dependency (i.e the execution of
-  an instruction cannot occur until it's operands are available). A sequence of
-  dependent instructions of sufficient latency may achieve no benefit from ILP.
-  That is, unless they can be interleaved with a set of relatively independent
-  instructions. Furthermore, resource constraints such as the number of
-  available registers and functional units can also delay execution. This
-  creates an interesting problem for hardware and/or compilers, selecting a
-  scheduling of instructions.
+  Instruction Level Parallelism (ILP), processors capable of exploiting ILP on
+  one core through pipelining are known as superscalar processors. Superscalar
+  processors present an opportunity to increase execution throughput by a
+  multitude of the longest latency instruction of the architecture. However
+  maximizing throughput is not always achievable, in part due to instruction
+  dependency (i.e the execution of an instruction cannot occur until it's
+  operands are available). A sequence of dependent instructions of sufficient
+  latency may achieve no benefit from a superscalar architecture. That is, unless they can be
+  interleaved with a set of relatively independent instructions. Furthermore,
+  resource constraints such as the number of available registers and functional
+  units can also delay execution. This creates an interesting problem for
+  hardware and/or compilers: selecting a scheduling of instructions.
 #+LaTex: \begin{tcolorbox}[title=Problem: Instruction Scheduling]
 Given an a dependency graph (DAG) of instructions and resource limitations
 (number of registers, functional units, etc), designate an ordering (find a *schedule*) 
@@ -232,12 +233,18 @@ search problem \parencite{hennessy1983postpass}, and problems attempting to
 integrate resource limitations on modern architectures are NP-Hard
 \parencite{motwani1995combining}. Thus practical solutions to instruction
 scheduling problems are given by either:
-    - *Heuristics* most commonly used by conventional compilers
+    - *Heuristics* most commonly used by conventional schedulers
     - *Approximation Algorithms* some experimental use done for near optimal
       schedules \parencite{costa2016approx}
-These algorithms take a model of the program (typically represented as a
-dependency DAG \parencite{gibbons1986efficient}) as input and return an
-ordering as output. 
+These solutions have been traditionally defined in hardware, however due to
+increasingly complex hardware constraints certain architectures known as Very
+Long Instruction Word (VLIW) architectures haven been constructed that move the
+burden of scheduling to the compiler \parencite{fisher1983very}. These
+algorithms are generally more comprehensive then simple permutation based
+heuristics performed at runtime by hardware and take a model of the program
+(typically represented as a dependency DAG \parencite{gibbons1986efficient}) as
+input and returns an ordered model to be used by the assembler during
+compilation.
 
 ** Types of Instruction Scheduling
    There are two broad criteria that have historically influenced scheduling
@@ -256,6 +263,9 @@ ordering as output.
 	 - *Trace Scheduling:* (global acyclic/cyclic) tries to optimize control flow by predicting routes
      taken on branches
 
+     Local scheduling is significantly simpler than global, and most algorithms
+     build upon local scheduling.
+     
 *** TODO COMMENT update types of scheduling from beamer
 ** Register Allocation
    \parencite{Chaitin:1982:RAS:872726.806984} TODO REFERENCE REGISTER ALLOC
@@ -401,6 +411,7 @@ ordering as output.
 * Current/Previous Approaches
 *** TODO COMMENT write intro to current/previous approaches
 ** List Scheduling (most commonly performed scheduling)
+   TODO reference \parencite{hwu1993superblock}
    	Simple heuristic.  Choose a prioritized topological order that
     - Respects the edges in the data-dependence graph (*topological*)
     - Heuristic choice among options, e.g pick first the node with the longest path extending from that node *prioritized*
@@ -536,7 +547,38 @@ between heuristics by scaling
 * Org-Bibtex                                                         :ignore:
 ** COMMENT PUT BIBTEX ENTRIES HERE IN SUBSECTION ENDED WITH IGNORE USING ORG-BIBTEX-YANK COMMAND :ignore:
 ** COMMENT EXPORT TO References.bib USING ORG-BIBTEX COMMAND :ignore:
-** Postpass code optimization of pipeline constraints :ignore:
+** The superblock: an effective technique for VLIW and superscalar compilation :ignore:
+   :PROPERTIES:
+   :TITLE:    The superblock: an effective technique for VLIW and superscalar compilation
+   :BTYPE:    incollection
+   :CUSTOM_ID: hwu1993superblock
+   :AUTHOR:   Hwu, Wen-Mei W and Mahlke, Scott A and Chen, William Y and Chang, Pohua P and Warter, Nancy J and Bringmann, Roger A and Ouellette, Roland G and Hank, Richard E and Kiyohara, Tokuzo and Haab, Grant E and others
+   :BOOKTITLE: Instruction-Level Parallelism
+   :PAGES:    229--248
+   :YEAR:     1993
+   :PUBLISHER: Springer
+   :END:
+** Very long instruction word architectures and the ELI-512 :ignore:
+   :PROPERTIES:
+   :TITLE:    Very long instruction word architectures and the ELI-512
+   :BTYPE:    book
+   :CUSTOM_ID: fisher1983very
+   :AUTHOR:   Fisher, Joseph A
+   :VOLUME:   11
+   :NUMBER:   3
+   :YEAR:     1983
+   :PUBLISHER: ACM
+   :END:
+** Optimization of horizontal microcode within and beyond basic blocks: an application of processor scheduling with resources :ignore:
+   :PROPERTIES:
+   :TITLE:    Optimization of horizontal microcode within and beyond basic blocks: an application of processor scheduling with resources
+   :BTYPE:    techreport
+   :CUSTOM_ID: fisher1979optimization
+   :AUTHOR:   Fisher, Joseph A
+   :YEAR:     1979
+   :INSTITUTION: New York Univ., NY (USA). Courant Mathematics and Computing Lab.
+   :END:
+** Postpass code optimization of pipeline constraints                :ignore:
    :PROPERTIES:
    :TITLE:    Postpass code optimization of pipeline constraints
    :BTYPE:    article
