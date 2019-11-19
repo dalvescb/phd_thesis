@@ -262,11 +262,23 @@ compilation.
      optimize by interleaving iterations
 	 - *Trace Scheduling:* (global acyclic/cyclic) tries to optimize control flow by predicting routes
      taken on branches
+   Each of the above categories are distinguished by what consideration is given
+   to different types of branching. Initial research into scheduling focused
+   entirely on local scheduling (ignoring branching)
+   \parencite{rau1993instruction} and culminated in the use of various list
+   scheduling algorithms in most schedulers by the 80s
+   \parencite{fisher1983very}. An intuitive approach to global scheduling is to
+   first schedule basic blocks then attempt to move operations from one block
+   to an empty slots in neighboring blocks. However this approach would need to
+   take into account/possibly reverse too many arbitrary decisions made in local
+   scheduling in every possible neighboring block. To compensate this for this,
+   techniques for predicting more frequently occurring branch routes to improve
+   global scheduling was invented known as trace scheduling \parencite{fisher1981trace}.
+   Cyclic scheduling deals with branching that conforms to a loop in the control
+   graph, and could be dealt with in the same fashion as global/trace
+   scheduling, however is important/distinct enough to have it's own class of
+   algorithm known as modulo scheduling (discussed in a later section).
 
-     Local scheduling is significantly simpler than global, and most algorithms
-     build upon local scheduling.
-     
-*** TODO COMMENT update types of scheduling from beamer
 ** Register Allocation
    \parencite{Chaitin:1982:RAS:872726.806984} TODO REFERENCE REGISTER ALLOC
    - Given a schedule, assign registers keeping in mind
@@ -337,7 +349,10 @@ compilation.
 
    When performing *modulo scheduling*, a basic block of a loop can be broken
    into stages and the loop can be *unrolled* to interleave stages between
-   iterations
+   iterations. The task of generating an optimal, resource-constrained schedule
+   for loops with arbitrary recurrences is known to be NP-complete
+   \parencite{lam2012systolic}
+
 *** TODO COMMENT update staging from beamer
 ** Iteration Interval
 \begin{equation}
@@ -570,6 +585,18 @@ between heuristics by scaling
    :YEAR:     1983
    :PUBLISHER: ACM
    :END:
+** Trace scheduling: A technique for global microcode compaction  :ignore:
+   :PROPERTIES:
+   :TITLE:    Trace scheduling: A technique for global microcode compaction
+   :BTYPE:    article
+   :CUSTOM_ID: fisher1981trace
+   :AUTHOR:   Fisher, Joseph A.
+   :JOURNAL:  IEEE transactions on computers
+   :NUMBER:   7
+   :PAGES:    478--490
+   :YEAR:     1981
+   :PUBLISHER: IEEE
+   :END:
 ** Optimization of horizontal microcode within and beyond basic blocks: an application of processor scheduling with resources :ignore:
    :PROPERTIES:
    :TITLE:    Optimization of horizontal microcode within and beyond basic blocks: an application of processor scheduling with resources
@@ -589,6 +616,16 @@ between heuristics by scaling
    :VOLUME:   3
    :YEAR:     1983
    :PUBLISHER: Stanford Univ., CA
+   :END:
+** A systolic array optimizing compiler :ignore:
+   :PROPERTIES:
+   :TITLE:    A systolic array optimizing compiler
+   :BTYPE:    book
+   :CUSTOM_ID: lam2012systolic
+   :AUTHOR:   Lam, Monica S
+   :VOLUME:   64
+   :YEAR:     2012
+   :PUBLISHER: Springer Science \& Business Media
    :END:
 ** Topology and geometry :ignore: 
    :PROPERTIES:
