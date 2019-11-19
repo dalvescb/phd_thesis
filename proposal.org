@@ -278,7 +278,62 @@ compilation.
    graph, and could be dealt with in the same fashion as global/trace
    scheduling, however is important/distinct enough to have it's own class of
    algorithm known as modulo scheduling (discussed in a later section).
+*** TODO COMMENT reference list and modulo scheduling section
+    
+** SuperScalar Architectures
 
+   #+ATTR_LATEX: :width 0.5\textwidth 
+   #+CAPTION: Simple RISC Pipelined Architecture
+   #+LABEL: fig:PipelinedArchitecture
+     [[file:figures/pipeline.png]]
+  
+   Simple pipelined architectures issue a single instruction per "cycle".
+   Through pipeling, ILP is still exploitable, but limited by only having one of
+   each type of functional unit. 
+   
+   #+ATTR_LATEX: :width 0.5\textwidth 
+   #+CAPTION: SuperScalar Architecture   
+   #+LABEL: fig:SuperScalarArchitecture
+      [[file:figures/superscaler.png]]
+   
+   Superscalar architectures are all uniprocessors that can execute two or more
+   scalar operations in parallel, this encompasses a wide variety of
+   architectures, but common to all these architectures are the existense of
+   parallel and pipelined functional units, and the need to manage that
+   parallelism \parencite{zyuban2001inherently}. In particular, superscalar
+   architectures put increased strain on resource management. This poses a more
+   serious challenge for scheduling algorithms, since basic block scheduling is
+   often not sufficient to allow generation of code that utilizes machine
+   resources to the desired extent \parencite{bernstein1991global}. 
+   
+   Both of the above figures [[fig:PipelinedArchitecture]] and
+   [[fig:SuperScalarArchitecture]] show an ideal schedule with no stalls.
+   
+*** TODO COMMENT update superscalar architectures from beamer
+** Pipeline Stalls
+#+LaTex: \begin{figure}
+  #+BEGIN_center
+  #+ATTR_LATEX: :width 0.4\textwidth :center
+    [[file:figures/bubbles.png]]
+  #+ATTR_LATEX: :width 0.46\textwidth :center
+    [[file:figures/bubbles2.png]]
+  #+END_center 
+#+LaTex: \caption{Example of a bubble (NOP) being inserted to fix an unfullfilled data dependency}
+#+LaTex: \end{figure}
+
+   An ideal schedule (like in the previous figures) contains *NO* stalls (often
+   not possible)  
+*** TODO COMMENT update pipeline stalls from beamer
+** Hazards
+		- *Data Hazards*
+			- read after write *RAW*
+			- write after read *WAR*
+			- write after write *WAW*
+		- *Structural Hazards* occurs when an aspect of hardware is accessed at the same time
+		- *Control Hazards* caused by branching, next instruction unknown
+    Hardware encountering hazards causees stalls in the pipeline
+*** TODO COMMENT update hazards from beamer
+   
 ** Register Allocation
    \parencite{Chaitin:1982:RAS:872726.806984} TODO REFERENCE REGISTER ALLOC
    - Given a schedule, assign registers keeping in mind
@@ -313,36 +368,6 @@ compilation.
    - Attempts to *combine register allocation and scheduling* are
      rare and yield an *NP-hard* problem \parencite{motwani1995combining} \parencite{Pinter:1993:RAI:173262.155114}
 *** TODO COMMENT update combining register alloc from beamer
-** Instruction Pipelining
-     [[file:figures/pipeline.png]]
-  
- Simple example pipeline with no stalls and a single instruction fetch per
- "cycle"
-*** TODO COMMENT update instruction pipelining from beamer
-** SuperScalar Architectures
-   \parencite{bernstein1991global} USE REFERENCE ABOUT SUPERSCALAR PIPELINE SCHEDULING
-   #+ATTR_LATEX: :width 0.5\textwidth
-      [[file:figures/superscaler.png]]
-   
-   Superscalar architectures can fetch multiple instructions per "cycle" and
-   require more thought about resource restriction (such as limits on ALU's)
-*** TODO COMMENT update superscalar architectures from beamer
-** Pipeline Stalls
-   [[file:figures/bubbles.png]]
-   [[file:figures/bubbles2.png]]
-   
-   An ideal shedule (like in the previous figures) contains *NO* stalls (often
-   not possible)
-*** TODO COMMENT update pipeline stalls from beamer
-** Hazards
-		- *Data Hazards*
-			- read after write *RAW*
-			- write after read *WAR*
-			- write after write *WAW*
-		- *Structural Hazards* occurs when an aspect of hardware is accessed at the same time
-		- *Control Hazards* caused by branching, next instruction unknown
-    Hardware encountering hazards causees stalls in the pipeline
-*** TODO COMMENT update hazards from beamer
 ** Swing Modulo Scheduling: Staging
    #+ATTR_LATEX: :width 0.5\textwidth
    [[file:figures/staging.png]]
@@ -573,6 +598,19 @@ between heuristics by scaling
    :PAGES:    229--248
    :YEAR:     1993
    :PUBLISHER: Springer
+   :END:
+** Inherently lower-power high-performance superscalar architectures :ignore:
+   :PROPERTIES:
+   :TITLE:    Inherently lower-power high-performance superscalar architectures
+   :BTYPE:    article
+   :CUSTOM_ID: zyuban2001inherently
+   :AUTHOR:   Zyuban, Victor V and Kogge, Peter M
+   :JOURNAL:  IEEE Transactions on Computers
+   :VOLUME:   50
+   :NUMBER:   3
+   :PAGES:    268--285
+   :YEAR:     2001
+   :PUBLISHER: IEEE
    :END:
 ** Very long instruction word architectures and the ELI-512 :ignore:
    :PROPERTIES:
