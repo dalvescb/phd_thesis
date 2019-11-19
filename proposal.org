@@ -524,7 +524,7 @@ between heuristics by scaling
     \color{lightblue}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
    \end{align*}
 *** TODO COMMENT update stochastic scaling from beamer
-** Topology Analysis
+** Topological Analysis
       *Assertion* For each scaling $\color{lightgreen}{c_i \in \mathbb{RAND(R)}}$, there exists an $\color{lightgreen}{\epsilon \in
      \mathbb(R)}$ such that $\color{lightgreen}{c_i + \epsilon}$
    produces a distinct schedule from $\color{lightgreen}{c_i}$
@@ -535,6 +535,7 @@ between heuristics by scaling
    - Prove stochastic scaling spans the topology of all schedules
    - Use PCA analysis to select useful pull parameters
    - Develop clustering methods for assigning pull parameters
+ TODO reference topological definition in \parencite{bredon2013topology}
 *** TODO COMMENT update topology analysis from beamer
 * Timeline
 ** TODO COMMENT Timeline
@@ -589,6 +590,17 @@ between heuristics by scaling
    :YEAR:     1983
    :PUBLISHER: Stanford Univ., CA
    :END:
+** Topology and geometry :ignore: 
+   :PROPERTIES:
+   :TITLE:    Topology and geometry
+   :BTYPE:    book
+   :CUSTOM_ID: bredon2013topology
+   :AUTHOR:   Bredon, Glen E
+   :VOLUME:   139
+   :YEAR:     2013
+   :PUBLISHER: Springer Science \& Business Media
+   :END:
+*** COMMENT [[https://books.google.ca/books?hl=en&lr=&id=wuUlBQAAQBAJ&oi=fnd&pg=PA1&dq=bredon+glen+topology+and+geometry&ots=LFqjujWMGd&sig=fccl_8xgDo7xPGII14WyzTrJaNw#v=onepage&q=bredon%20glen%20topology%20and%20geometry&f=false][Topology and geometry]]
 ** Constraint-Based Register Allocation and Instruction Scheduling   :ignore:
    :PROPERTIES:
    :TITLE:    Constraint-Based Register Allocation and Instruction Scheduling
