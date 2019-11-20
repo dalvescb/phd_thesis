@@ -303,26 +303,39 @@ compilation.
    parallelism \parencite{zyuban2001inherently}. In particular, superscalar
    architectures put increased strain on resource management. This poses a more
    serious challenge for scheduling algorithms, since basic block scheduling is
-   often not sufficient to allow generation of code that utilizes machine
-   resources to the desired extent \parencite{bernstein1991global}. 
-   
-   Both of the above figures [[fig:PipelinedArchitecture]] and
-   [[fig:SuperScalarArchitecture]] show an ideal schedule with no stalls.
-   
+   often not sufficient to allow full utilization of machine
+   resources \parencite{bernstein1991global}. 
+
+   The most ideal architecture to schedule for would be a RISC architecture with
+   $n$ evenly replicated functional units (as seen in
+   [[fig:SuperScalarArchitecture]]). One way to view optimizing a schedule over such
+   an architecture would be to maximize the amount of live functional units per
+   cycle (i.e maximum throughput). This would generally be accomplished by
+   interleaving different types of instruction, however if you stretch data
+   dependent instructions too far apart doing this you risk running out of
+   available registers (you increase register pressure). This is further
+   complicated on CISC architectures (unsurprisingly) because of heterogeneous
+   instruction lengths. 
+
 *** TODO COMMENT update superscalar architectures from beamer
 ** Pipeline Stalls
-#+LaTex: \begin{figure}
+   Both of the previous sections figures [[fig:PipelinedArchitecture]] and
+   [[fig:SuperScalarArchitecture]] show an ideal schedule with *NO* stalls. A stall
+   occurs when, for whatever reason, full throughput cannot be achieved and a
+   NOOP (No-Operation) instruction must be inserted. This is also known as
+   inserting a bubble in the pipeline. 
+#+LaTex: \begin{figure}[!h]
   #+BEGIN_center
   #+ATTR_LATEX: :width 0.4\textwidth :center
     [[file:figures/bubbles.png]]
   #+ATTR_LATEX: :width 0.46\textwidth :center
     [[file:figures/bubbles2.png]]
   #+END_center 
+#+LaTex: \label{fig:PipelineStall}
 #+LaTex: \caption{Example of a bubble (NOP) being inserted to fix an unfullfilled data dependency}
 #+LaTex: \end{figure}
-
-   An ideal schedule (like in the previous figures) contains *NO* stalls (often
-   not possible)  
+   Figure \ref{fig:PipelineStall} gives an
+   example of inserting a bubble.
 *** TODO COMMENT update pipeline stalls from beamer
 ** Hazards
 		- *Data Hazards*
