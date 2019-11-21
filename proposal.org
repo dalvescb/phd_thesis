@@ -306,9 +306,9 @@ compilation.
    often not sufficient to allow full utilization of machine
    resources \parencite{bernstein1991global}. 
 
-   The most ideal architecture to schedule for would be a RISC architecture with
-   $n$ evenly replicated functional units (as seen in
-   [[fig:SuperScalarArchitecture]]). One way to view optimizing a schedule over such
+   An ideal architecture to schedule for would be a RISC architecture with
+   a collection of functional units of $m$ types, where the machine has $n_1$,
+   $n_2$, ..., $n_m$ units of each type. One way to view optimizing a schedule over such
    an architecture would be to maximize the amount of live functional units per
    cycle (i.e maximum throughput). This would generally be accomplished by
    interleaving different types of instruction, however if you stretch data
