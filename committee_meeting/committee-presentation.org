@@ -2,13 +2,13 @@
 # -*- mode: org; -*-
 
 #+REVEAL_ROOT: https://cdn.jsdelivr.net/reveal.js/3.0.0/
-#+REVEAL_THEME: league
-# #+REVEAL_THEME: sky
+# #+REVEAL_THEME: league
+#+REVEAL_THEME: sky
 
 #+OPTIONS: reveal_title_slide:auto num:nil toc:nil timestamp:nil
 
 #+MACRO: color @@html:<font color="$1">$2</font>@@
-#+MACRO: alert @@html:<font color="lightblue">$1</font>@@
+#+MACRO: alert @@html:<font color="navy">$1</font>@@
 
 #+REVEAL_EXTRA_CSS: ./mystyle.css
 # #+REVEAL_EXTRA_CSS: /Users/curtis/reveal.js/css/theme/night.css
@@ -21,15 +21,15 @@
 #+Email: curtis.dalves@gmail.com
 #+Author: Curtis D'Alves
 
-* Recap: Research Efforts Before Last Committee Meeting
+* Recap: Research Efforts 
 ** Constrained Optimization Model For Modulo Scheduling
 
 #+BEGIN_cmath
 #+HTML: <small>
 \begin{align*}
-    \color{lightblue}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
-    \color{lightblue}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
-    \color{lightblue}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
+    \color{navy}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
+    \color{navy}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
+    \color{navy}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
     & t_i :& \text{dispatch time} \\
     & b_i :& \text{completion time} \\
     & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
@@ -42,10 +42,10 @@
 #+BEGIN_cmath
 #+HTML: <small>
 \begin{align}
-    \color{lightblue}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
+    \color{navy}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
 								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  \\
 								 & b_i + \epsilon \leq t_i + \textrm{II} \\
-    \color{lightblue}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
+    \color{navy}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
 \end{align}
 #+HTML: </small>    
 #+END_cmath
@@ -61,8 +61,8 @@ between heuristics by scaling
 #+BEGIN_cmath
 #+HTML: <small>
    \begin{align*}
-            \color{lightblue}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
-            \color{lightblue}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
+            \color{navy}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
+            \color{navy}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
             \qquad & \qquad & \qquad \\
             \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
     \end{align*}
@@ -70,48 +70,52 @@ between heuristics by scaling
 #+END_cmath
 
 ** Stochastic Scaling
-   - The scaling $\color{lightgreen}{\frac{1}{N_j}}$ may be a good *guess*, but not necessarily effective in practice
+   - The scaling $\color{black}{\frac{1}{N_j}}$ may be a good *guess*, but not necessarily effective in practice
    - {{{alert(IDEA)}}} scale the {{{alert(IO penalty)}}} stochastically
+   - 
 #+BEGIN_cmath
 #+HTML: <small>
       \begin{align*}
-          \color{lightblue}{\text{Define a Clustering}} \qquad & \mathbb{C} = \text{Cluster}(\forall i \mid i \rightarrow j) \\
-          \color{lightblue}{\text{For each Cluster i}} \qquad & c_i \in \mathbb{RAND(R)} \\
-          \color{lightblue}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
+          \color{navy}{\text{Define a Grouping}} \qquad & \mathbb{C} = \text{Group}(\forall i \mid i \rightarrow j) \\
+          \color{navy}{\text{For each Group i}} \qquad & c_i \in \mathbb{RAND(R)} \\
+          \color{navy}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
         \end{align*}
 #+HTML: </small>
 #+END_cmath
 
 ** COCONUT Frameworks
-   - Nested Domain Specific Languages for functional assembly
-   - Provides code graph library for optimizing over
-   - Provides register allocater and simulator
-   - Provides code generator
+   - Provides {{{alert(Domain Specific Languages)}}} for *functional assembly*
+     - In only Z and Power currently
+   - Provides {{{alert(Code Graph Library)}}} for modeling dependency *DAG* 
+   - Provides {{{alert(Register Allocator)}}} (needs upgrading)
+   - Provides {{{alert(Hardware Simulator)}}} (needs upgrading)
+   - Provides {{{alert(Code Generation)}}}
 
 * Efforts Since Last Committee Meeting
 ** Improvements to Coconut
-  - Integrated IPOPT (non-linear constrained optimization solver) into Coconut 
-  - Automated schedule generation and added support for stochastic parameters
-  - Updated Hashed Expression library to use as front-end to IPOPT
+  - Integrated {{{alert(IPOPT )}}} (non-linear constrained optimization solver) into Coconut 
+  - {{{alert(Automated)}}} Schedule Generation
+  - Added support for {{{alert(Stochastic Parameters)}}}
+  - Updated {{{alert(Hashed Expression)}}} library to use as front-end to {{{alert(IPOPT)}}}
 
 ** Acquired Interim Results
-  - generated schedules for ECC (elliptic curve cryptography) kernels on IBM's
-    Z14 architecture (was successfully productized) 
-  - generated schedules for core math functions on IBM's MASS library achieving
-    up to 20% speedup (also on Z14 and product pending)
+  - Generated schedules for {{{alert(ECC)}}} (elliptic curve cryptography) kernels on IBM's
+    {{{alert(Z14)}}} architecture (was successfully productized) 
+  - Generated schedules for core math functions on {{{alert(IBM's MASS Library)}}} achieving
+    up to 20% speedup (also on {{{alert(Z14)}}} and product pending)
 
 ** Co-Author Contributions to the Following Works
-   - Using z14 Fused-Multiply-Add Instructions to Accelerate Elliptic Curve
-     Cryptography
+   - {{{alert(Using z14 Fused-Multiply-Add Instructions to Accelerate Elliptic Curve
+     Cryptography)}}}
      - published conference paper CASCON 2019 and won best Paper
-   - A Framework for Preadolscent Programmers to Create Cooperative Multiplayer
-     Reading Games
+   - {{{alert(A Framework for Preadolescent Programmers to Create Cooperative Multiplayer
+     Reading Games)}}}
 
 ** Presentations 
-   - Poster Presentation at IBM TechConnect 2019
-   - Poster Presentation at IBM CASCON 2019
-   - Workshop at CASCON 2019 (published proceeding Two Functional MDD's for the
+   - {{{alert(Poster Presentation)}}} at IBM TechConnect 2019
+   - {{{alert(Poster Presentation)}}} at IBM CASCON 2019
+   - {{{alert(Workshop)}}} at CASCON 2019 (published proceeding Two Functional MDD's for the
      Price of One)
 
 ** Awards
-   Won IBM CAS Student of the Year
+  {{{alert(Won IBM CAS Student of the Year)}}} 

@@ -9,7 +9,7 @@
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/league.css" id="theme"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/sky.css" id="theme"/>
 
 <link rel="stylesheet" href="./mystyle.css"/>
 
@@ -33,20 +33,20 @@
 </section>
 
 <section>
-<section id="slide-org1a6bb12">
-<h2 id="org1a6bb12">Recap: Research Efforts Before Last Committee Meeting</h2>
-<div class="outline-text-2" id="text-org1a6bb12">
+<section id="slide-org5b844a4">
+<h2 id="org5b844a4">Recap: Research Efforts</h2>
+<div class="outline-text-2" id="text-org5b844a4">
 </div>
 </section>
-<section id="slide-org21dd1c6">
-<h3 id="org21dd1c6">Constrained Optimization Model For Modulo Scheduling</h3>
+<section id="slide-org6af0df4">
+<h3 id="org6af0df4">Constrained Optimization Model For Modulo Scheduling</h3>
 <div class="cmath">
 <small>
 <div>
 \begin{align*}
-    \color{lightblue}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
-    \color{lightblue}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
-    \color{lightblue}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
+    \color{navy}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
+    \color{navy}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
+    \color{navy}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
     & t_i :& \text{dispatch time} \\
     & b_i :& \text{completion time} \\
     & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
@@ -59,16 +59,16 @@
 </div>
 
 </section>
-<section id="slide-org8413c93">
-<h3 id="org8413c93">Constrained Optimization Model</h3>
+<section id="slide-org197da71">
+<h3 id="org197da71">Constrained Optimization Model</h3>
 <div class="cmath">
 <small>
 <div>
 \begin{align}
-    \color{lightblue}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
+    \color{navy}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
 								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  \\
 								 & b_i + \epsilon \leq t_i + \textrm{II} \\
-    \color{lightblue}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
+    \color{navy}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
 \end{align}
 
 </div>
@@ -77,17 +77,17 @@
 </div>
 
 <p>
-<font color="lightblue">Key Idea:</font> Encode choice heuristics as penalties, adjust preference
+<font color="navy">Key Idea:</font> Encode choice heuristics as penalties, adjust preference
 between heuristics by scaling
 </p>
 
 </section>
-<section id="slide-orgb149cbe">
-<h3 id="orgb149cbe">IO Penalty</h3>
+<section id="slide-org103586f">
+<h3 id="org103586f">IO Penalty</h3>
 <ul>
-<li><font color="lightblue">IDEA</font> penalize dispatch time of instructions based on the quantity and
+<li><font color="navy">IDEA</font> penalize dispatch time of instructions based on the quantity and
 latencies of it's dependencies</li>
-<li><font color="lightblue">Note</font> This is a <b>penalty</b> not a <b>hard</b> constraint on latencies</li>
+<li><font color="navy">Note</font> This is a <b>penalty</b> not a <b>hard</b> constraint on latencies</li>
 
 </ul>
 
@@ -95,8 +95,8 @@ latencies of it's dependencies</li>
 <small>
 <div>
 \begin{align*}
-         \color{lightblue}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
-         \color{lightblue}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
+         \color{navy}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
+         \color{navy}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
          \qquad & \qquad & \qquad \\
          \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
  \end{align*}
@@ -107,20 +107,21 @@ latencies of it's dependencies</li>
 </div>
 
 </section>
-<section id="slide-orgff60a22">
-<h3 id="orgff60a22">Stochastic Scaling</h3>
+<section id="slide-org72064c2">
+<h3 id="org72064c2">Stochastic Scaling</h3>
 <ul>
-<li>The scaling \(\color{lightgreen}{\frac{1}{N_j}}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
-<li><font color="lightblue">IDEA</font> scale the <font color="lightblue">IO penalty</font> stochastically</li>
+<li>The scaling \(\color{black}{\frac{1}{N_j}}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
+<li><font color="navy">IDEA</font> scale the <font color="navy">IO penalty</font> stochastically</li>
+<li></li>
 
 </ul>
 <div class="cmath">
 <small>
 <div>
 \begin{align*}
-    \color{lightblue}{\text{Define a Clustering}} \qquad & \mathbb{C} = \text{Cluster}(\forall i \mid i \rightarrow j) \\
-    \color{lightblue}{\text{For each Cluster i}} \qquad & c_i \in \mathbb{RAND(R)} \\
-    \color{lightblue}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
+    \color{navy}{\text{Define a Grouping}} \qquad & \mathbb{C} = \text{Group}(\forall i \mid i \rightarrow j) \\
+    \color{navy}{\text{For each Group i}} \qquad & c_i \in \mathbb{RAND(R)} \\
+    \color{navy}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
   \end{align*}
 
 </div>
@@ -129,75 +130,79 @@ latencies of it's dependencies</li>
 </div>
 
 </section>
-<section id="slide-org8affa7f">
-<h3 id="org8affa7f">COCONUT Frameworks</h3>
+<section id="slide-orgb9f4929">
+<h3 id="orgb9f4929">COCONUT Frameworks</h3>
 <ul>
-<li>Nested Domain Specific Languages for functional assembly</li>
-<li>Provides code graph library for optimizing over</li>
-<li>Provides register allocater and simulator</li>
-<li>Provides code generator</li>
+<li>Provides <font color="navy">Domain Specific Languages</font> for <b>functional assembly</b>
+<ul>
+<li>In only Z and Power currently</li>
+
+</ul></li>
+<li>Provides <font color="navy">Code Graph Library</font> for modeling dependency <b>DAG</b></li>
+<li>Provides <font color="navy">Register Allocator</font> (needs upgrading)</li>
+<li>Provides <font color="navy">Hardware Simulator</font> (needs upgrading)</li>
+<li>Provides <font color="navy">Code Generation</font></li>
 
 </ul>
 
 </section>
 </section>
 <section>
-<section id="slide-org2dfa437">
-<h2 id="org2dfa437">Efforts Since Last Committee Meeting</h2>
-<div class="outline-text-2" id="text-org2dfa437">
+<section id="slide-org9015516">
+<h2 id="org9015516">Efforts Since Last Committee Meeting</h2>
+<div class="outline-text-2" id="text-org9015516">
 </div>
 </section>
-<section id="slide-orgc9bfd40">
-<h3 id="orgc9bfd40">Improvements to Coconut</h3>
+<section id="slide-orgcba9162">
+<h3 id="orgcba9162">Improvements to Coconut</h3>
 <ul>
-<li>Integrated IPOPT (non-linear constrained optimization solver) into Coconut</li>
-<li>Automated schedule generation and added support for stochastic parameters</li>
-<li>Updated Hashed Expression library to use as front-end to IPOPT</li>
+<li>Integrated <font color="navy">IPOPT</font> (non-linear constrained optimization solver) into Coconut</li>
+<li><font color="navy">Automated</font> Schedule Generation</li>
+<li>Added support for <font color="navy">Stochastic Parameters</font></li>
+<li>Updated <font color="navy">Hashed Expression</font> library to use as front-end to <font color="navy">IPOPT</font></li>
 
 </ul>
 
 </section>
-<section id="slide-org010a13f">
-<h3 id="org010a13f">Acquired Interim Results</h3>
+<section id="slide-orgdf90e95">
+<h3 id="orgdf90e95">Acquired Interim Results</h3>
 <ul>
-<li>generated schedules for ECC (elliptic curve cryptography) kernels on IBM's
-Z14 architecture (was successfully productized)</li>
-<li>generated schedules for core math functions on IBM's MASS library achieving
-up to 20% speedup (also on Z14 and product pending)</li>
+<li>Generated schedules for <font color="navy">ECC</font> (elliptic curve cryptography) kernels on IBM's
+<font color="navy">Z14</font> architecture (was successfully productized)</li>
+<li>Generated schedules for core math functions on <font color="navy">IBM's MASS Library</font> achieving
+up to 20% speedup (also on <font color="navy">Z14</font> and product pending)</li>
 
 </ul>
 
 </section>
-<section id="slide-orgd46ada5">
-<h3 id="orgd46ada5">Co-Author Contributions to the Following Works</h3>
+<section id="slide-org6d36a8e">
+<h3 id="org6d36a8e">Co-Author Contributions to the Following Works</h3>
 <ul>
-<li>Using z14 Fused-Multiply-Add Instructions to Accelerate Elliptic Curve
-Cryptography
+<li><font color="navy">Using z14 Fused-Multiply-Add Instructions to Accelerate Elliptic Curve Cryptography</font>
 <ul>
 <li>published conference paper CASCON 2019 and won best Paper</li>
 
 </ul></li>
-<li>A Framework for Preadolscent Programmers to Create Cooperative Multiplayer
-Reading Games</li>
+<li><font color="navy">A Framework for Preadolescent Programmers to Create Cooperative Multiplayer Reading Games</font></li>
 
 </ul>
 
 </section>
-<section id="slide-org873bc23">
-<h3 id="org873bc23">Presentations</h3>
+<section id="slide-org3970621">
+<h3 id="org3970621">Presentations</h3>
 <ul>
-<li>Poster Presentation at IBM TechConnect 2019</li>
-<li>Poster Presentation at IBM CASCON 2019</li>
-<li>Workshop at CASCON 2019 (published proceeding Two Functional MDD's for the
+<li><font color="navy">Poster Presentation</font> at IBM TechConnect 2019</li>
+<li><font color="navy">Poster Presentation</font> at IBM CASCON 2019</li>
+<li><font color="navy">Workshop</font> at CASCON 2019 (published proceeding Two Functional MDD's for the
 Price of One)</li>
 
 </ul>
 
 </section>
-<section id="slide-org07466f1">
-<h3 id="org07466f1">Awards</h3>
+<section id="slide-org08e61b7">
+<h3 id="org08e61b7">Awards</h3>
 <p>
-Won IBM CAS Student of the Year
+<font color="navy">Won IBM CAS Student of the Year</font> 
 </p>
 </section>
 </section>
