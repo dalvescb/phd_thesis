@@ -1,0 +1,31 @@
+#+Title: Ph.D Committee Meeting
+#+DATE: 2019-11-22
+#+EMAIL: curtis.dalves@gmail.com
+#+AUTHOR: Curtis D'Alves
+
+* Worked On Code Base (known as COCONUT) used for Research
+  - added support for optimization solver IPOPT
+  - automated schedule generation and added support for stochastic parameter generation
+  - updated another code base (HashedExpression) to use as a front-end for IPOPT
+
+* Acquired Interim Results
+ - generated schedules for ECC (elliptic curve cryptography) kernels on IBM's
+   Z14 architecture (was successfully productized) 
+ - generated schedules for core math functions on IBM's MASS library achieving
+   up to 20% speedup (also on Z14 and product pending)
+
+* Co-Author Contributions to the Following Papers
+  - Using z14 Fused-Multiply-Add Instructions to Accelerate Elliptic Curve
+    Cryptography
+    - published conference paper CASCON 2019 and won best Paper
+  - A Framework for Preadolscent Programmers to Create Cooperative Multiplayer
+    Reading Games
+
+* Presentations 
+  - Poster Presentation at IBM TechConnect 2019
+  - Poster Presentation at IBM CASCON 2019
+  - Workshop at CASCON 2019 (published proceeding Two Functional MDD's for the
+    Price of One)
+
+* Awards
+  - Won IBM CAS's Student of the Year

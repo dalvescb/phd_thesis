@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Ph.D Commmittee Meeting</title>
+<meta name="author" content="Curtis D'Alves"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/league.css" id="theme"/>
+
+<link rel="stylesheet" href="./mystyle.css"/>
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Ph.D Commmittee Meeting</h1><h2 class="author">Curtis D'Alves</h2><h2 class="date">2019-11-22</h2>
+</section>
+
+<section>
+<section id="slide-org1a6bb12">
+<h2 id="org1a6bb12">Recap: Research Efforts Before Last Committee Meeting</h2>
+<div class="outline-text-2" id="text-org1a6bb12">
+</div>
+</section>
+<section id="slide-org21dd1c6">
+<h3 id="org21dd1c6">Constrained Optimization Model For Modulo Scheduling</h3>
+<div class="cmath">
+<small>
+<div>
+\begin{align*}
+    \color{lightblue}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
+    \color{lightblue}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
+    \color{lightblue}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
+    & t_i :& \text{dispatch time} \\
+    & b_i :& \text{completion time} \\
+    & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
+    & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
+\end{align*}
+
+</div>
+</small>
+
+</div>
+
+</section>
+<section id="slide-org8413c93">
+<h3 id="org8413c93">Constrained Optimization Model</h3>
+<div class="cmath">
+<small>
+<div>
+\begin{align}
+    \color{lightblue}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
+								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  \\
+								 & b_i + \epsilon \leq t_i + \textrm{II} \\
+    \color{lightblue}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
+\end{align}
+
+</div>
+</small>
+
+</div>
+
+<p>
+<font color="lightblue">Key Idea:</font> Encode choice heuristics as penalties, adjust preference
+between heuristics by scaling
+</p>
+
+</section>
+<section id="slide-orgb149cbe">
+<h3 id="orgb149cbe">IO Penalty</h3>
+<ul>
+<li><font color="lightblue">IDEA</font> penalize dispatch time of instructions based on the quantity and
+latencies of it's dependencies</li>
+<li><font color="lightblue">Note</font> This is a <b>penalty</b> not a <b>hard</b> constraint on latencies</li>
+
+</ul>
+
+<div class="cmath">
+<small>
+<div>
+\begin{align*}
+         \color{lightblue}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
+         \color{lightblue}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
+         \qquad & \qquad & \qquad \\
+         \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
+ \end{align*}
+
+</div>
+</small>
+
+</div>
+
+</section>
+<section id="slide-orgff60a22">
+<h3 id="orgff60a22">Stochastic Scaling</h3>
+<ul>
+<li>The scaling \(\color{lightgreen}{\frac{1}{N_j}}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
+<li><font color="lightblue">IDEA</font> scale the <font color="lightblue">IO penalty</font> stochastically</li>
+
+</ul>
+<div class="cmath">
+<small>
+<div>
+\begin{align*}
+    \color{lightblue}{\text{Define a Clustering}} \qquad & \mathbb{C} = \text{Cluster}(\forall i \mid i \rightarrow j) \\
+    \color{lightblue}{\text{For each Cluster i}} \qquad & c_i \in \mathbb{RAND(R)} \\
+    \color{lightblue}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
+  \end{align*}
+
+</div>
+</small>
+
+</div>
+
+</section>
+<section id="slide-org8affa7f">
+<h3 id="org8affa7f">COCONUT Frameworks</h3>
+<ul>
+<li>Nested Domain Specific Languages for functional assembly</li>
+<li>Provides code graph library for optimizing over</li>
+<li>Provides register allocater and simulator</li>
+<li>Provides code generator</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org2dfa437">
+<h2 id="org2dfa437">Efforts Since Last Committee Meeting</h2>
+<div class="outline-text-2" id="text-org2dfa437">
+</div>
+</section>
+<section id="slide-orgc9bfd40">
+<h3 id="orgc9bfd40">Improvements to Coconut</h3>
+<ul>
+<li>Integrated IPOPT (non-linear constrained optimization solver) into Coconut</li>
+<li>Automated schedule generation and added support for stochastic parameters</li>
+<li>Updated Hashed Expression library to use as front-end to IPOPT</li>
+
+</ul>
+
+</section>
+<section id="slide-org010a13f">
+<h3 id="org010a13f">Acquired Interim Results</h3>
+<ul>
+<li>generated schedules for ECC (elliptic curve cryptography) kernels on IBM's
+Z14 architecture (was successfully productized)</li>
+<li>generated schedules for core math functions on IBM's MASS library achieving
+up to 20% speedup (also on Z14 and product pending)</li>
+
+</ul>
+
+</section>
+<section id="slide-orgd46ada5">
+<h3 id="orgd46ada5">Co-Author Contributions to the Following Works</h3>
+<ul>
+<li>Using z14 Fused-Multiply-Add Instructions to Accelerate Elliptic Curve
+Cryptography
+<ul>
+<li>published conference paper CASCON 2019 and won best Paper</li>
+
+</ul></li>
+<li>A Framework for Preadolscent Programmers to Create Cooperative Multiplayer
+Reading Games</li>
+
+</ul>
+
+</section>
+<section id="slide-org873bc23">
+<h3 id="org873bc23">Presentations</h3>
+<ul>
+<li>Poster Presentation at IBM TechConnect 2019</li>
+<li>Poster Presentation at IBM CASCON 2019</li>
+<li>Workshop at CASCON 2019 (published proceeding Two Functional MDD's for the
+Price of One)</li>
+
+</ul>
+
+</section>
+<section id="slide-org07466f1">
+<h3 id="org07466f1">Awards</h3>
+<p>
+Won IBM CAS Student of the Year
+</p>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'convex', // see README of reveal.js for options
+transitionSpeed: 'default',
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+
+});
+</script>
+</body>
+</html>
