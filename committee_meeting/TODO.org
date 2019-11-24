@@ -1,0 +1,13 @@
+* Committee Meeting 2019
+
+** Find Conference/Publication for paper about actual research better than CASCON
+*** Within Next 6 months?
+   - CGO
+   - ETAPS
+   - TACO
+** For Proposal
+   - What is closest related work
+   - What architetures to compare to besides Z and Power (ARM and RISC-5?)
+   - how many MW saved?
+   - Explain why we want to violate latency constraints?
+   - Put sigmoid benchmarks?

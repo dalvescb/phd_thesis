@@ -1,0 +1,121 @@
+* Header :ignore:
+# -*- mode: org; -*-
+
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/reveal.js/3.0.0/
+# #+REVEAL_THEME: league
+#+REVEAL_THEME: sky
+
+#+OPTIONS: reveal_title_slide:auto num:nil toc:nil timestamp:nil
+
+#+MACRO: color @@html:<font color="$1">$2</font>@@
+#+MACRO: alert @@html:<font color="navy">$1</font>@@
+
+#+REVEAL_EXTRA_CSS: ./mystyle.css
+# #+REVEAL_EXTRA_CSS: /Users/curtis/reveal.js/css/theme/night.css
+
+# To load Org-reveal, type “M-x load-library”, then type “ox-reveal”.
+
+
+#+Title: Stochastic Optimization for Instruction Scheduling and Their Potential for Architecture Analysis 
+#+Date: 2019-11-26
+#+Email: curtis.dalves@gmail.com
+#+Author: Curtis D'Alves
+
+* Recap: Research Efforts 
+** Constrained Optimization Model For Modulo Scheduling
+
+#+BEGIN_cmath
+#+HTML: <small>
+\begin{align*}
+    \color{navy}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
+    \color{navy}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
+    \color{navy}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
+    & t_i :& \text{dispatch time} \\
+    & b_i :& \text{completion time} \\
+    & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
+    & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
+\end{align*}
+#+HTML: </small>
+#+END_cmath
+
+** Constrained Optimization Model
+#+BEGIN_cmath
+#+HTML: <small>
+\begin{align}
+    \color{navy}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
+								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  \\
+								 & b_i + \epsilon \leq t_i + \textrm{II} \\
+    \color{navy}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
+\end{align}
+#+HTML: </small>    
+#+END_cmath
+
+{{{alert(Key Idea:)}}} Encode choice heuristics as penalties, adjust preference
+between heuristics by scaling
+
+** IO Penalty
+   - {{{alert(IDEA)}}} penalize dispatch time of instructions based on the quantity and
+    latencies of it's dependencies
+   - {{{alert(Note)}}} This is a *penalty* not a *hard* constraint on latencies
+
+#+BEGIN_cmath
+#+HTML: <small>
+   \begin{align*}
+            \color{navy}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
+            \color{navy}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
+            \qquad & \qquad & \qquad \\
+            \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
+    \end{align*}
+#+HTML: </small>
+#+END_cmath
+
+** Stochastic Scaling
+   - The scaling $\color{black}{\frac{1}{N_j}}$ may be a good *guess*, but not necessarily effective in practice
+   - {{{alert(IDEA)}}} scale the {{{alert(IO penalty)}}} stochastically
+   - 
+#+BEGIN_cmath
+#+HTML: <small>
+      \begin{align*}
+          \color{navy}{\text{Define a Grouping}} \qquad & \mathbb{C} = \text{Group}(\forall i \mid i \rightarrow j) \\
+          \color{navy}{\text{For each Group i}} \qquad & c_i \in \mathbb{RAND(R)} \\
+          \color{navy}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
+        \end{align*}
+#+HTML: </small>
+#+END_cmath
+
+** COCONUT Frameworks
+   - Provides {{{alert(Domain Specific Languages)}}} for *functional assembly*
+     - In only Z and Power currently
+   - Provides {{{alert(Code Graph Library)}}} for modeling dependency *DAG* 
+   - Provides {{{alert(Register Allocator)}}} (needs upgrading)
+   - Provides {{{alert(Hardware Simulator)}}} (needs upgrading)
+   - Provides {{{alert(Code Generation)}}}
+
+* Efforts Since Last Committee Meeting
+** Improvements to Coconut
+  - Integrated {{{alert(IPOPT )}}} (non-linear constrained optimization solver) into Coconut 
+  - {{{alert(Automated)}}} Schedule Generation
+  - Added support for {{{alert(Stochastic Parameters)}}}
+  - Updated {{{alert(Hashed Expression)}}} library to use as front-end to {{{alert(IPOPT)}}}
+
+** Acquired Interim Results
+  - Generated schedules for {{{alert(ECC)}}} (elliptic curve cryptography) kernels on IBM's
+    {{{alert(Z14)}}} architecture (was successfully productized) 
+  - Generated schedules for core math functions on {{{alert(IBM's MASS Library)}}} achieving
+    up to 20% speedup (also on {{{alert(Z14)}}} and product pending)
+
+** Co-Author Contributions to the Following Works
+   - {{{alert(Using z14 Fused-Multiply-Add Instructions to Accelerate Elliptic Curve
+     Cryptography)}}}
+     - published conference paper CASCON 2019 and won best Paper
+   - {{{alert(A Framework for Preadolescent Programmers to Create Cooperative Multiplayer
+     Reading Games)}}}
+
+** Presentations 
+   - {{{alert(Poster Presentation)}}} at IBM TechConnect 2019
+   - {{{alert(Poster Presentation)}}} at IBM CASCON 2019
+   - {{{alert(Workshop)}}} at CASCON 2019 (published proceeding Two Functional MDD's for the
+     Price of One)
+
+** Awards
+  {{{alert(Won IBM CAS Student of the Year)}}} 
