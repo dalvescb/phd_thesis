@@ -21,6 +21,9 @@
 #+Email: curtis.dalves@gmail.com
 #+Author: Curtis D'Alves
 
+
+#+OPTIONS: reveal_title_slide:"<small>%t</small>"
+
 * Recap: Research Efforts 
 ** Constrained Optimization Model For Modulo Scheduling
 
@@ -91,31 +94,9 @@ between heuristics by scaling
    - Provides {{{alert(Hardware Simulator)}}} (needs upgrading)
    - Provides {{{alert(Code Generation)}}}
 
-* Efforts Since Last Committee Meeting
-** Improvements to Coconut
-  - Integrated {{{alert(IPOPT )}}} (non-linear constrained optimization solver) into Coconut 
-  - {{{alert(Automated)}}} Schedule Generation
-  - Added support for {{{alert(Stochastic Parameters)}}}
-  - Updated {{{alert(Hashed Expression)}}} library to use as front-end to {{{alert(IPOPT)}}}
-
 ** Acquired Interim Results
   - Generated schedules for {{{alert(ECC)}}} (elliptic curve cryptography) kernels on IBM's
     {{{alert(Z14)}}} architecture (was successfully productized) 
   - Generated schedules for core math functions on {{{alert(IBM's MASS Library)}}} achieving
     up to 20% speedup (also on {{{alert(Z14)}}} and product pending)
 
-** Co-Author Contributions to the Following Works
-   - {{{alert(Using z14 Fused-Multiply-Add Instructions to Accelerate Elliptic Curve
-     Cryptography)}}}
-     - published conference paper CASCON 2019 and won best Paper
-   - {{{alert(A Framework for Preadolescent Programmers to Create Cooperative Multiplayer
-     Reading Games)}}}
-
-** Presentations 
-   - {{{alert(Poster Presentation)}}} at IBM TechConnect 2019
-   - {{{alert(Poster Presentation)}}} at IBM CASCON 2019
-   - {{{alert(Workshop)}}} at CASCON 2019 (published proceeding Two Functional MDD's for the
-     Price of One)
-
-** Awards
-  {{{alert(Won IBM CAS Student of the Year)}}} 
