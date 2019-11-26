@@ -2,16 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title>Stochastic Optimization for Instruction Scheduling and Their Potential for Architecture Analysis</title>
-<meta name="author" content="Curtis D'Alves"/>
+<title><h3><font color="navy">Stochastic Optimization for Instruction Scheduling and Their Potential for Architecture Analysis</font></h3></title>
+<meta name="author" content="@@html:<h4>Curtis D'Alves</h4>@@"/>
 <style type="text/css">
 .underline { text-decoration: underline; }
 </style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+<link rel="stylesheet" href="/home/dalvescb/reveal.js/css/reveal.css"/>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/sky.css" id="theme"/>
+<link rel="stylesheet" href="/home/dalvescb/reveal.js/css/theme/sky.css" id="theme"/>
 
-<link rel="stylesheet" href="./mystyle.css"/>
 
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
@@ -19,7 +18,7 @@
         var link = document.createElement( 'link' );
         link.rel = 'stylesheet';
         link.type = 'text/css';
-        link.href = 'https://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        link.href = '/home/dalvescb/reveal.js/css/print/pdf.css';
         document.getElementsByTagName( 'head' )[0].appendChild( link );
     }
 </script>
@@ -29,17 +28,41 @@
 <div class="reveal">
 <div class="slides">
 <section id="sec-title-slide">
-<h1 class="title">Stochastic Optimization for Instruction Scheduling and Their Potential for Architecture Analysis</h1><h2 class="author">Curtis D'Alves</h2><h2 class="date">2019-11-26</h2>
+<h1 class="title"><h3><font color="navy">Stochastic Optimization for Instruction Scheduling and Their Potential for Architecture Analysis</font></h3></h1><h2 class="author"><h4>Curtis D'Alves</h4></h2><h2 class="date"><h4>2019-11-26</h4></h2>
 </section>
 
 <section>
-<section id="slide-org8d789f0">
-<h2 id="org8d789f0">Recap: Research Efforts</h2>
-<div class="outline-text-2" id="text-org8d789f0">
+<section id="slide-org47198f7">
+<h2 id="org47198f7">Background</h2>
+<div class="outline-text-2" id="text-org47198f7">
 </div>
 </section>
-<section id="slide-org8c0dc4d">
-<h3 id="org8c0dc4d">Constrained Optimization Model For Modulo Scheduling</h3>
+<section id="slide-orga848ab3">
+<h3 id="orga848ab3">Who Am I?</h3>
+<ul>
+<li><font color="navy">Ph.D Candidate</font> McMaster University</li>
+<li>Did my Master's in <font color="navy">Continuous Optimization Algorithms</font></li>
+<li>Working on <font color="navy">CAS Project 1006</font> (Stochastic Algorithms for Instructions Scheduling)
+<ul>
+<li>Working with Robert Enenkel <font color="navy">optimizing MASS libraries</font></li>
+
+</ul></li>
+<li>Emacs enthusiast</li>
+
+</ul>
+</section>
+<section id="slide-org4c69dc7">
+<h3 id="org4c69dc7"></h3>
+</section>
+</section>
+<section>
+<section id="slide-org00c0126">
+<h2 id="org00c0126">Recap: Research Efforts</h2>
+<div class="outline-text-2" id="text-org00c0126">
+</div>
+</section>
+<section id="slide-org6f8f37c">
+<h3 id="org6f8f37c">Constrained Optimization Model For Modulo Scheduling</h3>
 <div class="cmath">
 <small>
 <div>
@@ -59,8 +82,8 @@
 </div>
 
 </section>
-<section id="slide-org6c42d9f">
-<h3 id="org6c42d9f">Constrained Optimization Model</h3>
+<section id="slide-orgb1a6d82">
+<h3 id="orgb1a6d82">Constrained Optimization Model</h3>
 <div class="cmath">
 <small>
 <div>
@@ -82,8 +105,8 @@ between heuristics by scaling
 </p>
 
 </section>
-<section id="slide-orgfc47491">
-<h3 id="orgfc47491">IO Penalty</h3>
+<section id="slide-orgdc0990d">
+<h3 id="orgdc0990d">IO Penalty</h3>
 <ul>
 <li><font color="navy">IDEA</font> penalize dispatch time of instructions based on the quantity and
 latencies of it's dependencies</li>
@@ -107,12 +130,11 @@ latencies of it's dependencies</li>
 </div>
 
 </section>
-<section id="slide-org55c2644">
-<h3 id="org55c2644">Stochastic Scaling</h3>
+<section id="slide-orge221145">
+<h3 id="orge221145">Stochastic Scaling</h3>
 <ul>
 <li>The scaling \(\color{black}{\frac{1}{N_j}}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
 <li><font color="navy">IDEA</font> scale the <font color="navy">IO penalty</font> stochastically</li>
-<li></li>
 
 </ul>
 <div class="cmath">
@@ -130,8 +152,8 @@ latencies of it's dependencies</li>
 </div>
 
 </section>
-<section id="slide-org8db89cf">
-<h3 id="org8db89cf">COCONUT Frameworks</h3>
+<section id="slide-orgd7a17fd">
+<h3 id="orgd7a17fd">COCONUT Frameworks</h3>
 <ul>
 <li>Provides <font color="navy">Domain Specific Languages</font> for <b>functional assembly</b>
 <ul>
@@ -146,8 +168,8 @@ latencies of it's dependencies</li>
 </ul>
 
 </section>
-<section id="slide-orgeb6f242">
-<h3 id="orgeb6f242">Acquired Interim Results</h3>
+<section id="slide-org2faf0bc">
+<h3 id="org2faf0bc">Acquired Interim Results</h3>
 <ul>
 <li>Generated schedules for <font color="navy">ECC</font> (elliptic curve cryptography) kernels on IBM's
 <font color="navy">Z14</font> architecture (was successfully productized)</li>
@@ -159,8 +181,8 @@ up to 20% speedup (also on <font color="navy">Z14</font> and product pending)</l
 </section>
 </div>
 </div>
-<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
-<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+<script src="/home/dalvescb/reveal.js/lib/js/head.min.js"></script>
+<script src="/home/dalvescb/reveal.js/js/reveal.js"></script>
 <script>
 // Full list of configuration options available here:
 // https://github.com/hakimel/reveal.js#configuration
@@ -186,11 +208,11 @@ transitionSpeed: 'default',
 
 // Optional libraries used to extend on reveal.js
 dependencies: [
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+ { src: '/home/dalvescb/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: '/home/dalvescb/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: '/home/dalvescb/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: '/home/dalvescb/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: '/home/dalvescb/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
 
 });
 </script>
