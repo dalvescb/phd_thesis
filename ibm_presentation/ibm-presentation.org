@@ -35,7 +35,7 @@
      - Working with Robert Enenkel {{{alert(optimizing MASS libraries)}}}
    - Emacs enthusiast
 ** 
-* Recap: Research Efforts 
+* Research Efforts Thus Far
 ** Constrained Optimization Model For Modulo Scheduling
 
 #+BEGIN_cmath
@@ -110,3 +110,11 @@ between heuristics by scaling
   - Generated schedules for core math functions on {{{alert(IBM's MASS Library)}}} achieving
     up to 20% speedup (also on {{{alert(Z14)}}} and product pending)
 
+* Next Steps
+
+** RoadMap
+   - Construct optimization model that can *encode heuristics* as penalties {{{color(green,CHECK)}}}
+   - Verify we can use *stochastic scaling* to span a variety of schedules {{{color(green,CHECK)}}}
+   - Verify we can use model to find *near-optimal* schedules {{{color(green,CHECK)}}}
+   - *Generate data sets* of varying schedules and their corresponding heuristics {{{color(red,TBA)}}}
+   - Utilize *data analysis* to rate effectiveness of different heuristics on different architectures {{{color(red,TBA)}}}

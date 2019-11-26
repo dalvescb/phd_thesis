@@ -32,13 +32,13 @@
 </section>
 
 <section>
-<section id="slide-org47198f7">
-<h2 id="org47198f7">Background</h2>
-<div class="outline-text-2" id="text-org47198f7">
+<section id="slide-orgc0109c6">
+<h2 id="orgc0109c6">Background</h2>
+<div class="outline-text-2" id="text-orgc0109c6">
 </div>
 </section>
-<section id="slide-orga848ab3">
-<h3 id="orga848ab3">Who Am I?</h3>
+<section id="slide-orgff6f626">
+<h3 id="orgff6f626">Who Am I?</h3>
 <ul>
 <li><font color="navy">Ph.D Candidate</font> McMaster University</li>
 <li>Did my Master's in <font color="navy">Continuous Optimization Algorithms</font></li>
@@ -51,18 +51,18 @@
 
 </ul>
 </section>
-<section id="slide-org4c69dc7">
-<h3 id="org4c69dc7"></h3>
+<section id="slide-org90a9b46">
+<h3 id="org90a9b46"></h3>
 </section>
 </section>
 <section>
-<section id="slide-org00c0126">
-<h2 id="org00c0126">Recap: Research Efforts</h2>
-<div class="outline-text-2" id="text-org00c0126">
+<section id="slide-org7cac5f9">
+<h2 id="org7cac5f9">Research Efforts Thus Far</h2>
+<div class="outline-text-2" id="text-org7cac5f9">
 </div>
 </section>
-<section id="slide-org6f8f37c">
-<h3 id="org6f8f37c">Constrained Optimization Model For Modulo Scheduling</h3>
+<section id="slide-org53d6c0c">
+<h3 id="org53d6c0c">Constrained Optimization Model For Modulo Scheduling</h3>
 <div class="cmath">
 <small>
 <div>
@@ -82,8 +82,8 @@
 </div>
 
 </section>
-<section id="slide-orgb1a6d82">
-<h3 id="orgb1a6d82">Constrained Optimization Model</h3>
+<section id="slide-orga0e969f">
+<h3 id="orga0e969f">Constrained Optimization Model</h3>
 <div class="cmath">
 <small>
 <div>
@@ -105,8 +105,8 @@ between heuristics by scaling
 </p>
 
 </section>
-<section id="slide-orgdc0990d">
-<h3 id="orgdc0990d">IO Penalty</h3>
+<section id="slide-org13eb055">
+<h3 id="org13eb055">IO Penalty</h3>
 <ul>
 <li><font color="navy">IDEA</font> penalize dispatch time of instructions based on the quantity and
 latencies of it's dependencies</li>
@@ -130,8 +130,8 @@ latencies of it's dependencies</li>
 </div>
 
 </section>
-<section id="slide-orge221145">
-<h3 id="orge221145">Stochastic Scaling</h3>
+<section id="slide-orga9b4791">
+<h3 id="orga9b4791">Stochastic Scaling</h3>
 <ul>
 <li>The scaling \(\color{black}{\frac{1}{N_j}}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
 <li><font color="navy">IDEA</font> scale the <font color="navy">IO penalty</font> stochastically</li>
@@ -152,8 +152,8 @@ latencies of it's dependencies</li>
 </div>
 
 </section>
-<section id="slide-orgd7a17fd">
-<h3 id="orgd7a17fd">COCONUT Frameworks</h3>
+<section id="slide-org9f8b2e6">
+<h3 id="org9f8b2e6">COCONUT Frameworks</h3>
 <ul>
 <li>Provides <font color="navy">Domain Specific Languages</font> for <b>functional assembly</b>
 <ul>
@@ -168,13 +168,32 @@ latencies of it's dependencies</li>
 </ul>
 
 </section>
-<section id="slide-org2faf0bc">
-<h3 id="org2faf0bc">Acquired Interim Results</h3>
+<section id="slide-org4258634">
+<h3 id="org4258634">Acquired Interim Results</h3>
 <ul>
 <li>Generated schedules for <font color="navy">ECC</font> (elliptic curve cryptography) kernels on IBM's
 <font color="navy">Z14</font> architecture (was successfully productized)</li>
 <li>Generated schedules for core math functions on <font color="navy">IBM's MASS Library</font> achieving
 up to 20% speedup (also on <font color="navy">Z14</font> and product pending)</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org2e74e6f">
+<h2 id="org2e74e6f">Next Steps</h2>
+<div class="outline-text-2" id="text-org2e74e6f">
+</div>
+</section>
+<section id="slide-org599bb92">
+<h3 id="org599bb92">RoadMap</h3>
+<ul>
+<li>Construct optimization model that can <b>encode heuristics</b> as penalties <font color="green">CHECK</font></li>
+<li>Verify we can use <b>stochastic scaling</b> to span a variety of schedules <font color="green">CHECK</font></li>
+<li>Verify we can use model to find <b>near-optimal</b> schedules <font color="green">CHECK</font></li>
+<li><b>Generate data sets</b> of varying schedules and their corresponding heuristics <font color="red">TBA</font></li>
+<li>Utilize <b>data analysis</b> to rate effectiveness of different heuristics on different architectures <font color="red">TBA</font></li>
 
 </ul>
 </section>
