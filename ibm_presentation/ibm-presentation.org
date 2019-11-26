@@ -1,8 +1,8 @@
 * Header :ignore:
 # -*- mode: org; -*-
 
-# #+REVEAL_ROOT: https://cdn.jsdelivr.net/reveal.js/3.0.0/
-#+REVEAL_ROOT: /home/dalvescb/reveal.js/
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/reveal.js/3.0.0/
+# #+REVEAL_ROOT: /home/dalvescb/reveal.js/
 # #+REVEAL_THEME: league
 #+REVEAL_THEME: sky
 
@@ -34,10 +34,58 @@
    - Working on {{{alert(CAS Project 1006)}}} (Stochastic Algorithms for Instructions Scheduling)
      - Working with Robert Enenkel {{{alert(optimizing MASS libraries)}}}
    - Emacs enthusiast
-** 
-* Research Efforts Thus Far
-** Constrained Optimization Model For Modulo Scheduling
 
+** Previous Work: Kriston Costa
+   - Utilized modified version of {{{alert(Kargers Min Cut Algorithm)}}}
+   - {{{alert(Approximation Algorithm)}}} that can be performed {{{alert(stochastically)}}}
+   - Takes successive *min-cuts* across a graph (dependency graph will {{{alert(minimize register pressure)}}})
+
+** Karger's Minimum Cut Algorithm     
+   [[file:kargermincut.png]]
+   Cuts create {{{alert(groups)}}} that are candidates to {{{alert(interleave across stages)}}} in *modulo scheduling*
+
+** Previous Work: Instruction Scheduling using Constraint Programming
+   - Abid Malik, Jim McInnes, Peter van Beek
+   - Used {{{alert(Linear Optimization)}}} with {{{alert(Constraints)}}} to find optimal schedules for basic blocks
+   - Optimized over a {{{alert(Dependency Graph)}}} $G = (N,E)$
+   - Used hard {{{alert(Latency Constraints)}}}
+     $$\forall (i,j) \in E \cdot j \geq i + l(i,j)$$ 
+     
+* Rapid Prototyping With COCONUT   
+** Rapid Prototyping With COCONUT 
+   {{{alert(COCONUT)}}}:( {{{alert(CO)}}}ode {{{alert(CON)}}}structing {{{alert(U)}}}ser {{{alert(T)}}}ool )
+
+   - COCONUT is an {{{alert(Interactive Development ToolSet)}}} for performance critical assembly code,
+     with existing implementations for {{{alert(PowerPC and Z)}}}
+     #+ATTR_HTML: :width 70% :height 50%
+     [[file:prototyping.jpg]]  
+
+** Rapid Prototyping With COCONUT 
+   - Performance critical assembly code can be encoded in the Coconut {{{alert(eDSL)}}} 
+   - {{{alert(Example COCONUT CODE)}}}
+   #+BEGIN_SRC elm
+   some_func :: (VR n,GPR n,VR n ,...) −> (MR n, VR n ,...)
+   some_func (a0,b0,c0 ,...) = let
+       a0_0 = vadd b0 a0
+       a0_1 = vsub c0 a0_0
+       ...
+     in (a0_0,a0_1 ,...)
+   #+END_SRC
+   
+** COCONUT Features
+     - Provides {{{alert(Code Graph Library)}}} for modeling dependency *DAG* 
+     - Provides {{{alert(Register Allocator)}}} 
+     - Provides {{{alert(Hardware Simulator)}}} 
+     - Provides {{{alert(Code Generation)}}}
+
+* Research Efforts Thus Far
+** Focus on Finding Near-Optimal Schedules for MASS Libraries
+   - scheduling inside a loop ({{{alert(modulo scheduling)}}})
+   - ignoring {{{alert(global/trace)}}} scheduling techniques
+   - scheduling on {{{alert(IBM Z)}}} (hopefully {{{alert(POWER)}}} coming soon) 
+   - little consideration for cost of schedule generation
+
+** Constrained Optimization Model For Modulo Scheduling
 #+BEGIN_cmath
 #+HTML: <small>
 \begin{align*}
@@ -52,6 +100,8 @@
 #+HTML: </small>
 #+END_cmath
 
+  {{{alert(NOTE)}}}: dispatch and completion times are designed to model *OoO* (Out of Order) execution machines 
+  
 ** Constrained Optimization Model
 #+BEGIN_cmath
 #+HTML: <small>
@@ -83,6 +133,16 @@ between heuristics by scaling
 #+HTML: </small>
 #+END_cmath
 
+** Indicator Function (Sigmoid Logistic Curve)
+   [[file:sigmoid.svg]]
+   $$S(x) = \frac{1}{1 + e^{-x}}$$ 
+ 
+** Indicator Function (Custom Sigmoid)
+   #+ATTR_HTML: :width 70% :height 70%
+   [[file:sigmoid.jpg]]
+
+    \[ S(x) = \frac{1}{(1 + e^{s(-0.5 + v)})(1 + e^{s(-0.5-v)})} \]
+    
 ** Stochastic Scaling
    - The scaling $\color{black}{\frac{1}{N_j}}$ may be a good *guess*, but not necessarily effective in practice
    - {{{alert(IDEA)}}} scale the {{{alert(IO penalty)}}} stochastically
@@ -96,20 +156,16 @@ between heuristics by scaling
 #+HTML: </small>
 #+END_cmath
 
-** COCONUT Frameworks
-   - Provides {{{alert(Domain Specific Languages)}}} for *functional assembly*
-     - In only Z and Power currently
-   - Provides {{{alert(Code Graph Library)}}} for modeling dependency *DAG* 
-   - Provides {{{alert(Register Allocator)}}} (needs upgrading)
-   - Provides {{{alert(Hardware Simulator)}}} (needs upgrading)
-   - Provides {{{alert(Code Generation)}}}
+** Forming Heuristics as Penalties
+   Different categories of heuristics can be formed by 
+    - {{{alert(Grouping)}}} different types of instructions
+    - using the right {{{alert(Indicator Function)}}}
 
-** Acquired Interim Results
-  - Generated schedules for {{{alert(ECC)}}} (elliptic curve cryptography) kernels on IBM's
-    {{{alert(Z14)}}} architecture (was successfully productized) 
-  - Generated schedules for core math functions on {{{alert(IBM's MASS Library)}}} achieving
-    up to 20% speedup (also on {{{alert(Z14)}}} and product pending)
-
+* What do we gain from this approach?
+  - {{{alert(Continuous Optimization)}}} algorithm provides a flexible space for schedules to span
+    - Different heuristics can be encoded as penalties, scaled for priority
+  - {{{alert(Stochastic)}}} element provides a means to generate a variety of schedules
+    
 * Next Steps
 
 ** RoadMap
@@ -118,3 +174,17 @@ between heuristics by scaling
    - Verify we can use model to find *near-optimal* schedules {{{color(green,CHECK)}}}
    - *Generate data sets* of varying schedules and their corresponding heuristics {{{color(red,TBA)}}}
    - Utilize *data analysis* to rate effectiveness of different heuristics on different architectures {{{color(red,TBA)}}}
+
+** Topological Analysis
+   - *Instruction Schedules* presents a {{{alert(metric space)}}} (slightly stronger topological space)
+   - *TDA* Topological Data Analysis consists of many approach's for analysis of datasets using techniques from topology
+     - {{{alert(Persistent Homology)}}} method for computing common topological features of a space at difference spatial resolutions
+
+** Principle Component Analysis
+   - {{{alert(PCA)}}} is a statistical procedure commonly used to *judge the importance of parameters* involved in a predictive model
+   - Various models (say linear regressive) could be used to predict *scaling parameters* for penalties
+   - Performing {{{alert(PCA)}}} on scaling parameters could reveal the importance of heuristics on an architecture
+     
+* Questions? Constructive Criticisms Are Very Welcome
+  
+  
