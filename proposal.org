@@ -311,7 +311,7 @@ compilation.
    $n_2$, ..., $n_m$ units of each type. One way to view optimizing a schedule over such
    an architecture would be to maximize the amount of live functional units per
    cycle (i.e maximum throughput). This would generally be accomplished by
-   interleaving different types of instruction, however if you stretch data
+   interleaving different types of instructions, however if you stretch data
    dependent instructions too far apart doing this you risk running out of
    available registers (you increase register pressure). This is further
    complicated on CISC architectures (unsurprisingly) because of heterogeneous
