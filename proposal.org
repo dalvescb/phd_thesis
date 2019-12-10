@@ -449,10 +449,17 @@ compilation.
    #+ATTR_LATEX: :width 0.5\textwidth
    #+RESULTS:
    [[file:figures/OoODiagram.png]]
-  
+
   Performed genarally in hardware through some variation of *Tomasulo's Algorithm* \parencite{tomasulo1967efficient}
- 
+
+*** TODO COMMENT explain reservation stations
 *** TODO COMMENT update out-of-order execution from beamer
+    Data flow execution can be controlled in hardware via algorithms such as Tomasulo's algorithm or variations.
+     [[https://en.wikipedia.org/wiki/Tomasulo_algorithm#cite_note-intel-5]]
+    Necessary Implementation concepts for tomasulo's algorithm
+    - *Common data bus* connects reservation stations directly to functional units
+    - *Instruction order* instructions are issued sequentially / exceptions are raised sequentially
+    - *Register Renaming* 
 ** Register Pressure In Staged Loops
    - Staging can *increase pipeline throughput* by enabling more instructions to
      be scheduled between high latency operations and subsequent use
