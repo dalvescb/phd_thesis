@@ -24,6 +24,7 @@
 #+LATEX_HEADER: \def\mytitle{??? Program Code ???}
 #+LATEX_HEADER: \BeforeBeginEnvironment{minted}{\begin{tcolorbox}[title=\hfill \mytitle]}%
 #+LATEX_HEADER: \AfterEndEnvironment{minted}{\end{tcolorbox}}%
+#+LATEX_HEADER: \usepackage{hyperref}
 
 # Before a code block, write {{{code(title-of-block)}}}
 #
@@ -399,7 +400,7 @@ compilation.
    - the maximum *number of cyles* to complete a loop iteration
    - exact number is complicated *Out of Order Execution* / *Staging*
 *** TODO COMMENT update II from beamer
-** Register Remapping
+** Register Remapping/Renaming
    When executing machine code, hardware maps *Logical Registers* to *Physical Registers*
    -  *Logical Registers* are a set of registers usable directly when
      writing/generating assembly code (limited by system architecture)
@@ -448,6 +449,9 @@ compilation.
    #+ATTR_LATEX: :width 0.5\textwidth
    #+RESULTS:
    [[file:figures/OoODiagram.png]]
+  
+  Performed genarally in hardware through some variation of *Tomasulo's Algorithm* \parencite{tomasulo1967efficient}
+ 
 *** TODO COMMENT update out-of-order execution from beamer
 ** Register Pressure In Staged Loops
    - Staging can *increase pipeline throughput* by enabling more instructions to
@@ -601,6 +605,19 @@ between heuristics by scaling
 * Org-Bibtex                                                         :ignore:
 ** COMMENT PUT BIBTEX ENTRIES HERE IN SUBSECTION ENDED WITH IGNORE USING ORG-BIBTEX-YANK COMMAND :ignore:
 ** COMMENT EXPORT TO References.bib USING ORG-BIBTEX COMMAND :ignore:
+** An efficient algorithm for exploiting multiple arithmetic units :ignore:
+   :PROPERTIES:
+   :TITLE:    An efficient algorithm for exploiting multiple arithmetic units
+   :BTYPE:    article
+   :CUSTOM_ID: tomasulo1967efficient
+   :AUTHOR:   Tomasulo, Robert M
+   :JOURNAL:  IBM Journal of research and Development
+   :VOLUME:   11
+   :NUMBER:   1
+   :PAGES:    25--33
+   :YEAR:     1967
+   :PUBLISHER: IBM
+   :END:
 ** The superblock: an effective technique for VLIW and superscalar compilation :ignore:
    :PROPERTIES:
    :TITLE:    The superblock: an effective technique for VLIW and superscalar compilation
