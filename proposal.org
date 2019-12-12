@@ -294,7 +294,8 @@ compilation.
    instr. i                         |       IF | cBLU  ID |       EX |      MEM |       WB |
                                     \----------+----------+----------+----------+----------+----------\
    --->                                        | cBLU  IF |       ID |       EX |      MEM |       WB |
-     cycle t.                                  \----------+----------+----------+----------+----------/
+     cycle t                                   \----------+----------+----------+----------+----------/
+  
    #+END_SRC
 
    #+ATTR_LATEX: :width 1.0\textwidth 
@@ -306,8 +307,11 @@ compilation.
   
    Simple pipelined architectures issue a single instruction per "cycle".
    Through pipeling, ILP is still exploitable, but limited by only having one of
-   each type of functional unit. 
-  
+   each type of functional unit. Figure [[fig:PipelinedArchitecture]] show's an
+   example simple RISC architecture that exploits ILP while using only a single
+   execution unit. Conversely, figure [[fig:SuperScalarArchitecture]] shows a
+   superscalar architecture that utilizes parallel execution units.  
+   
    #+BEGIN_SRC ditaa :file figures/SuperScalarPipeline.png
    /----------+----------+----------+----------+----------\
    |       IF |       ID |       EX |      MEM | cBLU  WB |
@@ -324,7 +328,7 @@ compilation.
                          \----------+----------+----------+----------+----------+----------\
                                     |       IF | cBLU  ID |       EX |      MEM |       WB |
   --->                              +----------+----------+----------+----------+----------+
-     time t                         |       IF | cBLU  ID |       EX |      MEM |       WB |
+     cycle t                        |       IF | cBLU  ID |       EX |      MEM |       WB |
                                     \----------+----------+----------+----------+----------+----------\
                                                | cBLU  IF |       ID |       EX |      MEM |       WB |
                                                +----------+----------+----------+----------+----------+
@@ -336,7 +340,7 @@ compilation.
    #+CAPTION: SuperScalar Architecture   
    #+LABEL: fig:SuperScalarArchitecture
    #+RESULTS:
-   [[file:figures/RISCPipeline.png]]
+   [[file:figures/SuperScalarPipeline.png]]
    
   
    Superscalar architectures are all uniprocessors that can execute two or more
@@ -351,15 +355,13 @@ compilation.
 
    An ideal architecture to schedule for would be a RISC architecture with
    a collection of functional units of $m$ types, where the machine has $n_1$,
-   $n_2$, ..., $n_m$ units of each type. One way to view optimizing a schedule over such
-   an architecture would be to maximize the amount of live functional units per
+   $n_2$, ..., $n_m$ units of each type. One could view optimizing a schedule over such
+   an architecture as maximizing the amount of live functional units per
    cycle (i.e maximum throughput). This would generally be accomplished by
    interleaving different types of instructions, however if you stretch data
    dependent instructions too far apart doing this you risk running out of
-   available registers (you increase register pressure). This is further
-   complicated on CISC architectures (unsurprisingly) because of heterogeneous
-   instruction lengths. 
-
+   available registers (you increase register pressure). 
+   
 *** TODO COMMENT update superscalar architectures from beamer
 ** Pipeline Stalls
    Both of the previous sections figures [[fig:PipelinedArchitecture]] and
@@ -400,10 +402,26 @@ compilation.
      - done seperately from instruction scheduling (before or afterwords)
 *** TODO COMMENT update register allocation from beamer
 ** Graph Coloring
-  #+CAPTION:Register Allocation via Graph Coloring
-  #+NAME: fig:GraphColor 
-   [[file:figures/nshape.png]]
    
+#+BEGIN_SRC ditaa :file figures/GraphColor.png
+ Code Seq.       Interference Graph            Allocation
+
+A <- ...     /--------\         /--------\     R1 <- ...
+B <- ...     | cGRE A |         | cGRE D |     R2 <- ...
+    B ...    \--------/         \--------/         R2 ...
+C <- ...         |   |               |         R2 <- ...
+    A ...        |   \-----------\   |             R1 ...
+                 |               |   |
+D <- ...     /--------\         /--------\     R1 <- ...
+    D ...    | cBLU B |         | cBLU C |         R1 ...
+    C ...    \--------/         \--------/         R2 ...
+#+END_SRC 
+
+#+CAPTION:Register Allocation via Graph Coloring
+#+NAME: fig:GraphColor 
+#+RESULTS:
+[[file:figures/GraphColor.png]]
+
    Find a *k-Colouring* for the dependency graph, where *$k = \#Registers$*
 *** TODO COMMENT update graph coloring from beamer
 
@@ -425,8 +443,37 @@ compilation.
      rare and yield an *NP-hard* problem \parencite{motwani1995combining} \parencite{Pinter:1993:RAI:173262.155114}
 *** TODO COMMENT update combining register alloc from beamer
 ** Swing Modulo Scheduling: Staging
-   #+ATTR_LATEX: :width 0.5\textwidth
-   [[file:figures/staging.png]]
+
+#+BEGIN_SRC ditaa :file figures/SwingModuloStaging.png
+                                     
+                                     /---------\
+                                     |         |
+                                     |         v
+                                     |   /-----------\
+                                     |   |    cBLU   |
+                                     |   | Stage 3_1 |
+               /---------\           |   \-----------/
+               |         |           |         |
+               |         v           |         v
+               |   /-----------\     |   /-----------\
+               |   |    c1AB   |     |   |   c1AB    |
+               |   | Stage 2_1 |     |   | Stage 2_2 |
+               |   \-----------/     |   \-----------/
+               |         |           |         |
+               |         v           |         v
+/-----------\  |   /-----------\     |   /-----------\
+|   c1FF    |  |   |    c1FF   |     |   |   c1FF    | 
+| Stage 1_1 |  |   | Stage 1_2 |     |   | Stage 1_3 |
+\-----------/  |   \-----------/     |   \-----------/
+     |         |         |           |         
+     \---------/         \-----------/
+#+END_SRC
+
+#+CAPTION:Example 3-Staged for Swing Modulo Scheduling
+#+NAME: fig:SwingStaging 
+#+ATTR_LATEX: :width 0.6\textwidth
+#+RESULTS:
+[[file:figures/SwingModuloStaging.png]]
 
    When performing *modulo scheduling*, a basic block of a loop can be broken
    into stages and the loop can be *unrolled* to interleave stages between
