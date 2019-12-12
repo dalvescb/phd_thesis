@@ -545,6 +545,12 @@ compilation.
    - Cost function doesn't model the space of valid checking (hence model
      checking is required per each rewrite)
 *** TODO COMMENT update stochastic search from beamer
+** Meta-Optimization   
+   Previous research into meta-optimization of compilers has been attempted \parencite{stephenson2003meta}.
+   Hyper-heuristics are an off-spring of meta-optimization, that search within the search space of just heuristics vs the entire problem solution space.
+   TODO reference \parencite{burke2013hyper}
+*** TODO COMMENT read and summerize Hyper-Heuristics paper [[https://orsociety.tandfonline.com/doi/full/10.1057/jors.2013.71?casa_token=fOf2wR5Su64AAAAA%3A69plSPDMUXUurTufXWal6lCO6_73-XTubToX-9HY09raeRuaCwbO2SIre-CKBCBYHjsLFWBM4os#.XfFyqXWYUUG]]
+*** TODO COMMENT read and sumemrize ML for iterative optimizaiton slides [[https://www.eecis.udel.edu/~cavazos/cgo-2006-talk.pdf]]
 * Proposed Approaches
 ** TODO COMMENT write intro to proposed approaches
 ** Optimization Model for Modulo Scheduling
@@ -612,6 +618,32 @@ between heuristics by scaling
 * Org-Bibtex                                                         :ignore:
 ** COMMENT PUT BIBTEX ENTRIES HERE IN SUBSECTION ENDED WITH IGNORE USING ORG-BIBTEX-YANK COMMAND :ignore:
 ** COMMENT EXPORT TO References.bib USING ORG-BIBTEX COMMAND :ignore:
+** Meta optimization: improving compiler heuristics with machine learning :ignore:
+   :PROPERTIES:
+   :TITLE:    Meta optimization: improving compiler heuristics with machine learning
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: stephenson2003meta
+   :AUTHOR:   Stephenson, Mark and Amarasinghe, Saman and Martin, Martin and O'Reilly, Una-May
+   :BOOKTITLE: ACM SIGPLAN Notices
+   :VOLUME:   38
+   :NUMBER:   5
+   :PAGES:    77--90
+   :YEAR:     2003
+   :ORGANIZATION: ACM
+   :END:
+** Hyper-heuristics: A survey of the state of the art :ignore:
+   :PROPERTIES:
+   :TITLE:    Hyper-heuristics: A survey of the state of the art
+   :BTYPE:    article
+   :CUSTOM_ID: burke2013hyper
+   :AUTHOR:   Burke, Edmund K and Gendreau, Michel and Hyde, Matthew and Kendall, Graham and Ochoa, Gabriela and {\"O}zcan, Ender and Qu, Rong
+   :JOURNAL:  Journal of the Operational Research Society
+   :VOLUME:   64
+   :NUMBER:   12
+   :PAGES:    1695--1724
+   :YEAR:     2013
+   :PUBLISHER: Taylor \& Francis
+   :END:
 ** An efficient algorithm for exploiting multiple arithmetic units :ignore:
    :PROPERTIES:
    :TITLE:    An efficient algorithm for exploiting multiple arithmetic units
