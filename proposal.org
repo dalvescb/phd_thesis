@@ -282,21 +282,63 @@ compilation.
 *** TODO COMMENT reference list and modulo scheduling section
     
 ** SuperScalar Architectures
+   
+   #+BEGIN_SRC ditaa :file figures/RISCPipeline.png
+   /----------+----------+----------+----------+----------\
+   |       IF |       ID |       EX |      MEM | cBLU  WB |
+   \----------+----------+----------+----------+----------+----------\ 
+              |       IF |       ID |       EX | cBLU MEM |       WB |
+              \----------+----------+----------+----------+----------+----------\
+   |                     |       IF |       ID | cBLU  EX |      MEM |       WB |
+   v                     \----------+----------+----------+----------+----------+----------\
+   instr. i                         |       IF | cBLU  ID |       EX |      MEM |       WB |
+                                    \----------+----------+----------+----------+----------+----------\
+   --->                                        | cBLU  IF |       ID |       EX |      MEM |       WB |
+     cycle t.                                  \----------+----------+----------+----------+----------/
+   #+END_SRC
 
-   #+ATTR_LATEX: :width 0.5\textwidth 
+   #+ATTR_LATEX: :width 1.0\textwidth 
    #+CAPTION: Simple RISC Pipelined Architecture
    #+LABEL: fig:PipelinedArchitecture
-     [[file:figures/pipeline.png]]
+   #+RESULTS:
+   [[file:figures/RISCPipeline.png]]
+   
   
    Simple pipelined architectures issue a single instruction per "cycle".
    Through pipeling, ILP is still exploitable, but limited by only having one of
    each type of functional unit. 
-   
-   #+ATTR_LATEX: :width 0.5\textwidth 
+  
+   #+BEGIN_SRC ditaa :file figures/SuperScalarPipeline.png
+   /----------+----------+----------+----------+----------\
+   |       IF |       ID |       EX |      MEM | cBLU  WB |
+   +----------+----------+----------+----------+----------+ 
+   |       IF |       ID |       EX |      MEM | cBLU  WB |
+   \----------+----------+----------+----------+----------+----------\ 
+              |       IF |       ID |       EX | cBLU MEM |       WB |
+              +----------+----------+----------+----------+----------+
+              |       IF |       ID |       EX | cBLU MEM |       WB |
+              \----------+----------+----------+----------+----------+----------\
+  |                      |       IF |       ID | cBLU  EX |      MEM |       WB |
+  v                      +----------+----------+----------+----------+----------+
+  instr i                |       IF |       ID | cBLU  EX |      MEM |       WB |
+                         \----------+----------+----------+----------+----------+----------\
+                                    |       IF | cBLU  ID |       EX |      MEM |       WB |
+  --->                              +----------+----------+----------+----------+----------+
+     time t                         |       IF | cBLU  ID |       EX |      MEM |       WB |
+                                    \----------+----------+----------+----------+----------+----------\
+                                               | cBLU  IF |       ID |       EX |      MEM |       WB |
+                                               +----------+----------+----------+----------+----------+
+                                               | cBLU  IF |       ID |       EX |      MEM |       WB |
+                                               \----------+----------+----------+----------+----------/
+   #+END_SRC
+
+   #+ATTR_LATEX: :width 1.0\textwidth 
    #+CAPTION: SuperScalar Architecture   
    #+LABEL: fig:SuperScalarArchitecture
-      [[file:figures/superscaler.png]]
+   #+RESULTS:
+   [[file:figures/RISCPipeline.png]]
    
+  
    Superscalar architectures are all uniprocessors that can execute two or more
    scalar operations in parallel, this encompasses a wide variety of
    architectures, but common to all these architectures are the existense of
