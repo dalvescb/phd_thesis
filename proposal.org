@@ -299,7 +299,7 @@ compilation.
    #+END_SRC
 
    #+ATTR_LATEX: :width 1.0\textwidth 
-   #+CAPTION: Simple RISC Pipelined Architecture
+   #+CAPTION: Simple Pipelined Architecture
    #+LABEL: fig:PipelinedArchitecture
    #+RESULTS:
    [[file:figures/RISCPipeline.png]]
@@ -362,13 +362,15 @@ compilation.
    dependent instructions too far apart doing this you risk running out of
    available registers (you increase register pressure). 
    
-*** TODO COMMENT update superscalar architectures from beamer
 ** Pipeline Stalls
    Both of the previous sections figures [[fig:PipelinedArchitecture]] and
    [[fig:SuperScalarArchitecture]] show an ideal schedule with *NO* stalls. A stall
-   occurs when, for whatever reason, full throughput cannot be achieved and a
-   NOOP (No-Operation) instruction must be inserted. This is also known as
-   inserting a bubble in the pipeline. 
+   occurs when, because of various architecture *hazards* that can arise, full throughput
+   cannot be achieved and a NOOP (No-Operation) instruction must be inserted.
+   This is also known as inserting a bubble in the pipeline.
+   Figure \ref{fig:PipelineStall} gives an example of inserting a NOOP (bubble),
+   because of a Read After Write (RAW) hazard.
+
 #+LaTex: \begin{figure}[!h]
   #+BEGIN_center
   #+ATTR_LATEX: :width 0.4\textwidth :center
@@ -377,20 +379,25 @@ compilation.
     [[file:figures/bubbles2.png]]
   #+END_center 
 #+LaTex: \label{fig:PipelineStall}
-#+LaTex: \caption{Example of a bubble (NOP) being inserted to fix an unfullfilled data dependency}
+#+LaTex: \caption{Example of a bubble (NOOP) being inserted to fix an unfullfilled data dependency}
 #+LaTex: \end{figure}
-   Figure \ref{fig:PipelineStall} gives an
-   example of inserting a bubble.
-*** TODO COMMENT update pipeline stalls from beamer
+
 ** Hazards
-		- *Data Hazards*
-			- read after write *RAW*
-			- write after read *WAR*
-			- write after write *WAW*
-		- *Structural Hazards* occurs when an aspect of hardware is accessed at the same time
-		- *Control Hazards* caused by branching, next instruction unknown
-    Hardware encountering hazards causees stalls in the pipeline
-*** TODO COMMENT update hazards from beamer
+   Architecture hazards can be broken up broadly into three categories
+   \parencite{patterson2013computer}
+   - *Data Hazards* occur when a data dependency is broken, there are three
+     situations in which this can occur: read after write (RAW), write after
+     read (WAR) and write after write (WAW)  
+\begin{align*}
+\textbf{RAW}                    & \qquad & \textbf{WAR}                   & \qquad & \textbf{WAW} \\
+\textbf{R2} \leftarrow R5 + R3  & \qquad & R4 \leftarrow R1 + \textbf{R5} & \qquad & \textbf{R2} \leftarrow R4 + R7 \\
+R4 \leftarrow \textbf{R2} + R3  & \qquad & \textbf{R5} \leftarrow R1 + R2 & \qquad & \textbf{R2} \leftarrow R1 + R3
+\end{align*}
+     - *Structural Hazards* occurs when an aspect of hardware is accessed at the
+       same time (such as a functional unit)
+     - *Control Hazards* also known as Branch Hazards, occurs when a bad branch
+       prediction is made causing instructions that were brought into the
+       pipeline needing to be discarded 
    
 ** Register Allocation
    \parencite{Chaitin:1982:RAS:872726.806984} TODO REFERENCE REGISTER ALLOC
@@ -539,10 +546,13 @@ D <- ...     /--------\         /--------\     R1 <- ...
    #+RESULTS:
    [[file:figures/OoODiagram.png]]
 
-  Performed genarally in hardware through some variation of *Tomasulo's Algorithm* \parencite{tomasulo1967efficient}
+  Out of Order execution requires dynamic scheduling performed via algorithms
+  such as *Tomasulo's Algorithm* \parencite{tomasulo1967efficient} or
+  Score-boarding
 
 *** TODO COMMENT explain reservation stations
-*** TODO COMMENT update out-of-order execution from beamer
+*** TODO COMMENT explain score boarding [[https://en.wikipedia.org/wiki/Scoreboarding]]
+*** TODO COMMENT explain Tomasulo's algorithm
     Data flow execution can be controlled in hardware via algorithms such as Tomasulo's algorithm or variations.
      [[https://en.wikipedia.org/wiki/Tomasulo_algorithm#cite_note-intel-5]]
     Necessary Implementation concepts for tomasulo's algorithm
@@ -707,6 +717,15 @@ between heuristics by scaling
 * Org-Bibtex                                                         :ignore:
 ** COMMENT PUT BIBTEX ENTRIES HERE IN SUBSECTION ENDED WITH IGNORE USING ORG-BIBTEX-YANK COMMAND :ignore:
 ** COMMENT EXPORT TO References.bib USING ORG-BIBTEX COMMAND :ignore:
+** Computer organization and design MIPS edition: the hardware/software interface :ignore:
+   :PROPERTIES:
+   :TITLE:    Computer organization and design MIPS edition: the hardware/software interface
+   :BTYPE:    book
+   :CUSTOM_ID: patterson2013computer
+   :AUTHOR:   Patterson, David A and Hennessy, John L
+   :YEAR:     2013
+   :PUBLISHER: Newnes
+   :END:
 ** Meta optimization: improving compiler heuristics with machine learning :ignore:
    :PROPERTIES:
    :TITLE:    Meta optimization: improving compiler heuristics with machine learning
