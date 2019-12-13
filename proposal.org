@@ -25,6 +25,7 @@
 #+LATEX_HEADER: \BeforeBeginEnvironment{minted}{\begin{tcolorbox}[title=\hfill \mytitle]}%
 #+LATEX_HEADER: \AfterEndEnvironment{minted}{\end{tcolorbox}}%
 #+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \usepackage{algorithmic}
 
 # Before a code block, write {{{code(title-of-block)}}}
 #
@@ -399,19 +400,25 @@ R4 \leftarrow \textbf{R2} + R3  & \qquad & \textbf{R5} \leftarrow R1 + R2 & \qqu
        prediction is made causing instructions that were brought into the
        pipeline needing to be discarded 
    
-** Register Allocation
-   \parencite{Chaitin:1982:RAS:872726.806984} TODO REFERENCE REGISTER ALLOC
-   - Given a schedule, assign registers keeping in mind
-    - limited number of registers
-    - can't rewrite a register until consumed by dependent instructions
-   - Known NP-Complete
-     - Practically solved using non-optimal *Graph Coloring* algorithms
-     - done seperately from instruction scheduling (before or afterwords)
-*** TODO COMMENT update register allocation from beamer
-** Graph Coloring
+** Register Allocation via Graph Coloring
+   The theory of graph coloring deals with algorithms that seek to partition a
+   set of objects into classes, given simple rules associating objects that may
+   not belong to the same class \parencite{jensen2011graph}. These algorithms
+   operate on graphs, were generally the objects are vertices and edges denote
+   connected vertices cannot be in the same class. Classes are represented via
+   colors, and a *k-coloring* denotes a partitioning into k distinct classes.
+
+   Architectures provide a finite set of registers that must be "allocated"
+   after or during instruction scheduling. Finding an allocation for a given
+   schedule (assuming one exists) has been shown to be equivalent to the Graph
+   Coloring problem and hence NP-Complete \parencite{chaitin1981register}. Given
+   a code schedule in Single Static Assignment (SSA) form, a unique interference
+   graph can be constructed that denotes data dependency. On an architecture
+   with *k* registers, a register allocation is found via a *k-coloring* of
+   vertices of this interference graph. See Figure [[fig:GraphColor]] as an example.
    
 #+BEGIN_SRC ditaa :file figures/GraphColor.png
- Code Seq.       Interference Graph            Allocation
+ Code Schedule  Interference Graph            Allocation
 
 A <- ...     /--------\         /--------\     R1 <- ...
 B <- ...     | cGRE A |         | cGRE D |     R2 <- ...
@@ -428,9 +435,6 @@ D <- ...     /--------\         /--------\     R1 <- ...
 #+NAME: fig:GraphColor 
 #+RESULTS:
 [[file:figures/GraphColor.png]]
-
-   Find a *k-Colouring* for the dependency graph, where *$k = \#Registers$*
-*** TODO COMMENT update graph coloring from beamer
 
 ** Spilling
    - What if a *k-Coloring* can't be found? Must *Spill* memory
@@ -717,6 +721,16 @@ between heuristics by scaling
 * Org-Bibtex                                                         :ignore:
 ** COMMENT PUT BIBTEX ENTRIES HERE IN SUBSECTION ENDED WITH IGNORE USING ORG-BIBTEX-YANK COMMAND :ignore:
 ** COMMENT EXPORT TO References.bib USING ORG-BIBTEX COMMAND :ignore:
+** Graph coloring problems :ignore:
+   :PROPERTIES:
+   :TITLE:    Graph coloring problems
+   :BTYPE:    book
+   :CUSTOM_ID: jensen2011graph
+   :AUTHOR:   Jensen, Tommy R and Toft, Bjarne
+   :VOLUME:   39
+   :YEAR:     2011
+   :PUBLISHER: John Wiley \& Sons
+   :END:
 ** Computer organization and design MIPS edition: the hardware/software interface :ignore:
    :PROPERTIES:
    :TITLE:    Computer organization and design MIPS edition: the hardware/software interface
@@ -966,6 +980,19 @@ between heuristics by scaling
    :PUBLISHER: Springer
    :END:
 *** COMMENT [[http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.799.7976&rep=rep1&type=pdf][Instruction-level parallel processing]]
+** Register allocation via coloring                                  :ignore:
+   :PROPERTIES:
+   :TITLE:    Register allocation via coloring
+   :BTYPE:    article
+   :CUSTOM_ID: chaitin1981register
+   :AUTHOR:   Chaitin, Gregory J and Auslander, Marc A and Chandra, Ashok K and Cocke, John and Hopkins, Martin E and Markstein, Peter W
+   :JOURNAL:  Computer languages
+   :VOLUME:   6
+   :NUMBER:   1
+   :PAGES:    47--57
+   :YEAR:     1981
+   :PUBLISHER: Elsevier
+   :END:
 ** Register Allocation \& Spilling via Graph Coloring :ignore:
    :PROPERTIES:
    :TITLE:    Register Allocation \& Spilling via Graph Coloring
