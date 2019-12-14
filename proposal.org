@@ -404,9 +404,11 @@ R4 \leftarrow \textbf{R2} + R3  & \qquad & \textbf{R5} \leftarrow R1 + R2 & \qqu
    The theory of graph coloring deals with algorithms that seek to partition a
    set of objects into classes, given simple rules associating objects that may
    not belong to the same class \parencite{jensen2011graph}. These algorithms
-   operate on graphs, were generally the objects are vertices and edges denote
-   connected vertices cannot be in the same class. Classes are represented via
-   colors, and a *k-coloring* denotes a partitioning into k distinct classes.
+   operate on graphs, where generally the objects are vertices and the edges
+   denote connected vertices that cannot be in the same class. Classes are
+   represented via colors, where a *k-coloring* denotes a partitioning into k
+   distinct classes. The problem of finding a *k-coloring* is a well known
+   NP-Complete problem \parencite{jensen2011graph}.
 
    Architectures provide a finite set of registers that must be "allocated"
    after or during instruction scheduling. Finding an allocation for a given
@@ -437,6 +439,12 @@ D <- ...     /--------\         /--------\     R1 <- ...
 [[file:figures/GraphColor.png]]
 
 ** Spilling
+  Finding the existence of a *k-coloring* for a given graph is itself an
+  NP-Complete problem \parencite{jensen2011graph}, and the absence of an existing coloring presents a
+  difficult problem. When a schedule cannot be register allocated, variables
+  must be /spilled/ to memory (spilling is the action of storing variables into
+  memory rather than registers \parencite{bouchez2007complexity}).
+  
    - What if a *k-Coloring* can't be found? Must *Spill* memory
 	 - Simply insert new *Load / Store* instructions as needed
    - Potentially *creates new stalls* in the pipeline, need to re-perform
@@ -721,6 +729,17 @@ between heuristics by scaling
 * Org-Bibtex                                                         :ignore:
 ** COMMENT PUT BIBTEX ENTRIES HERE IN SUBSECTION ENDED WITH IGNORE USING ORG-BIBTEX-YANK COMMAND :ignore:
 ** COMMENT EXPORT TO References.bib USING ORG-BIBTEX COMMAND :ignore:
+** On the complexity of register coalescing :ignore:
+   :PROPERTIES:
+   :TITLE:    On the complexity of register coalescing
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: bouchez2007complexity
+   :AUTHOR:   Bouchez, Florent and Darte, Alain and Rastello, Fabrice
+   :BOOKTITLE: Proceedings of the International Symposium on Code Generation and Optimization
+   :PAGES:    102--114
+   :YEAR:     2007
+   :ORGANIZATION: IEEE Computer Society
+   :END:
 ** Graph coloring problems :ignore:
    :PROPERTIES:
    :TITLE:    Graph coloring problems
