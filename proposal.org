@@ -1,4 +1,4 @@
-#+TITLE: Thesis Proposal Title
+#+TITLE: Analysis of Compiler Heuristics via Hyper-Heuristics 
 #+DESCRIPTION: Thesis proposal for Curtis D'Alves; McMaster University 2019.
 #+AUTHOR: [[mailto:dalvescb@mcmaster.ca][Curtis D'Alves]]
 #+EMAIL: curtis.dalves@gmail.com
@@ -119,11 +119,11 @@ Source: Mark Armstrong --github ~armkeh~
 
 \vspace{5em}
 
-{\Huge Thesis Proposal Title}
+{\Huge Analysis of Compiler Heuristics via Hyper-Heuristics}
 
 \vspace{1em}
 
-{\Large Possibly some more bullshit here}
+{\Large A Thesis Proposal}
 
 \vspace{2em}
 
@@ -454,19 +454,29 @@ D <- ...     /--------\         /--------\     R1 <- ...
  
   Graph coloring heuristics can be bolstered to include the addition of spilling
   when they fail to find a proper *k-coloring*
-  \parencite{Chaitin:1982:RAS:872726.806984}. The choice of which node to spill
-  is a cost/benefit estimation. Each edge in the interference graph can be
-  assigned an estimated live range (how long the edge is in the resulting
-  schedule). Eliminating longer live ranges alleviates more register pressure
-  and creates a more flexible scheduling space.
+  \parencite{Chaitin:1982:RAS:872726.806984},\parencite{briggs1989coloring}. The
+  choice of which node to spill is a cost/benefit estimation. Each edge in the
+  interference graph can be assigned an estimated live range (sections of code
+  which a value is defined and used but not re-defined). Eliminating longer live
+  ranges alleviates more register pressure and creates a more flexible
+  scheduling space.
 
 ** Combining Register Allocation and Instruction Scheduling
-   - Register Allocation is generally done after instruction scheduling
-   - This can *make spilling necessary*
-   - Register allocation can be performed before instruction schedule, but will
-     *constrain the space of valid schedules*
-   - Attempts to *combine register allocation and scheduling* are
-     rare and yield an *NP-hard* problem \parencite{motwani1995combining} \parencite{Pinter:1993:RAI:173262.155114}
+   Register allocation can be performed before, after, or combined with
+   instruction scheduling, but is generally performed after
+   \parencite{brasier1995craig}. Performing allocation before scheduling
+   involves allocating on top of a "default" schedule and then manipulating the
+   schedule while maintaining a fixed allocation. Having a fixed allocation
+   creates new dependencies (known as /anti-dependencies/) that limit the space
+   of valid schedules. Conversely, register allocation done after instruction
+   scheduling is uninhibited by these anti-dependencies and may find more
+   efficient schedules, but they may require post-hoc intervention via spilling.
+
+   Attempts to combine register allocation and scheduling are rare in
+   conventional compilers, even a simple instance of the problem (single
+   register,no latency's, single functional unit) is /NP-hard/
+   \parencite{motwani1995combining} \parencite{Pinter:1993:RAI:173262.155114}. 
+   
 *** TODO COMMENT update combining register alloc from beamer
 ** Swing Modulo Scheduling: Staging
 
@@ -637,7 +647,7 @@ D <- ...     /--------\         /--------\     R1 <- ...
 *** TODO COMMENT write info on Integer Programming
 ** Stochastic Search
    Work by stanford \parencite{Schkufza:2016:SPO:2886013.2863701}
-  - Suitable for *Short Basic Block* assembly code sequences
+  - Suitable for *Short Basic Block* assembly code sequences (no modulo scheduling)
   - Utilizes a multiple pass *Stochastic Algorithm*
   - Encodes constraints as a *Cost Function* and uses a
     *Markov Chain Monte Carlo Sampler* to explore space of all
@@ -1020,6 +1030,29 @@ between heuristics by scaling
    :PAGES:    47--57
    :YEAR:     1981
    :PUBLISHER: Elsevier
+   :END:
+** CRAIG: a practical framework for combining instruction scheduling and register assignment. :ignore:
+   :PROPERTIES:
+   :TITLE:    CRAIG: a practical framework for combining instruction scheduling and register assignment.
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: brasier1995craig
+   :AUTHOR:   Brasier, Thomas S and Sweany, Philip H and Beaty, Steven J and Carr, Steve
+   :BOOKTITLE: PACT
+   :PAGES:    11--18
+   :YEAR:     1995
+   :ORGANIZATION: Citeseer
+   :END:
+** Coloring heuristics for register allocation :ignore:
+   :PROPERTIES:
+   :TITLE:    Coloring heuristics for register allocation
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: briggs1989coloring
+   :AUTHOR:   Briggs, Preston and Cooper, Keith D and Kennedy, Ken and Torczon, Linda
+   :BOOKTITLE: PLDI
+   :VOLUME:   89
+   :PAGES:    275--284
+   :YEAR:     1989
+   :ORGANIZATION: Citeseer
    :END:
 ** Register Allocation \& Spilling via Graph Coloring :ignore:
    :PROPERTIES:
