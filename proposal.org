@@ -1,4 +1,4 @@
-#+TITLE: Analysis of Compiler Heuristics via Hyper-Heuristics 
+#+TITLE: Analysis of Compiler Heuristics via Stochastic Scheduling and Hyper-Heuristics 
 #+DESCRIPTION: Thesis proposal for Curtis D'Alves; McMaster University 2019.
 #+AUTHOR: [[mailto:dalvescb@mcmaster.ca][Curtis D'Alves]]
 #+EMAIL: curtis.dalves@gmail.com
@@ -119,7 +119,7 @@ Source: Mark Armstrong --github ~armkeh~
 
 \vspace{5em}
 
-{\Huge Analysis of Compiler Heuristics via Hyper-Heuristics}
+{\Huge Analysis of Compiler Heuristics via Stochastic Scheduling and Hyper-Heuristics}
 
 \vspace{1em}
 
@@ -399,7 +399,7 @@ R4 \leftarrow \textbf{R2} + R3  & \qquad & \textbf{R5} \leftarrow R1 + R2 & \qqu
      - *Control Hazards* also known as Branch Hazards, occurs when a bad branch
        prediction is made causing instructions that were brought into the
        pipeline needing to be discarded 
-   
+*** COMMENT see hazard section here [[http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.69.7453&rep=rep1&type=pdf]]
 ** Register Allocation via Graph Coloring
    The theory of graph coloring deals with algorithms that seek to partition a
    set of objects into classes, given simple rules associating objects that may
@@ -475,11 +475,16 @@ D <- ...     /--------\         /--------\     R1 <- ...
    Attempts to combine register allocation and scheduling are rare in
    conventional compilers, even a simple instance of the problem (single
    register,no latency's, single functional unit) is /NP-hard/
-   \parencite{motwani1995combining} \parencite{Pinter:1993:RAI:173262.155114}. 
+   \parencite{motwani1995combining} \parencite{Pinter:1993:RAI:173262.155114}.
+   Heuristics developed for combining register allocation and scheduling
+   generally involve estimating a tradeoff between controlling register pressure
+   and instruction parallelism considerations \parencite{motwani1995combining}.
    
-*** TODO COMMENT update combining register alloc from beamer
-** Swing Modulo Scheduling: Staging
-
+*** COMMENT more on register allocation here [[http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.69.7453&rep=rep1&type=pdf]]
+** Modulo Scheduling: Staging
+   Module scheduling focuses on exploiting instruction level parallelism within
+   loops by interleaving successive iterations of the loop and executing them in
+   parallel.
 #+BEGIN_SRC ditaa :file figures/SwingModuloStaging.png
                                      
                                      /---------\
@@ -505,12 +510,13 @@ D <- ...     /--------\         /--------\     R1 <- ...
      \---------/         \-----------/
 #+END_SRC
 
-#+CAPTION:Example 3-Staged for Swing Modulo Scheduling
+#+CAPTION:Example 3-Staged for Modulo Scheduling
 #+NAME: fig:SwingStaging 
 #+ATTR_LATEX: :width 0.6\textwidth
 #+RESULTS:
 [[file:figures/SwingModuloStaging.png]]
 
+ 
    When performing *modulo scheduling*, a basic block of a loop can be broken
    into stages and the loop can be *unrolled* to interleave stages between
    iterations. The task of generating an optimal, resource-constrained schedule
@@ -748,6 +754,16 @@ between heuristics by scaling
 * Org-Bibtex                                                         :ignore:
 ** COMMENT PUT BIBTEX ENTRIES HERE IN SUBSECTION ENDED WITH IGNORE USING ORG-BIBTEX-YANK COMMAND :ignore:
 ** COMMENT EXPORT TO References.bib USING ORG-BIBTEX COMMAND :ignore:
+** Swing modulo scheduling for gcc :ignore:
+   :PROPERTIES:
+   :TITLE:    Swing modulo scheduling for gcc
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: hagog2004swing
+   :AUTHOR:   Hagog, Mostafa and Zaks, Ayal
+   :BOOKTITLE: Proceedings of the 2004 GCC Developers’ Summit
+   :PAGES:    55--64
+   :YEAR:     2004
+   :END:
 ** On the complexity of register coalescing :ignore:
    :PROPERTIES:
    :TITLE:    On the complexity of register coalescing
