@@ -440,18 +440,25 @@ D <- ...     /--------\         /--------\     R1 <- ...
 
 ** Spilling
   Finding the existence of a *k-coloring* for a given graph is itself an
-  NP-Complete problem \parencite{jensen2011graph}, and the absence of an existing coloring presents a
-  difficult problem. When a schedule cannot be register allocated, variables
-  must be /spilled/ to memory (spilling is the action of storing variables into
-  memory rather than registers \parencite{bouchez2007complexity}).
-  
-   - What if a *k-Coloring* can't be found? Must *Spill* memory
-	 - Simply insert new *Load / Store* instructions as needed
-   - Potentially *creates new stalls* in the pipeline, need to re-perform
-     scheduling
-   - May use up dispatch slots
-   - An *Ideal Schedule* has no spilling
-*** TODO COMMENT update spilling from beamer
+  NP-Complete problem \parencite{jensen2011graph}, and the absence of an
+  existing coloring presents a difficult problem. When a schedule cannot be
+  register allocated, variables must be /spilled/ to memory (spilling is the
+  action of storing variables into memory rather than registers
+  \parencite{bouchez2007complexity}). Spilling requires the addition of new
+  instructions to store/load from memory, which changes not only the
+  interference graph (allowing different register allocations) but the
+  dependency graph as well (allowing different schedules). Therefore adding spills
+  alters the space of valid schedules, and merits consideration when searching
+  for a "truly optimal" schedule (although addition of spills unnecessarily is
+  generally detrimental).
+ 
+  Graph coloring heuristics can be bolstered to include the addition of spilling
+  when they fail to find a proper *k-coloring*
+  \parencite{Chaitin:1982:RAS:872726.806984}. The choice of which node to spill
+  is a cost/benefit estimation. Each edge in the interference graph can be
+  assigned an estimated live range (how long the edge is in the resulting
+  schedule). Eliminating longer live ranges alleviates more register pressure
+  and creates a more flexible scheduling space.
 
 ** Combining Register Allocation and Instruction Scheduling
    - Register Allocation is generally done after instruction scheduling
