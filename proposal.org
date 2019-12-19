@@ -1,4 +1,4 @@
-#+TITLE: Analysis of Compiler Heuristics for ILP via Stochastic Scheduling and Hyper-Heuristics 
+#+TITLE: Analysis of Compiler Heuristics via Stochastic Scheduling and Hyper-Heuristics 
 #+DESCRIPTION: Thesis proposal for Curtis D'Alves; McMaster University 2019.
 #+AUTHOR: [[mailto:dalvescb@mcmaster.ca][Curtis D'Alves]]
 #+EMAIL: curtis.dalves@gmail.com
@@ -119,7 +119,7 @@ Source: Mark Armstrong --github ~armkeh~
 
 \vspace{5em}
 
-{\Huge Analysis of Compiler Heuristics for ILP via Stochastic Scheduling and Hyper-Heuristics}
+{\Huge Analysis of Compiler Heuristics via Stochastic Scheduling and Hyper-Heuristics}
 
 \vspace{1em}
 
@@ -784,43 +784,72 @@ est(n,p) = earliest start time of n on p
     this to assigning a priority via a polynomial time heuristic. As mentioned
     before, combinations of heuristics can be applied through successive
     iterations, but each iteration could undo previous iterations work.
-    
+
 ** Linear/Constraint Programming
-     \parencite{malik2008optimal} Found provably optimal schedules for basic blocks using constraint
-     programming, with the following types of constraints
+   As an inherently discrete problem, a number of works have sought to formulate
+   instruction scheduling as an Integer Linear Programming (ILP) problem
+   (\parencite{wilken2000optimal}, \parencite{chang1997using},
+   \parencite{kastner2001ilp}, \parencite{nagarakatte2007register},
+   \parencite{kastner1999code}). Solving an ILP problem is an NP-Complete, so
+   formulating scheduling as an ILP only really serves to generalize
+   solutions to heuristics/approximation algorithms used by ILP solvers.
+    
+   Another approach which has been far less investigated would be to "relax" the
+   problem to a continuous Linear Program with constraints. Notable efforts into
+   this approach are the works of McInnes/Beek in
+   \parencite{malik2008optimal},\parencite{van2001fast}. The constraint LP
+   problem in \parencite{malik2008optimal} found provably optimal schedules for
+   basic blocks , with the following types of constraints:
    - *Latency Constraints*, i.e
      - Given a labeled dependency DAG $G = (N,E)$ 
        - $\forall (i,j) \in E \cdot j \geq i + l(i,j)$ 
    - *Resource Constraints* that ensured functional units were not exceeded
-   - *Distance Contstraints*, i.e
+   - *Distance Constraints*, i.e
      - Given a labeled dependency *DAG*  $G = (N,E)$ 
         - $\forall (i,j) \in E \cdot j \geq i + d(i,j)$
 
-   The hard constraints on latency would not account for *Register Remapping* in
-   *Out Of Order Execution* that would be able to find more optimal schedules
-   despite the fact that latencies in normal execution would create *pipeline stalls*
-   {{{code({\sc Assembly Code Example \hspace{12em} \color{grey}{.} })}}}
+   The approach has some limitations on sophisticated enough architectures. The
+   hard constraints on latency would not account for *Register Remapping* in
+   *Out Of Order Execution* architectures that would be able to find more
+   optimal schedules despite the fact that latencies in normal execution would
+   create *pipeline stalls*.
+   
+{{{code({\sc Assembly Code Example Requiring Register Renaming for Optimal Scheduling \hspace{12em} \color{grey}{.} })}}}
    #+BEGIN_SRC haskell
    fma r3,r3,r4
    fma r2,r2,r4
-   fma r1,r1,r4
-   fma r0,r0,r4
+   fma r4,r0,r3
+   fma r0,r1,r2
    #+END_SRC
    On a system with only 5 registers and an instruction fma of large enough
-   latency, the scheduler would push these instructions apart. However a machine
+   latency, the scheduler would need to push these instructions apart to avoid
+   breaking the anti-dependency on register r4. However a machine
    could use register remapping to execute these instructions efficiently Out-of-Order
-   making that constraint unnecessary.
-*** TODO COMMENT fix linear/constraint programming from beamer
-** Integer Programming
-   reference Optimal integer programming \parencite{wilken2000optimal}
-*** TODO COMMENT write info on Integer Programming
+   making that constraint unnecessary. 
+  
+   Despite limitations introduced by using hard constraints, this work is
+   notable as it illustrates how a relaxed LP problem can be used to model the
+   space of schedules. Even with the limitations on OoO architectures cutting of
+   the optimal schedule, it's reasonable to assume the LP would find
+   near-optimal schedules. And by converting hard constraints to soft
+   constraints (penalties) its simple to assert this space would contain the
+   optimal solution.
+
 ** Stochastic Search
-   Work by stanford \parencite{Schkufza:2016:SPO:2886013.2863701}
+   There is a notable work to explore the space of schedules through a
+   stochastic algorithm via Schkufza, Sharma, Aiken at Stanford
+   \parencite{Schkufza:2016:SPO:2886013.2863701}. The efforts are culminated in
+   a piece of open source software known as STOKE that serves as a "stochastic
+   optimizer and program synthesizer" for x86-64 instruction sets. Stoke is a
+   super-optimizer with the following notable qualities:
+
   - Suitable for *Short Basic Block* assembly code sequences (no modulo scheduling)
-  - Utilizes a multiple pass *Stochastic Algorithm*
-  - Encodes constraints as a *Cost Function* and uses a
-    *Markov Chain Monte Carlo Sampler* to explore space of all
-    possible schedules
+  - Utilizes a multi-pass algorithm, applying possibly overlapping program
+    transformations each pass
+  - Encodes constraints as a *Cost Function* and uses a *Model Checker* to
+    ensure valid schedules (undo-ing transformations otherwise)
+  - Uses *Markov Chain Monte Carlo Sampler* to add a stochastic element to
+    program transformation
 
   Each pass of the optimization minimizes the cost function
 
@@ -835,23 +864,68 @@ est(n,p) = earliest start time of n on p
   | $\color{lightgreen}{\boldsymbol{w_e}}$ | weight for the equivalence term                                   |
   | $\color{lightgreen}{\boldsymbol{w_p}}$ | weight for the performance term                                   |
 
-  Limitations with the approach as done by \parencite{Schkufza:2016:SPO:2886013.2863701} include
+  Limitations with the approach (as outlined in \parencite{Schkufza:2016:SPO:2886013.2863701}) include
    - Only optimizes basic blocks (no loops)
    - Extremely innefficent (only practical for very short scheduling)
-   - Performed in multiple passes with model checking
    - Cost function doesn't model the space of valid checking (hence model
      checking is required per each rewrite)
-*** TODO COMMENT update stochastic search from beamer
-** Meta-Optimization   
-   Previous research into meta-optimization of compilers has been attempted \parencite{stephenson2003meta}.
+    
+  This approach highlights the ability to use stochastic optimization to find
+  near-optimal schedules and the use of MCMC to explore the space of schedules.
+  Although the cost function doesn't model the space of valid schedules,
+  using it to generate schedules along with a may still prove to be the most
+  practical way to explore a variety of schedules. 
+  
+** Meta-Optimization / Hyper-Heuristics
+   Meta-optimization deals with the use of one optimization method to tune
+   another one. 
    Hyper-heuristics are an off-spring of meta-optimization, that search within the search space of just heuristics vs the entire problem solution space.
-   TODO reference \parencite{burke2013hyper}
+   Hyper-heuristics are a relatively new concept (first used in 2000 to describe
+   heuristics to choose heuristics) the definition has more recently been
+   extended to refer to a search method or learning mechanism for selecting or
+   generating heuristics to solve computational search problems
+   \parencite{burke2013hyper}. When speaking of hyper-heuristics, two main
+   categories should be considered: heuristic /selection/ and heuristic
+   /generation/. 
+
+   Previous research into meta-optimization of compilers has been attempted,
+   using machine learning to improve compiler heuristics
+   \parencite{stephenson2003meta}. The use of genetic programming has rarely
+   been used to solve production scheduling instances directly, because of the
+   difficulty of encoding solutions. However it has been found highly suitable
+   for encoding scheduling heuristics \parencite{jakobovic2007genetic}.
+
+   In the work of \parencite{jakobovic2007genetic}, genetic programming is used
+   to evolve dispatching rules, which are functions that assign a score to a job
+   based on the state of the problem. When a machine becomes idle, the
+   dispatching rule function is evaluated once for each job in the machine's
+   queue, and each result is assigned to the job as its score. The job in the
+   queue with the highest score is the next job to be assigned to the machine.
+   This approach shows genetic programming combining and rearranging heuristic
+   components to create heuristics superior to those which have been created by
+   humans (heuristic generation).
+
+   Although more works have investigated usage of heuristic generation for
+   scheduling (particularly through genetic programming
+   \parencite{beaty1991genetic},\parencite{kri2004genetic},\parencite{stephenson2003genetic},\parencite{wang2005instruction})
+   no works have been found (at the time of writing for this proposal) on
+   using heuristic selection / generation to analysis the effectiveness of
+   existing heuristics on architectures.
+
 *** TODO COMMENT read and summerize using Genetic Algorithms [[https://pdfs.semanticscholar.org/530b/e5eb7f81d8083cd0e4b47e38271c0529fd0f.pdf]]
 *** TODO COMMENT read and summerize learning heuristics for basic block scheduling [[https://link.springer.com/article/10.1007/s10732-007-9051-1]]   
 *** TODO COMMENT read and summerize Hyper-Heuristics paper [[https://orsociety.tandfonline.com/doi/full/10.1057/jors.2013.71?casa_token=fOf2wR5Su64AAAAA%3A69plSPDMUXUurTufXWal6lCO6_73-XTubToX-9HY09raeRuaCwbO2SIre-CKBCBYHjsLFWBM4os#.XfFyqXWYUUG]]
 *** TODO COMMENT read and sumemrize ML for iterative optimizaiton slides [[https://www.eecis.udel.edu/~cavazos/cgo-2006-talk.pdf]]
-* Proposed Approaches
-** TODO COMMENT write intro to proposed approaches
+* Proposed Approaches To Stochastic Scheduling and Heuristic Analysis via Hyper-Heuristics
+  In this section I will introduce a Stochastic Scheduling Algorithm that
+  utilizes a continuous optimization model with stochastic-ally generated
+  parameters, and propose it's use as a training set generator for ML driven
+  heuristics selection and possibly generation. The full goal of this approach would
+  be to not only find a means to evaluate the effectiveness of scheduling heuristics on a
+  given architecture by observing learned heuristic selection, but to also be
+  able to evaluate the limitations of an architecture by analyzing the space of
+  valid schedules via the continuous model used for optimization.
+
 ** Optimization Model for Modulo Scheduling
 \begin{align*}
     \color{lightblue}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
@@ -860,7 +934,7 @@ est(n,p) = earliest start time of n on p
     & t_i :& \text{dispatch time} \\
     & b_i :& \text{completion time} \\
     & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
-    & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
+    & \textrm{II} :& \text{iteration interval} = \frac{\# instructions}{dispatches/cycle} \\
 \end{align*}
 
 \begin{align}
@@ -870,44 +944,112 @@ est(n,p) = earliest start time of n on p
     \color{lightblue}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
 \end{align}
 
-*Key Idea:* Encode choice heuristics as penalties, adjust preference
-between heuristics by scaling
-*** TODO COMMENT update optimization model from beamer
+The above model is a continuous optimization problem for scheduling, similar to
+the work detailed in Linear/Constrained Programming by
+\parencite{malik2008optimal}. The model optimizes over a set of objective
+variables: $t_i$,$b_i$,$f_i$ for each instruction $i$ to be scheduled. Each
+variable $t_i$,$b_i$ represents the dispatch and completion times of the
+$i^{th}$ instruction respectively. As we wish to model an Out-of-Order
+execution architecture, completion times are not necessarily fixed to dispatch
+times. The third variable, $f_i$, which is constrained to be between 0 and 1, is
+the probability the instruction $i$ should spill. The constant variable $II$ is
+the pre-computed Initiation Interval
+
+Unlike the work of \parencite{malik2008optimal}, the proposed model makes little
+use of constraints. In fact the only constraints used are to enforce the
+resulting schedule is a valid modulo schedule. The notation $i \rightarrow j$
+used in the Hard Constraints equations above denotes instruction $j$
+depends on instruction $i$. The first hard constraint enforces any 
+instruction must be dispatched only after it's dependencies. The second
+constraint sets a limit on the overall execution time that instructions must
+fall within. And the third constraint enforces an instruction must complete
+within the same interval it was dispatched. 
+
+Without any *Penalties*, the above objective model would squash all dispatch and
+completion times down, moving dependent instructions apart only by a given
+$\epsilon$ (a small constant chosen for the purpose of creating any arbitrary
+/distance/) and assigning 0 to all $f_i$. A *Key Idea* to this work: encode
+choice heuristics as penalties, and adjust preference between heuristics by
+scaling. Heuristics, such as the ones detailed for use in List Scheduling, can
+all be encoded as Penalty Functions (functions that return a large value to push
+down in the schedule, or a large negative value to push up). By picking a large
+or small number to scale a penalty function we can prioritize a schedule.
+
 ** IO Penalty
-   - *IDEA* penalize dispatch time of instructions based on the quantity and
-    latencies of it's dependencies
-   - *Note* This is a *penalty* not a *hard* constraint on latencies
-   \begin{align*}
+   Since we're not pushing instructions apart through latency constraints like
+   in \parencite{malik2008optimal}, we need a penalty to compensate. We propose
+   penalizing the dispatch time of instructions based o the quantity and
+   latencies of it's dependencies. *Note*: unlike a hard constraint on
+   latencies, this won't cut off valid schedules that could be optimal on OoO
+   architectures. 
+   \begin{align}
             \color{lightblue}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
             \color{lightblue}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
             \qquad & \qquad & \qquad \\
             \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
-    \end{align*}
-*** TODO COMMENT update IO penalty from beamer
+    \end{align}
+   
+    #+NAME: fig:sigmoid
+    #+CAPTION: Custom Indicator Function
+    [[file:figures/sigmoid.jpg]] 
+
+** Indicator Function
+   The function $\mathbb{IN}$ specified in the model and used in the IO Penalty
+   above is what's known as an Indicator Function, and is important for
+   implementing heuristics that rely on testing the proximity of two
+   instructions. Essentially, the function can be used to indicate (via a
+   non-zero value) whether two instructions are scheduled within a certain range
+   of each-other. For this purpose, we developed a custom indicator function (an
+   alteration of the famous sigmoid function often used in neural networks)
+   shown in Figure [[fig:sigmoid]].
+\begin{align}
+     S(x) = \frac{1}{(1 + e^{s(-0.5 + v)})(1 + e^{s(-0.5-v)})}
+\end{align} 
+
 ** Stochastic Scaling
-   - The scaling $\frac{1}{N_j}$ may be a good *guess*, but not necessarily effective in practice
-   - *IDEA* scale the *IO penalty* stochastically
-   \begin{align*}
-    \color{lightblue}{\text{Define a Clustering}} \qquad & \mathbb{C} = \text{Cluster}(\forall i \mid i \rightarrow j) \\
-    \color{lightblue}{\text{For each Cluster i}} \qquad & c_i \in \mathbb{RAND(R)} \\
-    \color{lightblue}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
-   \end{align*}
-*** TODO COMMENT update stochastic scaling from beamer
-** Topological Analysis
-      *Assertion* For each scaling $\color{lightgreen}{c_i \in \mathbb{RAND(R)}}$, there exists an $\color{lightgreen}{\epsilon \in
-     \mathbb(R)}$ such that $\color{lightgreen}{c_i + \epsilon}$
-   produces a distinct schedule from $\color{lightgreen}{c_i}$
-   - If the assertion fails, the clustering is useless (possible to avoid such
-     clusterings?)
-   - What does this topology look like?
-   - Do all valid schedules span this topology?
-   - Prove stochastic scaling spans the topology of all schedules
-   - Use PCA analysis to select useful pull parameters
-   - Develop clustering methods for assigning pull parameters
- TODO reference topological definition in \parencite{bredon2013topology}
-*** TODO COMMENT update topology analysis from beamer
-* Timeline
-** TODO COMMENT Timeline
+   The scaling $\frac{1}{N_j}$ may be a good guess, but not necessarily effective in practice
+   - *IDEA* scale the *IO penalty* stochastic-ally by a multiple of the II
+   \begin{align}
+    \color{lightblue}{\text{Define a Grouping}} \qquad & \mathbb{C} = \text{Group}(\forall i \mid i \rightarrow j) \\
+    \color{lightblue}{\text{For each Group i}} \qquad & c_i \in \mathbb{RAND(R)} \\
+    \color{lightblue}{\text{Stochastic Penalty}} \qquad & \sum_i c_i II \cdot \mathbb{IO}(i)
+   \end{align}
+   
+   As previously mentioned, various other heuristics can be encoded and also scaled
+   stochastic-ally, in basically the same manner as the IO penalty. The nature
+   of many heuristics can be encapsulated by simply choosing the same scaling
+   based on the type of instruction (i.e push all loads up or down). 
+ 
+** Opportunity for Hyper-Heuristic Development  
+  By representing the space of schedules in a continuous model (i.e the space of
+  $\mathbb{R}^n$) and encoding heuristics as penalties, we can evaluate the
+  merits of various heuristics in combination with each other. The continuous
+  nature of the model provides more degrees of freedom when evaluating
+  overlapping heuristics. By scaling these heuristics stochastic-ally, we
+  already have a method to analysis heuristic selection through analyzing which
+  scalings provide better performing schedules.
+
+  By generating a variety of schedules for different types of basic blocks using
+  the stochastic method we can also obtain a "training set" which can
+  subsequently be used with various supervised Machine Learning (ML) algorithms, most
+  notably regression. The use of neural nets, ensemble methods or genetic
+  algorithms may also be worth exploring.  
+
+   Principal Component Analysis is a dimension reduction tool that can be used
+   to reduce a large set of variables to a small set that still contains most of
+   the information in the large set. Principal component analysis can possibly
+   be performed over the scaling parameters in conjunction with the training set
+   results order to judge the influence of penalties on a given architecture.
+
+   
+  Clustering methods (unsupervised learning) can possibly be used for heuristic
+  generation, by finding new groupings to scale. Given a clustering with scaling
+  $c_i$ we can check the following: *Assertion* For each scaling
+  $\color{lightgreen}{c_i \in \mathbb{RAND(R)}}$, there exists an
+  $\color{lightgreen}{\epsilon \in \mathbb(R)}$ such that
+  $\color{lightgreen}{c_i + \epsilon}$ produces a distinct schedule from
+  $\color{lightgreen}{c_i}$. If the assertion fails, the clustering is useless
+  (possible to avoid such clustering?)
 
 * Bib                                                                :ignore:
 # LaTeX: \addcontentsline{toc}{section}{References}
@@ -917,6 +1059,121 @@ between heuristics by scaling
 * Org-Bibtex                                                         :ignore:
 ** COMMENT PUT BIBTEX ENTRIES HERE IN SUBSECTION ENDED WITH IGNORE USING ORG-BIBTEX-YANK COMMAND :ignore:
 ** COMMENT EXPORT TO References.bib USING ORG-BIBTEX COMMAND :ignore:
+** Instruction scheduling using MAX-MIN ant system optimization :ignore:
+   :PROPERTIES:
+   :TITLE:    Instruction scheduling using MAX-MIN ant system optimization
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: wang2005instruction
+   :AUTHOR:   Wang, Gang and Gong, Wenrui and Kastner, Ryan
+   :BOOKTITLE: Proceedings of the 15th ACM Great Lakes symposium on VLSI
+   :PAGES:    44--49
+   :YEAR:     2005
+   :ORGANIZATION: ACM
+   :END:
+** Genetic programming applied to compiler heuristic optimization :ignore:
+   :PROPERTIES:
+   :TITLE:    Genetic programming applied to compiler heuristic optimization
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: stephenson2003genetic
+   :AUTHOR:   Stephenson, Mark and O’Reilly, Una-May and Martin, Martin C and Amarasinghe, Saman
+   :BOOKTITLE: European conference on genetic programming
+   :PAGES:    238--253
+   :YEAR:     2003
+   :ORGANIZATION: Springer
+   :END:
+** Genetic instruction scheduling and register allocation :ignore:
+   :PROPERTIES:
+   :TITLE:    Genetic instruction scheduling and register allocation
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: kri2004genetic
+   :AUTHOR:   Kri, Fernanda and Feeley, Marc
+   :BOOKTITLE: XXIV International Conference of the Chilean Computer Science Society
+   :PAGES:    76--83
+   :YEAR:     2004
+   :ORGANIZATION: IEEE
+   :END:
+** Genetic algorithms and instruction scheduling :ignore:
+   :PROPERTIES:
+   :TITLE:    Genetic algorithms and instruction scheduling
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: beaty1991genetic
+   :AUTHOR:   Beaty, Steven J
+   :BOOKTITLE: MICRO
+   :VOLUME:   24
+   :PAGES:    206--211
+   :YEAR:     1991
+   :ORGANIZATION: Citeseer
+   :END:
+** Genetic programming heuristics for multiple machine scheduling :ignore:
+   :PROPERTIES:
+   :TITLE:    Genetic programming heuristics for multiple machine scheduling
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: jakobovic2007genetic
+   :AUTHOR:   Jakobovi{\'c}, Domagoj and Jelenkovi{\'c}, Leonardo and Budin, Leo
+   :BOOKTITLE: European Conference on Genetic Programming
+   :PAGES:    321--330
+   :YEAR:     2007
+   :ORGANIZATION: Springer
+   :END:
+** Fast optimal instruction scheduling for single-issue processors with arbitrary latencies :ignore:
+   :PROPERTIES:
+   :TITLE:    Fast optimal instruction scheduling for single-issue processors with arbitrary latencies
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: van2001fast
+   :AUTHOR:   Van Beek, Peter and Wilken, Kent
+   :BOOKTITLE: International conference on principles and practice of constraint programming
+   :PAGES:    625--639
+   :YEAR:     2001
+   :ORGANIZATION: Springer
+   :END:
+** Code optimization by integer linear programming :ignore:
+   :PROPERTIES:
+   :TITLE:    Code optimization by integer linear programming
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: kastner1999code
+   :AUTHOR:   K{\"a}stner, Daniel and Langenbach, Marc
+   :BOOKTITLE: International Conference on Compiler Construction
+   :PAGES:    122--136
+   :YEAR:     1999
+   :ORGANIZATION: Springer
+   :END:
+** Register allocation and optimal spill code scheduling in software pipelined loops using 0-1 integer linear programming formulation :ignore:
+   :PROPERTIES:
+   :TITLE:    Register allocation and optimal spill code scheduling in software pipelined loops using 0-1 integer linear programming formulation
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: nagarakatte2007register
+   :AUTHOR:   Nagarakatte, Santosh G and Govindarajan, R
+   :BOOKTITLE: International Conference on Compiler Construction
+   :PAGES:    126--140
+   :YEAR:     2007
+   :ORGANIZATION: Springer
+   :END:
+** ILP-based Instruction Scheduling for IA-64 :ignore:
+   :PROPERTIES:
+   :TITLE:    ILP-based Instruction Scheduling for IA-64
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: kastner2001ilp
+   :AUTHOR:   K{\"a}stner, Daniel and Winkel, Sebastian
+   :BOOKTITLE: ACM SIGPLAN Notices
+   :VOLUME:   36
+   :NUMBER:   8
+   :PAGES:    145--154
+   :YEAR:     2001
+   :ORGANIZATION: ACM
+   :END:
+** Using integer linear programming for instruction scheduling and register allocation in multi-issue processors :ignore:
+   :PROPERTIES:
+   :TITLE:    Using integer linear programming for instruction scheduling and register allocation in multi-issue processors
+   :BTYPE:    article
+   :CUSTOM_ID: chang1997using
+   :AUTHOR:   Chang, Chia-Ming and Chen, Chien-Ming and King, Chung-Ta
+   :JOURNAL:  Computers \& Mathematics with Applications
+   :VOLUME:   34
+   :NUMBER:   9
+   :PAGES:    1--14
+   :YEAR:     1997
+   :PUBLISHER: Elsevier
+   :END:
 ** LIST SCHEDULING ALGORITHMS CLASSIFICATION: AN ANALYTICAL STUDY :ignore:
    :PROPERTIES:
    :TITLE:    LIST SCHEDULING ALGORITHMS CLASSIFICATION: AN ANALYTICAL STUDY
