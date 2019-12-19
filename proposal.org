@@ -1,4 +1,4 @@
-#+TITLE: Analysis of Compiler Heuristics via Stochastic Scheduling and Hyper-Heuristics 
+#+TITLE: Analysis of Compiler Heuristics for ILP via Stochastic Scheduling and Hyper-Heuristics 
 #+DESCRIPTION: Thesis proposal for Curtis D'Alves; McMaster University 2019.
 #+AUTHOR: [[mailto:dalvescb@mcmaster.ca][Curtis D'Alves]]
 #+EMAIL: curtis.dalves@gmail.com
@@ -119,7 +119,7 @@ Source: Mark Armstrong --github ~armkeh~
 
 \vspace{5em}
 
-{\Huge Analysis of Compiler Heuristics via Stochastic Scheduling and Hyper-Heuristics}
+{\Huge Analysis of Compiler Heuristics for ILP via Stochastic Scheduling and Hyper-Heuristics}
 
 \vspace{1em}
 
@@ -482,9 +482,6 @@ D <- ...     /--------\         /--------\     R1 <- ...
    
 *** COMMENT more on register allocation here [[http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.69.7453&rep=rep1&type=pdf]]
 ** Modulo Scheduling: Staging
-   Module scheduling focuses on exploiting instruction level parallelism within
-   loops by interleaving successive iterations of the loop and executing them in
-   parallel.
 #+BEGIN_SRC ditaa :file figures/SwingModuloStaging.png
                                      
                                      /---------\
@@ -516,21 +513,84 @@ D <- ...     /--------\         /--------\     R1 <- ...
 #+RESULTS:
 [[file:figures/SwingModuloStaging.png]]
 
- 
-   When performing *modulo scheduling*, a basic block of a loop can be broken
-   into stages and the loop can be *unrolled* to interleave stages between
-   iterations. The task of generating an optimal, resource-constrained schedule
-   for loops with arbitrary recurrences is known to be NP-complete
-   \parencite{lam2012systolic}
+   The objective of modulo scheduling is to engineer a schedule for
+   one iteration of the loop such that when this same schedule is repeated at
+   regular intervals, no intra- or inter-iteration dependence is violated, and
+   no resource usage conflicts arise between operations of either the same or
+   distinct iterations \parencite{rau1996iterative}. This generally involves a
+   sort of /loop pipelining/, where a basic block of a loop can be broken
+   into stages and the loop can be /unrolled/ to interleave stages between
+   iterations (see Figure [[fig:SwingStaging]]). Integral to this is the concept of
+   an *Initiation Interval* or II, which is essentially the fixed delay between
+   the  start of successive iterations (see Figure [[fig:InitiationInterval]]).
+   Each iteration of the loop can be divided into stages consisting of II cycles
+   each. A smaller II corresponds to shorter execution time.
 
-*** TODO COMMENT update staging from beamer
-** Iteration Interval
-\begin{equation}
-  \frac{\text{latency height}}{\# \text{stages}} \leq \textrm{II}
-\end{equation}
-   - the maximum *number of cyles* to complete a loop iteration
-   - exact number is complicated *Out of Order Execution* / *Staging*
-*** TODO COMMENT update II from beamer
+#+BEGIN_SRC ditaa :file figures/InitiationInterval.png
+ --------------------------------->
+     time 
+
+              /-----------\        
+              |   c1FF    | 
+              | Iter 3    | 
+              \-----------/ 
+        /-----------\               
+  II    |   c1FF    |       
+<---->  | Iter 2    |       
+        \-----------/       
+/-----------\  
+|   c1FF    |   
+| Iter 1    |  
+\-----------/  
+#+END_SRC
+
+#+CAPTION: Initiation Interval
+#+NAME: fig:InitiationInterval 
+#+ATTR_LATEX: :width 0.6\textwidth
+#+RESULTS:
+[[file:figures/InitiationInterval.png]]
+
+   Modulo Scheduling algorithms require a candidate II be selected before
+   scheduling is attempted. The *Minimum Initiation Interval* or *MII* is a lower
+   bound on the possible value of any II for which a modulo schedule exists. The
+   MII is constrained by both resource constraints (*resMII*) and recurrence
+   constraints (*recMII*). The resource constraint simply holds that resources
+   (such as functional units) must be sufficiently available and any extra
+   latency created waiting for a resource to become available must be accounted
+   for (the exact calculation of resMII is architecture specific and can
+   become very complicated on Out-of-Order execution architectures, covered in a
+   later section). The recurrence constraint lower bound is defined as the
+   maximum, taken over all cycles C in the dependence graph, of the sum of
+   latencies along C divided by the sum of distance along C:
+
+\begin{align}
+ MII &= max(recMII,resMII) \\
+ recMII &= \max\limits_{C \in DepGraph} \frac{\sum\limits_{e \in C} latency(e)}{\sum\limits_{e \in C}
+distance(e)} 
+\end{align}
+   The task of generating an optimal, resource-constrained schedule for loops
+   with arbitrary recurrences is known to be NP-complete
+   \parencite{lam2012systolic}. A heuristic approach via Swing Modulo
+   Scheduling has been implemented in the GNU C Compiler (GCC)
+   \parencite{hagog2004swing}.
+   
+** Register Pressure In Staged Loops
+   Staging can increase throughput by enabling more instructions to
+   be scheduled between high latency operations and subsequent use.
+   However this also increases the number of live instances of loop
+   variables and thus requires more registers to accommodate the schedule.
+   Swing Modulo Scheduling (SMS) is a notable variation of modulo scheduling
+   that utilizes a heuristic approach that aims to reduce register pressure
+   \parencite{gosling2000java}. Some architectures also provide hardware
+   mechanisms for *Register Queuing* that provide more efficient spilling.
+
+   Due to the nature of modulo scheduling, the lifetime of a variable can
+   overlap with a previous definition of itself. 
+   - Existing works have explored schemes of register queuing such as
+     *Modulo Variable Expansion* and *Rotating Register
+     File* \parencite{tyson2001evaluating}
+*** TODO COMMENT update register pressure from beamer
+    
 ** Register Remapping/Renaming
    When executing machine code, hardware maps *Logical Registers* to *Physical Registers*
    -  *Logical Registers* are a set of registers usable directly when
@@ -594,18 +654,6 @@ D <- ...     /--------\         /--------\     R1 <- ...
     - *Common data bus* connects reservation stations directly to functional units
     - *Instruction order* instructions are issued sequentially / exceptions are raised sequentially
     - *Register Renaming* 
-** Register Pressure In Staged Loops
-   - Staging can *increase pipeline throughput* by enabling more instructions to
-     be scheduled between high latency operations and subsequent use
-   - However this also increases the number of *live instances of loop
-     variables* and thus requires more registers to accommodate the schedule
-   - To deal with the access number of registers required that may not be
-     available, *Register Queuing* (what we term FIFO's) may be
-     necessary
-   - Existing works have explored schemes of register queuing such as
-     *Modulo Variable Expansion* and *Rotating Register
-     File* \parencite{tyson2001evaluating}
-*** TODO COMMENT update register pressure from beamer
 * Current/Previous Approaches
 *** TODO COMMENT write intro to current/previous approaches
 ** List Scheduling (most commonly performed scheduling)
@@ -754,6 +802,28 @@ between heuristics by scaling
 * Org-Bibtex                                                         :ignore:
 ** COMMENT PUT BIBTEX ENTRIES HERE IN SUBSECTION ENDED WITH IGNORE USING ORG-BIBTEX-YANK COMMAND :ignore:
 ** COMMENT EXPORT TO References.bib USING ORG-BIBTEX COMMAND :ignore:
+** Iterative modulo scheduling  :ignore:
+   :PROPERTIES:
+   :TITLE:    Iterative modulo scheduling
+   :BTYPE:    article
+   :CUSTOM_ID: rau1996iterative
+   :AUTHOR:   Rau, B Ramakrishna
+   :JOURNAL:  International Journal of Parallel Programming
+   :VOLUME:   24
+   :NUMBER:   1
+   :PAGES:    3--64
+   :YEAR:     1996
+   :PUBLISHER: Springer
+   :END:
+** The Java language specification :ignore:
+   :PROPERTIES:
+   :TITLE:    The Java language specification
+   :BTYPE:    book
+   :CUSTOM_ID: gosling2000java
+   :AUTHOR:   Gosling, James and Joy, Bill and Steele, Guy and Bracha, Gilad
+   :YEAR:     2000
+   :PUBLISHER: Addison-Wesley Professional
+   :END:
 ** Swing modulo scheduling for gcc :ignore:
    :PROPERTIES:
    :TITLE:    Swing modulo scheduling for gcc
