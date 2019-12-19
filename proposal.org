@@ -161,42 +161,32 @@ Wolfram Kahl                                         kahl@cas.mcmaster.ca
 
 #+begin_abstract
 
-In compiler optimization, *Instruction Scheduling* seeks to optimize the order of
-a sequence of instructions to maximize throughput while preserving semantics.
-As modern pipelined multi-core architectures become increasing more complex, with
-techniques such as super-scaling, out of order execution, register remapping,
-VLIW (Very Large Instruction Word) and
-more scheduling software must itself become more sophisticated to fully
-utilize this advanced hardware. However as a known NP-Complete problem, finding
-the optimal schedule for a non-trivial program is too costly. Conventional
-compilers opt to utilize heuristics that by default yield far from optimal schedules in
-exchange for compile time performance. Tuning via compiler flags is complex
-requiring expert insight (often the order of flags causes different heuristics
-to overwrite one another) and is often ignored by developers. Statically/Dynamically
-linked libraries present an opportunity to schedule pre-compiled binaries
-outside of compile time making room to use more costly methods to find better
-schedules for performance critical blocks.  
+In compiler optimization, Instruction Scheduling seeks to optimize the order of
+a sequence of instructions to maximize throughput while preserving semantics. As
+modern architectures become increasing more complex, with supported
+techniques/features such as super-scalar, out of order execution, register
+remapping, VLIW (Very Large Instruction Word) and more; opportunities to exploit
+Instruction Level Parallelism increase in turn. However as a known NP-Complete
+problem, finding the optimal schedule for a non-trivial program is too costly.
+Conventional compilers opt to utilize heuristics, many of which are developed on
+an ad-hoc basis.
+
 
 \vspace{1em}
 
-This proposal explores techniques for scheduling performance critical code on
-modern out-of-order architectures. Previous/Current techniques and their
-relevance are detailed, including List Scheduling, Approximation Algorithms,
-Stochastic Algorithms and (Non)Linear Programming. Of particular interest, the use of
-stochastic algorithms presents opportunity to examine the space of feasible
-schedules. We present a constrained non-linear optimization model that relaxes
-the discrete nature of scheduling problems. By encoding heuristics as penalty
-functions that can be scaled to assign priority and using stochastic-ally
-generated scaling parameters we hope to examine the topology of valid schedules
-in the more flexible space of $\textrm{R}^n$. 
-
-\vspace{1em}
-
-As a testing bed, we schedule the IBM\textsuperscript{\textregistered}
-MASS\texttrademark (Math Acceleration Subsystem) library functions for the
-Z\texttrademark and POWER\texttrademark architectures with already successful results,
-finding schedules that outperform previous iterations of the library for select
-functions.
+We present a stochastic non-linear programming algorithm, capable of spanning
+all valid schedules by relaxing the problem to a continuous domain and optimizing
+with constraints. We combine the optimization problem with heuristics by
+encoding them as penalty functions that can be scaled to adjust priority. By
+stochastic-ally generating scaling parameters, we can generate datasets that
+have been optimizing with varying emphasis on heuristics. So
+far, we have used this method to effectively find schedules for performance
+critical code on IBM MASS libraries, gaining up to 20% speedup compared to
+previously scheduled code. Although unsuitable to be implemented in a
+conventional compiler, we believe the method may prove useful for architecture
+analysis. By analyzing generated datasets together with the space of the model
+for a given architecture, we hope to gain insights into how different heuristics
+impact different architectures. 
 
 #+begin_center org
 #+begin_small
