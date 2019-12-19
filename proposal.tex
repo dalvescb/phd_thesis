@@ -1,4 +1,4 @@
-% Created 2019-12-19 Thu 15:04
+% Created 2019-12-19 Thu 15:10
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{report}
 \usepackage[utf8]{inputenc}
@@ -146,7 +146,7 @@ impact different architectures.
 \newpage
 
 \chapter{Introduction (Background to Instruction Scheduling)}
-\label{sec:org5d5e54f}
+\label{sec:org943f782}
 Modern processors are built with architectures capable of exploiting
 Instruction Level Parallelism (ILP) on a single core 
 through pipelining and superscalar behavior. Superscalar
@@ -187,7 +187,7 @@ These solutions can implemented in hardware to execute at run-time
  be used by the assembler during compilation.
 
 \section{Types of Instruction Scheduling}
-\label{sec:orgc6c8a52}
+\label{sec:org8012531}
 There are two broad criteria that have historically influenced scheduling
 algorithms: the first being the control flow of the dependency graph, the
 second being the nature/constraints of the architecture being scheduled for
@@ -225,7 +225,7 @@ have it's own class of algorithm known as modulo scheduling (discussed in a
 later section).
 
 \section{SuperScalar Architectures}
-\label{sec:orgf0c70ac}
+\label{sec:orgd8071a8}
 
 \begin{figure}[htbp]
 \centering
@@ -269,7 +269,7 @@ dependent instructions too far apart doing this you risk running out of
 available registers (you increase register pressure). 
 
 \section{Pipeline Stalls}
-\label{sec:org26b7824}
+\label{sec:org37a6849}
 Both of the previous figures \ref{fig:PipelinedArchitecture} and
 \ref{fig:SuperScalarArchitecture} show an ideal schedule with \textbf{NO} stalls. A stall
 occurs when, because of various architecture \textbf{hazards} that can arise, full throughput
@@ -288,7 +288,7 @@ because of a Read After Write (RAW) hazard.
 \end{figure}
 
 \section{Hazards}
-\label{sec:org8628279}
+\label{sec:org5e7aff8}
 Architecture hazards can be broken up broadly into three categories
 \parencite{patterson2013computer}
 \begin{itemize}
@@ -309,7 +309,7 @@ prediction is made causing instructions that were brought into the
 pipeline needing to be discarded
 \end{itemize}
 \section{Register Allocation via Graph Coloring}
-\label{sec:org62666b9}
+\label{sec:orgdb487bb}
 The theory of graph coloring deals with algorithms that seek to partition a
 set of objects into classes, given simple rules associating objects that may
 not belong to the same class \parencite{jensen2011graph}. These algorithms
@@ -335,7 +335,7 @@ vertices of this interference graph. See Figure \ref{fig:GraphColor} as an examp
 \end{figure}
 
 \section{Spilling}
-\label{sec:orgc5e3a3a}
+\label{sec:org4ff1720}
 Finding the existence of a \textbf{k-coloring} for a given graph is itself an
 NP-Complete problem \parencite{jensen2011graph}, and the absence of an
 existing coloring presents a difficult problem. When a schedule cannot be
@@ -359,7 +359,7 @@ ranges alleviates more register pressure and creates a more flexible
 scheduling space.
 
 \section{Combining Register Allocation and Instruction Scheduling}
-\label{sec:org2bdea56}
+\label{sec:orgd84284a}
 Register allocation can be performed before, after, or combined with
 instruction scheduling, but is generally performed after
 \parencite{brasier1995craig}. Performing allocation before scheduling
@@ -379,7 +379,7 @@ generally involve estimating a tradeoff between controlling register pressure
 and instruction parallelism considerations \parencite{motwani1995combining}.
 
 \section{Modulo Scheduling: Staging}
-\label{sec:org12658c8}
+\label{sec:org7a7f62b}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.6\textwidth]{figures/SwingModuloStaging.png}
@@ -431,7 +431,7 @@ Scheduling has been implemented in the GNU C Compiler (GCC)
 \parencite{hagog2004swing}.
 
 \section{Register Pressure In Staged Loops}
-\label{sec:orgca07349}
+\label{sec:orgb2fc66d}
 Staging can increase throughput by enabling more instructions to
 be scheduled between high latency operations and subsequent use.
 However this also increases the number of live instances of loop
@@ -451,7 +451,7 @@ kernel is unrolled and multiple definitions of a variable are renamed at
 compile time \parencite{valluri1998modulo}. 
 
 \section{Register Remapping/Renaming}
-\label{sec:orga0aef25}
+\label{sec:org41f1037}
 Not to be confused with renaming of registers at compile time, register
 renaming in hardware is a technique to remove false data dependencies ---
 write after read (WAR) and write after write (WAW) --- between register
@@ -477,7 +477,7 @@ Having a larger number of Physical registers than Logical registers gives
 hardware extra flexibility when dispatching instructions for \textbf{Out of Order Execution}.
 
 \section{Out-of-Order Execution}
-\label{sec:org6807fea}
+\label{sec:orgfb67c5e}
 
 The execution flow of an instruction on a CPU can be implemented in one of
 two paradigms: \textbf{in-order} or \textbf{out-of-order} (OoO, also known as dynamic)
@@ -542,9 +542,9 @@ in hardware, reservation stations for all execution units and a common data
 bus between all reservation stations \parencite{tomasulo1967efficient}.
 
 \chapter{Current State of the Art and Notable/Relevant Works in Instruction Scheduling}
-\label{sec:org546add5}
+\label{sec:orgd8500c5}
 \section{List Scheduling (most commonly performed scheduling)}
-\label{sec:org4922c49}
+\label{sec:org09af467}
 List scheduling is the most widely used technique for instruction scheduling
 \parencite{gibbons1986efficient}. List scheduling encompasses a class of
 algorithms for basic block scheduling via a chosen heuristic. It takes a list (of
@@ -619,7 +619,7 @@ before, combinations of heuristics can be applied through successive
 iterations, but each iteration could undo previous iterations work.
 
 \section{Constraint Programming}
-\label{sec:orgfd059fe}
+\label{sec:org135362f}
 As an inherently discrete problem, a number of works have sought to formulate
 instruction scheduling as an Integer Linear Programming (ILP) problem
 (\parencite{wilken2000optimal}, \parencite{chang1997using},
@@ -684,7 +684,7 @@ converting hard constraints to soft constraints (penalties) its simple to
 assert this space would contain the optimal solution.
 
 \section{Stochastic Search}
-\label{sec:org3b69bfa}
+\label{sec:org2c4525b}
 There is a notable work to explore the space of schedules through a
 stochastic algorithm by Schkufza, Sharma, Aiken at Stanford
 \parencite{Schkufza:2016:SPO:2886013.2863701}. The efforts are culminated in
@@ -734,7 +734,7 @@ it to generate schedules along with a model checker may still prove to be the
 most practical way to explore a variety of schedules.
 
 \section{Meta-Optimization / Hyper-Heuristics}
-\label{sec:org2e6a4a9}
+\label{sec:orgc007ab1}
 Meta-optimization deals with the use of one optimization method to tune
 another one. 
 Hyper-heuristics are an off-spring of meta-optimization, that search within the search space of just heuristics vs the entire problem solution space.
@@ -771,7 +771,7 @@ using heuristic selection / generation to analysis the effectiveness of
 existing heuristics on architectures.
 
 \chapter{Proposed Approaches To Stochastic Scheduling and Heuristic Analysis via Hyper-Heuristics}
-\label{sec:orgb9bb873}
+\label{sec:orgb476b5d}
 In this section I will introduce a Stochastic Scheduling Algorithm that
 utilizes a continuous optimization model with stochastically generated
 parameters, and propose it's use as a training set generator for ML driven
@@ -782,7 +782,7 @@ able to evaluate the limitations of an architecture by analyzing the space of
 valid schedules via the continuous model used for optimization.
 
 \section{Optimization Model for Modulo Scheduling}
-\label{sec:org32c806a}
+\label{sec:org947686b}
 \begin{align*}
     \color{lightblue}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
     \color{lightblue}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
@@ -801,8 +801,10 @@ valid schedules via the continuous model used for optimization.
 \end{align}
 
 The above model is a continuous optimization problem for scheduling, similar to
-the work detailed in Linear/Constrained Programming by
-\parencite{malik2008optimal}. The model optimizes over a set of objective
+the work detailed in Constraint Programming by
+\parencite{malik2008optimal}, but only maintaining the constraints necessary for
+ensuring a valid schedule, and relaxing the problem into a continuous domain as
+opposed to the Integer Linear Programming models mentioned. The model optimizes over a set of objective
 variables: \(t_i\),\(b_i\),\(f_i\) for each instruction \(i\) to be scheduled. Each
 variable \(t_i\),\(b_i\) represents the dispatch and completion times of the
 \(i^{th}\) instruction respectively. As we wish to model an Out-of-Order
@@ -831,7 +833,7 @@ down in the schedule, or a large negative value to push up). By picking a large
 or small number to scale a penalty function we can prioritize a schedule.
 
 \section{IO Penalty}
-\label{sec:org4280186}
+\label{sec:org31d76b3}
 Since we're not pushing instructions apart through latency constraints like
 in \parencite{malik2008optimal}, we need a penalty to compensate. We propose
 penalizing the dispatch time of instructions based on the quantity and
@@ -852,7 +854,7 @@ architectures.
 \end{figure} 
 
 \section{Indicator Function}
-\label{sec:org7611519}
+\label{sec:org5e14685}
 The function \(\mathbb{IN}\) specified in the model and used in the IO Penalty
 above is what's known as an Indicator Function, and is important for
 implementing heuristics that rely on testing the proximity of two
@@ -866,7 +868,7 @@ shown in Figure \ref{fig:sigmoid}.
 \end{align} 
 
 \section{Stochastic Scaling}
-\label{sec:org482f49e}
+\label{sec:org703bcc4}
 The scaling \(\frac{1}{N_j}\) may be a good guess, but not necessarily effective in practice
 \begin{itemize}
 \item \textbf{IDEA} scale the \textbf{IO penalty} stochastically by a multiple of the II
@@ -883,7 +885,7 @@ of many heuristics can be encapsulated by simply choosing the same scaling
 based on the type of instruction (i.e push all loads up or down). 
 
 \section{Opportunity for Hyper-Heuristic Development}
-\label{sec:orgbd3c993}
+\label{sec:orgef4b4ff}
 By representing the space of schedules in a continuous model (i.e the space of
 \(\mathbb{R}^n\)) and encoding heuristics as penalties, we can evaluate the
 merits of various heuristics in combination with each other. The continuous

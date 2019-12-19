@@ -948,8 +948,10 @@ est(n,p) = earliest start time of n on p
 \end{align}
 
 The above model is a continuous optimization problem for scheduling, similar to
-the work detailed in Linear/Constrained Programming by
-\parencite{malik2008optimal}. The model optimizes over a set of objective
+the work detailed in Constraint Programming by
+\parencite{malik2008optimal}, but only maintaining the constraints necessary for
+ensuring a valid schedule, and relaxing the problem into a continuous domain as
+opposed to the Integer Linear Programming models mentioned. The model optimizes over a set of objective
 variables: $t_i$,$b_i$,$f_i$ for each instruction $i$ to be scheduled. Each
 variable $t_i$,$b_i$ represents the dispatch and completion times of the
 $i^{th}$ instruction respectively. As we wish to model an Out-of-Order
