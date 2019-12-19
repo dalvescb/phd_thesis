@@ -210,7 +210,7 @@ functions.
 \tableofcontents
 \newpage
 
-* Introduction (Background)
+* Introduction (Background to Instruction Scheduling)
   Modern processors are built with pipelined architectures capable of
   Instruction Level Parallelism (ILP), processors capable of exploiting ILP on
   one core through pipelining are known as superscalar processors. Superscalar
@@ -620,26 +620,41 @@ R2 \leftarrow \textbf{R4} + R3    & \qquad &                 R2 \leftarrow \text
 ** Out-of-Order Execution
    
    The execution flow of an instruction on a CPU can be implemented in one of
-   two paradigms: *in-order* or *out-of-order* (also known as dynamic)
+   two paradigms: *in-order* or *out-of-order* (OoO, also known as dynamic)
    execution. Execution of an instruction cycle in each paradigm comprises of
    different steps:
    
    *In-Order Execution*
-    1. instruction fetch
-    2. stall until all operands are available and then dispatched
-    3. Execute (on appropriate functional unit)
-    4. Write back to register file
+    1. Instruction fetch
+    2. Stall until all operands are available
+    3. Dispatch to appropriate functional unit
+    4. Execute (on appropriate functional unit)
+    5. Write back to register file
    
    *Out-Of-Order Exeuction*
     1. Instruction fetch
     2. Dispatch to a temporary queue known as *Reservation Station*
-    3. Waits in the reservation station until operands are available
+    3. Wait in the reservation station until operands are available
     4. Dispatched once operands are available (even if before an older
        instruction)
     5. Execute (on appropriate functional unit)
     6. Results are retired to another temporary queue
     7. Only after all older instructions have their results written back, then
        the result is written back to register file
+
+   Although a more complicated design, OoO execution presents an opportunity to
+   increase throughput by filling in time that would be wasted stalling in step
+   2 of in-order execution with instructions that are ready, then re-ordering
+   the instructions back to appear they finished in order (known as retiring).
+   This essentially decouples the fetch and decode stages of the pipeline from
+   the execution stages. As the instruction pipeline deepens, there is therefore
+   increased opportunity to dispatch out of order. When combined with Register
+   Renaming, this is of particular benefit allowing instructions that are data
+   independent but register dependent to be executed in parallel. OoO
+   dispatching also provides benefits over in-order when cache misses (or high
+   latency memory accesses in general) occur \parencite{stark1997reducing}.
+   Figure [[fig:OutOfOrder]] illustrates the general control flow in an OoO machine.
+   
    #+BEGIN_SRC ditaa :file figures/OoODiagram.png
    /--------------\      /-------------\
    | Instr 0.     | ...  | Instr. n    |
@@ -677,46 +692,106 @@ R2 \leftarrow \textbf{R4} + R3    & \qquad &                 R2 \leftarrow \text
             \-----------------/
    #+END_SRC
 
+   #+CAPTION: Out-Of-Order Execution Control Flow
+   #+NAME: fig:OutOfOrder 
    #+ATTR_LATEX: :width 0.7\textwidth
    #+RESULTS:
    [[file:figures/OoODiagram.png]]
 
-  Out of Order execution requires dynamic scheduling performed via algorithms
-  such as *Tomasulo's Algorithm* \parencite{tomasulo1967efficient} or
-  Score-boarding
+  Out of Order execution requires dynamic scheduling (scheduling at runtime by
+  hardware) performed via methods such as *Tomasulo's Algorithm* or a *Register
+  Score-board*. Both methods seek to enable more efficient use of multiple
+  execution units while preventing breaking of data dependencies. A register
+  scoreboard checks resources for an instruction to see if the required
+  resources are available for the instruction to execute, and if so allows
+  dispatch. The scoreboard record (locks) the resources that would be modified
+  by the instruction at issue time, and any subsequent instructions that want to
+  access those resources cannot be issued until the instruction that initially
+  locked them subsequently unlocks them \parencite{popescu1997processor}.
+  Tomasulo's Algorithm innovated upon score-boarding allowing improved parallel
+  execution although requiring new hardware features such as register renaming
+  in hardware, reservation stations for all execution units and a common data
+  bus between all reservation stations \parencite{tomasulo1967efficient}.
 
-*** TODO COMMENT explain reservation stations
-*** TODO COMMENT explain score boarding [[https://en.wikipedia.org/wiki/Scoreboarding]]
-*** TODO COMMENT explain Tomasulo's algorithm
-    Data flow execution can be controlled in hardware via algorithms such as Tomasulo's algorithm or variations.
-     [[https://en.wikipedia.org/wiki/Tomasulo_algorithm#cite_note-intel-5]]
-    Necessary Implementation concepts for tomasulo's algorithm
-    - *Common data bus* connects reservation stations directly to functional units
-    - *Instruction order* instructions are issued sequentially / exceptions are raised sequentially
-    - *Register Renaming* 
-* Current/Previous Approaches
+* Current State of the Art and Notable/Relevant Works in Instruction Scheduling
 *** TODO COMMENT write intro to current/previous approaches
 ** List Scheduling (most commonly performed scheduling)
-   TODO reference \parencite{hwu1993superblock}
-   	Simple heuristic.  Choose a prioritized topological order that
-    - Respects the edges in the data-dependence graph (*topological*)
-    - Heuristic choice among options, e.g pick first the node with the longest path extending from that node *prioritized*
-    Most commonly used method for scheduling. Efficient but yields far less than
-    optimal schedules.
+   List scheduling is the most widely used technique for instruction scheduling
+   \parencite{gibbons1986efficient}. List scheduling encompasses a class of
+   algorithms for basic block scheduling via a chosen heuristic. It takes a list (of
+   instructions), assigns priorities via a heuristic and schedules them in a
+   topological order in decreasing priority \parencite{wang2018list}. The
+   general structure of a list scheduling algorithm can be described as follows
 
-    Issues with list scheduling include 
-    - Many factors to consider when constructing a schedule (everything listed in this presentation and more!)    
-    - Difficult (or more accurately impossible!) to consider all these aspects into a single choice heuristic        
-    - Combinations of heuristics can be used, and multiple iterations performed,
-      but each will usually undo the work of the other
-*** TODO COMMENT update list scheduling from beamer
+{{{code({\sc Basic Structure of List Scheduling Algorithms \hspace{12em} \color{grey}{.} })}}}
+#+BEGIN_SRC fortran
+while there are instrs to be scheduled do 
+      Identify highest priority instr n
+      Choose a processor p for n
+      Schedule n on p at est(n,p)
+end
+
+est(n,p) = earliest start time of n on p
+#+END_SRC
+
+    Priorities can be static (remain constant for the DAG) or dynamic (change
+    through iteration of the algorithm). The complexity of list scheduling
+    depends on the heuristic, but is generally polynomial
+    \parencite{wang2018list}. List scheduling can also be performed /forward/ or
+    /backward/, or performed successively, applying heuristic on top of
+    heuristics. Examples of common heuristics are given in Table
+    [[tab:ListHeuristics]] \parencite{sarangal2018list}.
+
+
+       
+#+CAPTION: Example List Scheduling Heuristics   
+#+NAME: tab:ListHeuristics 
+| *Heuristic*                              | *Description*                          |
+|------------------------------------------+----------------------------------------|
+| HLFET                                    | priority is chosen by the attributes   |
+| (Highest level first with estimate time) | of static levels                       |
+|------------------------------------------+----------------------------------------|
+| MCP (Modified Critical path)             | priority by utilizing ALAP (As late    |
+|                                          | as possible) attribute                 |
+|------------------------------------------+----------------------------------------|
+| ETF (Earliest time first)                | finds the earliest start time for each |
+|                                          | task and later chooses the task having |
+|                                          | less initial time                      |
+|------------------------------------------+----------------------------------------|
+| DLS (Dynamic level scheduling)           | finds the task priority on the tasks   |
+|                                          | priority on dynamic basis              |
+|------------------------------------------+----------------------------------------|
+| CNPT (Critical node parent tree)         | prioritization of task is determined   |
+|                                          | with CN (Critical node) attribute      |
+|------------------------------------------+----------------------------------------|
+
+    
+    List scheduling is the chosen method for most conventional compilers because
+    of its flexibility, efficiency and ability to find near-optimal schedules for
+    most basic blocks. Although originally thought to yield near optimal
+    schedules for almost all schedules, analysis of list scheduling techniques
+    have shown that List Scheduling techniques have difficulty finding
+    near-optimal schedules for codes with a moderate amount of available
+    parallelism --- the peak difficulty varying with both the number of
+    processing elements and schedule length \parencite{cooper1998experimental}.
+    Therefore as architectures become more sophisticated and provide more
+    opportunity to exploit parallelism, list scheduling will in turn become
+    increasingly inadequate.
+
+    Limitations of list scheduling most likely stem from the use of a single
+    choice heuristic. There are many factors to consider when constructing a
+    schedule, and it is difficult (or more accurately impossible) to condense
+    this to assigning a priority via a polynomial time heuristic. As mentioned
+    before, combinations of heuristics can be applied through successive
+    iterations, but each iteration could undo previous iterations work.
+    
 ** Linear/Constraint Programming
      \parencite{malik2008optimal} Found provably optimal schedules for basic blocks using constraint
      programming, with the following types of constraints
    - *Latency Constraints*, i.e
      - Given a labeled dependency DAG $G = (N,E)$ 
        - $\forall (i,j) \in E \cdot j \geq i + l(i,j)$ 
-   - *Resource Constraints* that ensured functinonal units were not exceded
+   - *Resource Constraints* that ensured functional units were not exceeded
    - *Distance Contstraints*, i.e
      - Given a labeled dependency *DAG*  $G = (N,E)$ 
         - $\forall (i,j) \in E \cdot j \geq i + d(i,j)$
@@ -842,6 +917,77 @@ between heuristics by scaling
 * Org-Bibtex                                                         :ignore:
 ** COMMENT PUT BIBTEX ENTRIES HERE IN SUBSECTION ENDED WITH IGNORE USING ORG-BIBTEX-YANK COMMAND :ignore:
 ** COMMENT EXPORT TO References.bib USING ORG-BIBTEX COMMAND :ignore:
+** LIST SCHEDULING ALGORITHMS CLASSIFICATION: AN ANALYTICAL STUDY :ignore:
+   :PROPERTIES:
+   :TITLE:    LIST SCHEDULING ALGORITHMS CLASSIFICATION: AN ANALYTICAL STUDY
+   :BTYPE:    article
+   :CUSTOM_ID: sarangal2018list
+   :AUTHOR:   Sarangal, Akanksha and Kaur, Nirmal and Kaur, Ravreet
+   :JOURNAL:  International Journal of Advanced Research in Computer Science
+   :VOLUME:   9
+   :NUMBER:   2
+   :PAGES:    385
+   :YEAR:     2018
+   :PUBLISHER: International Journal of Advanced Research in Computer Science
+   :END:
+** List-scheduling versus cluster-scheduling :ignore:
+   :PROPERTIES:
+   :TITLE:    List-scheduling versus cluster-scheduling
+   :BTYPE:    article
+   :CUSTOM_ID: wang2018list
+   :AUTHOR:   Wang, Huijun and Sinnen, Oliver
+   :JOURNAL:  IEEE Transactions on Parallel and Distributed Systems
+   :VOLUME:   29
+   :NUMBER:   8
+   :PAGES:    1736--1749
+   :YEAR:     2018
+   :PUBLISHER: IEEE
+   :END:
+** Efficient instruction scheduling for a pipelined architecture :ignore:
+   :PROPERTIES:
+   :TITLE:    Efficient instruction scheduling for a pipelined architecture
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: gibbons1986efficient
+   :AUTHOR:   Gibbons, Philip B and Muchnick, Steven S
+   :BOOKTITLE: Acm sigplan notices
+   :VOLUME:   21
+   :NUMBER:   7
+   :PAGES:    11--16
+   :YEAR:     1986
+   :ORGANIZATION: ACM
+   :END:
+** An experimental evaluation of list scheduling :ignore:
+   :PROPERTIES:
+   :TITLE:    An experimental evaluation of list scheduling
+   :BTYPE:    article
+   :CUSTOM_ID: cooper1998experimental
+   :AUTHOR:   Cooper, Keith D and Schielke, Philip J and Subramanian, Devika
+   :JOURNAL:  TR98
+   :VOLUME:   326
+   :YEAR:     1998
+   :END:
+** Processor architecture providing out-of-order execution :ignore:
+   :PROPERTIES:
+   :TITLE:    Processor architecture providing out-of-order execution
+   :BTYPE:    misc
+   :CUSTOM_ID: popescu1997processor
+   :AUTHOR:   Popescu, Valeri and Schultz, Merle A and Gibson, Gary A and Spracklen, John E and Lightner, Bruce D
+   :YEAR:     1997
+   :MONTH:    may # "~6"
+   :PUBLISHER: Google Patents
+   :NOTE:     US Patent 5,627,983
+   :END:
+** Reducing the performance impact of instruction cache misses by writing instructions into the reservation stations out-of-order :ignore:
+   :PROPERTIES:
+   :TITLE:    Reducing the performance impact of instruction cache misses by writing instructions into the reservation stations out-of-order
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: stark1997reducing
+   :AUTHOR:   Stark, Jared and Racunas, Paul and Patt, Yale N
+   :BOOKTITLE: Proceedings of the 30th Annual ACM/IEEE International Symposium on Microarchitecture
+   :PAGES:    34--43
+   :YEAR:     1997
+   :ORGANIZATION: IEEE Computer Society
+   :END:
 ** Iterative modulo scheduling  :ignore:
    :PROPERTIES:
    :TITLE:    Iterative modulo scheduling
