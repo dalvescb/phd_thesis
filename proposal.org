@@ -599,15 +599,47 @@ distance(e)}
    renaming in hardware is a technique to remove false data dependencies ---
    write after read (WAR) and write after write (WAW) --- between register
    operands of subsequent instructions at runtime \parencite{sima2000design}.
+   For example, a WAR hazard could be rewritten like so
+   
+\begin{align*}
+\textbf{Before}                   & \qquad &                 \textbf{After} \\
+R2 \leftarrow \textbf{R4} + R3    & \qquad &                 R2 \leftarrow \textbf{R4} + R3 \\
+\textbf{R4} \leftarrow R1 + R5    & \qquad \Longrightarrow & \textbf{R33} \leftarrow R1 + R5
+\end{align*}
 
-   When executing machine code, hardware maps *Logical Registers* to *Physical Registers*
+   A register renaming scheme must not rename to a register that would introduce
+   a new hazard, this would present a difficult problem were it not for the
+   existence of *Logical* and *Physical* Registers. When executing machine code,
+   hardware maps *Logical Registers* to *Physical Registers*
    -  *Logical Registers* are a set of registers usable directly when
      writing/generating assembly code (limited by system architecture)
    - *Physical Registers* are a set of registers actually available in hardware
    Having a larger number of Physical registers than Logical registers gives
-   hardware extra flexibility when dispatching instructions for *Out of Order Execution*
-*** TODO COMMENT update register remapping from beamer
+   hardware extra flexibility when dispatching instructions for *Out of Order Execution*.
+    
 ** Out-of-Order Execution
+   
+   The execution flow of an instruction on a CPU can be implemented in one of
+   two paradigms: *in-order* or *out-of-order* (also known as dynamic)
+   execution. Execution of an instruction cycle in each paradigm comprises of
+   different steps:
+   
+   *In-Order Execution*
+    1. instruction fetch
+    2. stall until all operands are available and then dispatched
+    3. Execute (on appropriate functional unit)
+    4. Write back to register file
+   
+   *Out-Of-Order Exeuction*
+    1. Instruction fetch
+    2. Dispatch to a temporary queue known as *Reservation Station*
+    3. Waits in the reservation station until operands are available
+    4. Dispatched once operands are available (even if before an older
+       instruction)
+    5. Execute (on appropriate functional unit)
+    6. Results are retired to another temporary queue
+    7. Only after all older instructions have their results written back, then
+       the result is written back to register file
    #+BEGIN_SRC ditaa :file figures/OoODiagram.png
    /--------------\      /-------------\
    | Instr 0.     | ...  | Instr. n    |
@@ -622,19 +654,19 @@ distance(e)}
                      |
                      v
             /-----------------\
-            | cBLU Grouper    |           Register Remapping
+            | cBLU Dispatch   |           Register Remapping
             \-----------------/
                      |
                      |
                      v 
             /-----------------\
-            | cBLU Dispather  |
+            | cBLU Reservation|
             \-----------------/
                      |
      -------------------------------------
      |      |                     |      |
    /----\ /----\               /----\ /----\
-   |cRED| |cRED|     ....      |cRED| |cRED|    OoO Exection
+   |cRED| |cRED|     ....      |cRED| |cRED|    Exection Units
    \----/ \----/               \----/ \----/
      |      |                     |      |
      -------------------------------------
@@ -645,7 +677,7 @@ distance(e)}
             \-----------------/
    #+END_SRC
 
-   #+ATTR_LATEX: :width 0.5\textwidth
+   #+ATTR_LATEX: :width 0.7\textwidth
    #+RESULTS:
    [[file:figures/OoODiagram.png]]
 
