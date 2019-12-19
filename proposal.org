@@ -513,18 +513,19 @@ D <- ...     /--------\         /--------\     R1 <- ...
 #+RESULTS:
 [[file:figures/SwingModuloStaging.png]]
 
-   The objective of modulo scheduling is to engineer a schedule for
-   one iteration of the loop such that when this same schedule is repeated at
-   regular intervals, no intra- or inter-iteration dependence is violated, and
-   no resource usage conflicts arise between operations of either the same or
-   distinct iterations \parencite{rau1996iterative}. This generally involves a
-   sort of /loop pipelining/, where a basic block of a loop can be broken
-   into stages and the loop can be /unrolled/ to interleave stages between
-   iterations (see Figure [[fig:SwingStaging]]). Integral to this is the concept of
-   an *Initiation Interval* or II, which is essentially the fixed delay between
-   the  start of successive iterations (see Figure [[fig:InitiationInterval]]).
-   Each iteration of the loop can be divided into stages consisting of II cycles
-   each. A smaller II corresponds to shorter execution time.
+   The objective of modulo scheduling is to engineer a schedule for one
+   iteration of the loop such that when this same schedule (known as the kernel)
+   is repeated at regular intervals, no intra- or inter-iteration dependence is
+   violated, and no resource usage conflicts arise between operations of either
+   the same or distinct iterations \parencite{rau1996iterative}. This generally
+   involves a sort of /loop pipelining/, where a basic block of a loop can be
+   broken into stages and the loop can be /unrolled/ to interleave stages
+   between iterations (see Figure [[fig:SwingStaging]]). Integral to this is the
+   concept of an *Initiation Interval* or II, which is essentially the fixed
+   delay between the start of successive iterations (see Figure
+   [[fig:InitiationInterval]]). Each iteration of the loop can be divided into
+   stages consisting of II cycles each. A smaller II corresponds to shorter
+   execution time.
 
 #+BEGIN_SRC ditaa :file figures/InitiationInterval.png
  --------------------------------->
@@ -585,10 +586,14 @@ distance(e)}
    mechanisms for *Register Queuing* that provide more efficient spilling.
 
    Due to the nature of modulo scheduling, the lifetime of a variable can
-   overlap with a previous definition of itself. 
-   - Existing works have explored schemes of register queuing such as
-     *Modulo Variable Expansion* and *Rotating Register
-     File* \parencite{tyson2001evaluating}
+   overlap with a previous definition of itself. To handle this, some form of
+   register renaming needs to be provided. Some hardware provide support for
+   this in the form of *Rotating Register Files* \parencite{rau1989cydra}. When
+   no hardware solution is provided, the problem of overlapping lifetimes can be
+   solved by a technique known as *Modulo Variable Expansion* (MVE), wherein the
+   kernel is unrolled and multiple definitions of a variable are renamed at
+   compile time \parencite{valluri1998modulo}. 
+
 *** TODO COMMENT update register pressure from beamer
     
 ** Register Remapping/Renaming
@@ -854,6 +859,30 @@ between heuristics by scaling
    :VOLUME:   39
    :YEAR:     2011
    :PUBLISHER: John Wiley \& Sons
+   :END:
+** The Cydra 5 departmental supercomputer: Design philosophies, decisions, and trade-offs :ignore:
+   :PROPERTIES:
+   :TITLE:    The Cydra 5 departmental supercomputer: Design philosophies, decisions, and trade-offs
+   :BTYPE:    article
+   :CUSTOM_ID: rau1989cydra
+   :AUTHOR:   Rau, B. Ramakrishna and Yen, David W. L. and Yen, Wei and Towle, Ross A.
+   :JOURNAL:  Computer
+   :VOLUME:   22
+   :NUMBER:   1
+   :PAGES:    12--35
+   :YEAR:     1989
+   :PUBLISHER: IEEE
+   :END:
+** Modulo-variable expansion sensitive scheduling :ignore:
+   :PROPERTIES:
+   :TITLE:    Modulo-variable expansion sensitive scheduling
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: valluri1998modulo
+   :AUTHOR:   Valluri, Madhavi Gopal and Govindarajan, R
+   :BOOKTITLE: Proceedings. Fifth International Conference on High Performance Computing (Cat. No. 98EX238)
+   :PAGES:    334--341
+   :YEAR:     1998
+   :ORGANIZATION: IEEE
    :END:
 ** Computer organization and design MIPS edition: the hardware/software interface :ignore:
    :PROPERTIES:
