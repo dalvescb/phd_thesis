@@ -1,4 +1,4 @@
-% Created 2019-12-19 Thu 08:20
+% Created 2019-12-19 Thu 15:04
 % Intended LaTeX compiler: pdflatex
 \documentclass[12pt]{report}
 \usepackage[utf8]{inputenc}
@@ -123,8 +123,8 @@ We present a stochastic non-linear programming algorithm, capable of spanning
 all valid schedules by relaxing the problem to a continuous domain and optimizing
 with constraints. We combine the optimization problem with heuristics by
 encoding them as penalty functions that can be scaled to adjust priority. By
-stochastic-ally generating scaling parameters, we can generate datasets that
-have been optimizing with varying emphasis on heuristics. So
+stochastically generating scaling parameters, we can generate datasets that
+have been optimized with varying emphasis on heuristics. So
 far, we have used this method to effectively find schedules for performance
 critical code on IBM MASS libraries, gaining up to 20\% speedup compared to
 previously scheduled code. Although unsuitable to be implemented in a
@@ -146,12 +146,12 @@ impact different architectures.
 \newpage
 
 \chapter{Introduction (Background to Instruction Scheduling)}
-\label{sec:org7f35790}
-Modern processors are built with pipelined architectures capable of
-Instruction Level Parallelism (ILP), processors capable of exploiting ILP on
-one core through pipelining are known as superscalar processors. Superscalar
-processors present an opportunity to increase execution throughput by a
-multitude of the longest latency instruction of the architecture. However
+\label{sec:org5d5e54f}
+Modern processors are built with architectures capable of exploiting
+Instruction Level Parallelism (ILP) on a single core 
+through pipelining and superscalar behavior. Superscalar
+processors of degree \(n\) are architectures theoretically capable of issuing
+and executing \(n\) instructions on \(n\) parallel execution units. However
 maximizing throughput is not always achievable, in part due to instruction
 dependency (i.e the execution of an instruction cannot occur until it's
 operands are available). A sequence of dependent instructions of sufficient
@@ -159,7 +159,7 @@ latency may achieve no benefit from a superscalar architecture. That is, unless 
 interleaved with a set of relatively independent instructions. Furthermore,
 resource constraints such as the number of available registers and functional
 units can also delay execution. This creates an interesting problem for
-hardware and/or compilers: selecting a scheduling of instructions.
+hardware and/or compilers: selecting a schedule of instructions.
 \begin{tcolorbox}[title=Problem: Instruction Scheduling]
 Given an a dependency graph (DAG) of instructions and resource limitations
 (number of registers, functional units, etc), designate an ordering (find a \textbf{schedule}) 
@@ -176,18 +176,18 @@ scheduling problems are given by either:
 \item \textbf{Approximation Algorithms} some experimental use done for near optimal
 schedules \parencite{costa2016approx}
 \end{itemize}
-These solutions have been traditionally defined in hardware, however due to
-increasingly complex hardware constraints certain architectures known as Very
-Long Instruction Word (VLIW) architectures haven been constructed that move the
-burden of scheduling to the compiler \parencite{fisher1983very}. These
-algorithms are generally more comprehensive then simple permutation based
-heuristics performed at runtime by hardware and take a model of the program
-(typically represented as a dependency DAG \parencite{gibbons1986efficient}) as
-input and returns an ordered model to be used by the assembler during
-compilation.
+These solutions can implemented in hardware to execute at run-time
+ (dynamically), or implemented at compiler time via the compiler. With the
+ exception of certain niche architectures known as Very Long Instruction Word
+ (VLIW) architectures that seek to move the burden of scheduling to the compiler
+ entirely \parencite{fisher1983very}, modern architectures approach scheduling
+ from both the compiler and hardware. In general, comprehensive scheduling
+ algorithms take a model of the program (typically represented as a dependency
+ DAG \parencite{gibbons1986efficient}) as input and return an ordered model to
+ be used by the assembler during compilation.
 
 \section{Types of Instruction Scheduling}
-\label{sec:orgbcb52ce}
+\label{sec:orgc6c8a52}
 There are two broad criteria that have historically influenced scheduling
 algorithms: the first being the control flow of the dependency graph, the
 second being the nature/constraints of the architecture being scheduled for
@@ -211,18 +211,21 @@ entirely on local scheduling (ignoring branching)
 \parencite{rau1993instruction} and culminated in the use of various list
 scheduling algorithms in most schedulers by the 80s
 \parencite{fisher1983very}. An intuitive approach to global scheduling is to
-first schedule basic blocks then attempt to move operations from one block
-to an empty slots in neighboring blocks. However this approach would need to
-take into account/possibly reverse too many arbitrary decisions made in local
-scheduling in every possible neighboring block. To compensate this for this,
+first schedule basic blocks then attempt to move operations from one block to
+empty slots in neighboring blocks. However this approach would need to take
+into account/possibly reverse too many arbitrary decisions made in local
+scheduling in every possible neighboring block. To compensate for this,
 techniques for predicting more frequently occurring branch routes to improve
-global scheduling was invented known as trace scheduling \parencite{fisher1981trace}.
-Cyclic scheduling deals with branching that conforms to a loop in the control
-graph, and could be dealt with in the same fashion as global/trace
-scheduling, however is important/distinct enough to have it's own class of
-algorithm known as modulo scheduling (discussed in a later section).
+global scheduling was invented known as trace scheduling
+\parencite{fisher1981trace}. Cyclic scheduling deals with branching that
+conforms to a loop in the control graph, and could be dealt with in the same
+fashion as global/trace scheduling, however because so much
+performance-critical code is in looping it is important enough to
+have it's own class of algorithm known as modulo scheduling (discussed in a
+later section).
+
 \section{SuperScalar Architectures}
-\label{sec:org7781cd3}
+\label{sec:orgf0c70ac}
 
 \begin{figure}[htbp]
 \centering
@@ -231,10 +234,11 @@ algorithm known as modulo scheduling (discussed in a later section).
 \end{figure}
 
 
-Simple pipelined architectures issue a single instruction per "cycle".
+Simple pipelined architectures issue a single instruction per cycle.
 Through pipeling, ILP is still exploitable, but limited by only having one of
-each type of functional unit. Figure \ref{fig:PipelinedArchitecture} show's an
-example simple RISC architecture that exploits ILP while using only a single
+each type of functional unit. Figure \ref{fig:PipelinedArchitecture} shows an
+example simple RISC architecture with a 5 stage pipeline (IF=Fetch,
+ID=Decode, EX=Execute,MEM=Memory Access,WB=Write Back) that exploits ILP while using only a single
 execution unit. Conversely, figure \ref{fig:SuperScalarArchitecture} shows a
 superscalar architecture that utilizes parallel execution units.  
 
@@ -247,7 +251,7 @@ superscalar architecture that utilizes parallel execution units.
 
 Superscalar architectures are all uniprocessors that can execute two or more
 scalar operations in parallel, this encompasses a wide variety of
-architectures, but common to all these architectures are the existense of
+architectures, but common to all these architectures is the existence of
 parallel and pipelined functional units, and the need to manage that
 parallelism \parencite{zyuban2001inherently}. In particular, superscalar
 architectures put increased strain on resource management. This poses a more
@@ -265,8 +269,8 @@ dependent instructions too far apart doing this you risk running out of
 available registers (you increase register pressure). 
 
 \section{Pipeline Stalls}
-\label{sec:orge39093b}
-Both of the previous sections figures \ref{fig:PipelinedArchitecture} and
+\label{sec:org26b7824}
+Both of the previous figures \ref{fig:PipelinedArchitecture} and
 \ref{fig:SuperScalarArchitecture} show an ideal schedule with \textbf{NO} stalls. A stall
 occurs when, because of various architecture \textbf{hazards} that can arise, full throughput
 cannot be achieved and a NOOP (No-Operation) instruction must be inserted.
@@ -284,11 +288,11 @@ because of a Read After Write (RAW) hazard.
 \end{figure}
 
 \section{Hazards}
-\label{sec:orgc961e0a}
+\label{sec:org8628279}
 Architecture hazards can be broken up broadly into three categories
 \parencite{patterson2013computer}
 \begin{itemize}
-\item \textbf{Data Hazards} occur when a data dependency is broken, there are three
+\item \textbf{Data Hazards} occur when a data dependency is broken. There are three
 situations in which this can occur: read after write (RAW), write after
 read (WAR) and write after write (WAW)
 \end{itemize}
@@ -300,22 +304,22 @@ R4 \leftarrow \textbf{R2} + R3  & \qquad & \textbf{R5} \leftarrow R1 + R2 & \qqu
 \begin{itemize}
 \item \textbf{Structural Hazards} occurs when an aspect of hardware is accessed at the
 same time (such as a functional unit)
-\item \textbf{Control Hazards} also known as Branch Hazards, occurs when a bad branch
+\item \textbf{Control Hazards} also known as Branch Hazards, occur when a bad branch
 prediction is made causing instructions that were brought into the
 pipeline needing to be discarded
 \end{itemize}
 \section{Register Allocation via Graph Coloring}
-\label{sec:org152aee5}
+\label{sec:org62666b9}
 The theory of graph coloring deals with algorithms that seek to partition a
 set of objects into classes, given simple rules associating objects that may
 not belong to the same class \parencite{jensen2011graph}. These algorithms
-operate on graphs, where generally the objects are vertices and the edges
+operate on graphs, where the objects are vertices and the edges
 denote connected vertices that cannot be in the same class. Classes are
 represented via colors, where a \textbf{k-coloring} denotes a partitioning into k
-distinct classes. The problem of finding a \textbf{k-coloring} is a well known
+distinct classes. The problem of finding a \textbf{k-coloring} is a well-known
 NP-Complete problem \parencite{jensen2011graph}.
 
-Architectures provide a finite set of registers that must be "allocated"
+Architectures provide a finite set of registers that must be allocated
 after or during instruction scheduling. Finding an allocation for a given
 schedule (assuming one exists) has been shown to be equivalent to the Graph
 Coloring problem and hence NP-Complete \parencite{chaitin1981register}. Given
@@ -331,7 +335,7 @@ vertices of this interference graph. See Figure \ref{fig:GraphColor} as an examp
 \end{figure}
 
 \section{Spilling}
-\label{sec:org978a172}
+\label{sec:orgc5e3a3a}
 Finding the existence of a \textbf{k-coloring} for a given graph is itself an
 NP-Complete problem \parencite{jensen2011graph}, and the absence of an
 existing coloring presents a difficult problem. When a schedule cannot be
@@ -355,7 +359,7 @@ ranges alleviates more register pressure and creates a more flexible
 scheduling space.
 
 \section{Combining Register Allocation and Instruction Scheduling}
-\label{sec:org1b5b6a2}
+\label{sec:org2bdea56}
 Register allocation can be performed before, after, or combined with
 instruction scheduling, but is generally performed after
 \parencite{brasier1995craig}. Performing allocation before scheduling
@@ -367,7 +371,7 @@ scheduling is uninhibited by these anti-dependencies and may find more
 efficient schedules, but they may require post-hoc intervention via spilling.
 
 Attempts to combine register allocation and scheduling are rare in
-conventional compilers, even a simple instance of the problem (single
+conventional compilers, as even a simple instance of the problem (single
 register,no latency's, single functional unit) is \emph{NP-hard}
 \parencite{motwani1995combining} \parencite{Pinter:1993:RAI:173262.155114}.
 Heuristics developed for combining register allocation and scheduling
@@ -375,7 +379,7 @@ generally involve estimating a tradeoff between controlling register pressure
 and instruction parallelism considerations \parencite{motwani1995combining}.
 
 \section{Modulo Scheduling: Staging}
-\label{sec:orgad37445}
+\label{sec:org12658c8}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.6\textwidth]{figures/SwingModuloStaging.png}
@@ -393,7 +397,7 @@ between iterations (see Figure \ref{fig:SwingStaging}). Integral to this is the
 concept of an \textbf{Initiation Interval} or II, which is essentially the fixed
 delay between the start of successive iterations (see Figure
 \ref{fig:InitiationInterval}). Each iteration of the loop can be divided into
-stages consisting of II cycles each. A smaller II corresponds to shorter
+stages each consisting of II cycles. A smaller II corresponds to shorter
 execution time.
 
 \begin{figure}[htbp]
@@ -403,10 +407,10 @@ execution time.
 \end{figure}
 
 Modulo Scheduling algorithms require a candidate II be selected before
-scheduling is attempted. The \textbf{Minimum Initiation Interval} or \textbf{MII} is a lower
+scheduling is attempted. The \textbf{Minimum Initiation Interval} or \(\operatorname{MII}\) is a lower
 bound on the possible value of any II for which a modulo schedule exists. The
-MII is constrained by both resource constraints (\textbf{resMII}) and recurrence
-constraints (\textbf{recMII}). The resource constraint simply holds that resources
+MII is constrained by both resource constraints (\(\operatorname{resMII}\)) and recurrence
+constraints (\(\operatorname{recMII}\)). The resource constraint simply holds that resources
 (such as functional units) must be sufficiently available and any extra
 latency created waiting for a resource to become available must be accounted
 for (the exact calculation of resMII is architecture specific and can
@@ -416,8 +420,8 @@ maximum, taken over all cycles C in the dependence graph, of the sum of
 latencies along C divided by the sum of distance along C:
 
 \begin{align}
- MII &= max(recMII,resMII) \\
- recMII &= \max\limits_{C \in DepGraph} \frac{\sum\limits_{e \in C} latency(e)}{\sum\limits_{e \in C}
+ \operatorname{MII} &= \max(\operatorname{recMII},\operatorname{resMII}) \\
+ \operatorname{recMII} &= \max\limits_{C \in DepGraph} \frac{\sum\limits_{e \in C} latency(e)}{\sum\limits_{e \in C}
 distance(e)} 
 \end{align}
 The task of generating an optimal, resource-constrained schedule for loops
@@ -427,7 +431,7 @@ Scheduling has been implemented in the GNU C Compiler (GCC)
 \parencite{hagog2004swing}.
 
 \section{Register Pressure In Staged Loops}
-\label{sec:org931654f}
+\label{sec:orgca07349}
 Staging can increase throughput by enabling more instructions to
 be scheduled between high latency operations and subsequent use.
 However this also increases the number of live instances of loop
@@ -439,7 +443,7 @@ mechanisms for \textbf{Register Queuing} that provide more efficient spilling.
 
 Due to the nature of modulo scheduling, the lifetime of a variable can
 overlap with a previous definition of itself. To handle this, some form of
-register renaming needs to be provided. Some hardware provide support for
+register renaming needs to be provided. Some hardware provides support for
 this in the form of \textbf{Rotating Register Files} \parencite{rau1989cydra}. When
 no hardware solution is provided, the problem of overlapping lifetimes can be
 solved by a technique known as \textbf{Modulo Variable Expansion} (MVE), wherein the
@@ -447,7 +451,7 @@ kernel is unrolled and multiple definitions of a variable are renamed at
 compile time \parencite{valluri1998modulo}. 
 
 \section{Register Remapping/Renaming}
-\label{sec:org6283b3a}
+\label{sec:orga0aef25}
 Not to be confused with renaming of registers at compile time, register
 renaming in hardware is a technique to remove false data dependencies ---
 write after read (WAR) and write after write (WAW) --- between register
@@ -473,11 +477,11 @@ Having a larger number of Physical registers than Logical registers gives
 hardware extra flexibility when dispatching instructions for \textbf{Out of Order Execution}.
 
 \section{Out-of-Order Execution}
-\label{sec:orgcc2d16e}
+\label{sec:org6807fea}
 
 The execution flow of an instruction on a CPU can be implemented in one of
 two paradigms: \textbf{in-order} or \textbf{out-of-order} (OoO, also known as dynamic)
-execution. Execution of an instruction cycle in each paradigm comprises of
+execution. Execution of an instruction cycle in each paradigm comprises
 different steps:
 
 \textbf{In-Order Execution}
@@ -489,17 +493,18 @@ different steps:
 \item Write back to register file
 \end{enumerate}
 
-\textbf{Out-Of-Order Exeuction}
+\newpage
+
+\textbf{Out-Of-Order Execution}
 \begin{enumerate}
 \item Instruction fetch
 \item Dispatch to a temporary queue known as \textbf{Reservation Station}
 \item Wait in the reservation station until operands are available
-\item Dispatched once operands are available (even if before an older
+\item Issue once operands are available (even if before an older
 instruction)
 \item Execute (on appropriate functional unit)
-\item Results are retired to another temporary queue
-\item Only after all older instructions have their results written back, then
-the result is written back to register file
+\item Retire results to another temporary queue
+\item Write results back to register files after all older instructions have their results written back
 \end{enumerate}
 
 Although a more complicated design, OoO execution presents an opportunity to
@@ -517,7 +522,7 @@ Figure \ref{fig:OutOfOrder} illustrates the general control flow in an OoO machi
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.7\textwidth]{figures/OoODiagram.png}
+\includegraphics[width=1.0\textwidth]{figures/OoODiagram.png}
 \caption{\label{fig:OutOfOrder}Out-Of-Order Execution Control Flow}
 \end{figure}
 
@@ -531,15 +536,15 @@ dispatch. The scoreboard record (locks) the resources that would be modified
 by the instruction at issue time, and any subsequent instructions that want to
 access those resources cannot be issued until the instruction that initially
 locked them subsequently unlocks them \parencite{popescu1997processor}.
-Tomasulo's Algorithm innovated upon score-boarding allowing improved parallel
+Tomasulo's Algorithm innovated upon score-boarding by allowing improved parallel
 execution although requiring new hardware features such as register renaming
 in hardware, reservation stations for all execution units and a common data
 bus between all reservation stations \parencite{tomasulo1967efficient}.
 
 \chapter{Current State of the Art and Notable/Relevant Works in Instruction Scheduling}
-\label{sec:org921a702}
+\label{sec:org546add5}
 \section{List Scheduling (most commonly performed scheduling)}
-\label{sec:org9bb0f57}
+\label{sec:org4922c49}
 List scheduling is the most widely used technique for instruction scheduling
 \parencite{gibbons1986efficient}. List scheduling encompasses a class of
 algorithms for basic block scheduling via a chosen heuristic. It takes a list (of
@@ -560,7 +565,7 @@ est(n,p) = earliest start time of n on p
 
 Priorities can be static (remain constant for the DAG) or dynamic (change
 through iteration of the algorithm). The complexity of list scheduling
-depends on the heuristic, but is generally polynomial
+depends on the heuristic, but is generally polynomial time
 \parencite{wang2018list}. List scheduling can also be performed \emph{forward} or
 \emph{backward}, or performed successively, applying heuristic on top of
 heuristics. Examples of common heuristics are given in Table
@@ -613,22 +618,27 @@ this to assigning a priority via a polynomial time heuristic. As mentioned
 before, combinations of heuristics can be applied through successive
 iterations, but each iteration could undo previous iterations work.
 
-\section{Linear/Constraint Programming}
-\label{sec:orgb4a7b3d}
+\section{Constraint Programming}
+\label{sec:orgfd059fe}
 As an inherently discrete problem, a number of works have sought to formulate
 instruction scheduling as an Integer Linear Programming (ILP) problem
 (\parencite{wilken2000optimal}, \parencite{chang1997using},
 \parencite{kastner2001ilp}, \parencite{nagarakatte2007register},
-\parencite{kastner1999code}). Solving an ILP problem is an NP-Complete, so
+\parencite{kastner1999code}). These models optimize over integer objective
+variables (representing schedule dispatch times for instructions), and
+utilize constraints and penalties to achieve valid and desirable schedules.
+Solving an ILP problem is an NP-Complete problem, so
 formulating scheduling as an ILP only really serves to generalize
 solutions to heuristics/approximation algorithms used by ILP solvers.
 
-Another approach which has been far less investigated would be to "relax" the
-problem to a continuous Linear Program with constraints. Notable efforts into
-this approach are the works of McInnes/Beek in
-\parencite{malik2008optimal},\parencite{van2001fast}. The constraint LP
-problem in \parencite{malik2008optimal} found provably optimal schedules for
-basic blocks , with the following types of constraints:
+Another approach which has been far less investigated would be to optimize
+the problem focusing entirely on constraints (known as constraint
+programming). This type of optimization model would find a desirable schedule
+through constraints alone (converting penalties). Notable efforts into this
+approach are the works of McInnes/Beek in
+\parencite{malik2008optimal},\parencite{van2001fast}. The constraint problem
+in \parencite{malik2008optimal} found provably optimal schedules for basic
+blocks , with the following types of constraints:
 \begin{itemize}
 \item \textbf{Latency Constraints}, i.e
 \begin{itemize}
@@ -667,17 +677,16 @@ could use register remapping to execute these instructions efficiently Out-of-Or
 making that constraint unnecessary. 
 
 Despite limitations introduced by using hard constraints, this work is
-notable as it illustrates how a relaxed LP problem can be used to model the
-space of schedules. Even with the limitations on OoO architectures cutting of
-the optimal schedule, it's reasonable to assume the LP would find
-near-optimal schedules. And by converting hard constraints to soft
-constraints (penalties) its simple to assert this space would contain the
-optimal solution.
+notable as it illustrates how scheduling can be modeled as constraints. Even
+with the limitations on OoO architectures cutting of the optimal schedule,
+it's reasonable to assume the model would find near-optimal schedules. And by
+converting hard constraints to soft constraints (penalties) its simple to
+assert this space would contain the optimal solution.
 
 \section{Stochastic Search}
-\label{sec:org5cc21ba}
+\label{sec:org3b69bfa}
 There is a notable work to explore the space of schedules through a
-stochastic algorithm via Schkufza, Sharma, Aiken at Stanford
+stochastic algorithm by Schkufza, Sharma, Aiken at Stanford
 \parencite{Schkufza:2016:SPO:2886013.2863701}. The efforts are culminated in
 a piece of open source software known as STOKE that serves as a "stochastic
 optimizer and program synthesizer" for x86-64 instruction sets. Stoke is a
@@ -696,15 +705,15 @@ program transformation
 Each pass of the optimization minimizes the cost function
 
 \begin{equation*}
-  cost(R; T) = w_e \times eq(R; T) + w_p \times perf(R; T)
+  \operatorname{cost}(R; T) = w_e \times \operatorname{eq}(R; T) + w_p \times \operatorname{perf}(R; T)
 \end{equation*}
 
 \begin{center}
 \begin{tabular}{ll}
 \(\color{lightgreen}{\boldsymbol{R}}\) & any rewrite of the program\\
 \(\color{lightgreen}{\boldsymbol{T}}\) & the input program sequence\\
-\(\color{lightgreen}{eq(\cdot)}\) & the equivalence function (0 if \(\color{lightgreen}{R \equiv T}\) )\\
-\(\color{lightgreen}{perf(\cdot)}\) & a metric for performance\\
+\(\color{lightgreen}{\operatorname{eq}(\cdot)}\) & the equivalence function (0 if \(\color{lightgreen}{R \equiv T}\) )\\
+\(\color{lightgreen}{\operatorname{perf}(\cdot)}\) & a metric for performance\\
 \(\color{lightgreen}{\boldsymbol{w_e}}\) & weight for the equivalence term\\
 \(\color{lightgreen}{\boldsymbol{w_p}}\) & weight for the performance term\\
 \end{tabular}
@@ -720,12 +729,12 @@ checking is required per each rewrite)
 
 This approach highlights the ability to use stochastic optimization to find
 near-optimal schedules and the use of MCMC to explore the space of schedules.
-Although the cost function doesn't model the space of valid schedules,
-using it to generate schedules along with a may still prove to be the most
-practical way to explore a variety of schedules. 
+Although the cost function doesn't model the space of valid schedules, using
+it to generate schedules along with a model checker may still prove to be the
+most practical way to explore a variety of schedules.
 
 \section{Meta-Optimization / Hyper-Heuristics}
-\label{sec:org9c09e50}
+\label{sec:org2e6a4a9}
 Meta-optimization deals with the use of one optimization method to tune
 another one. 
 Hyper-heuristics are an off-spring of meta-optimization, that search within the search space of just heuristics vs the entire problem solution space.
@@ -762,9 +771,9 @@ using heuristic selection / generation to analysis the effectiveness of
 existing heuristics on architectures.
 
 \chapter{Proposed Approaches To Stochastic Scheduling and Heuristic Analysis via Hyper-Heuristics}
-\label{sec:orgc61996c}
+\label{sec:orgb9bb873}
 In this section I will introduce a Stochastic Scheduling Algorithm that
-utilizes a continuous optimization model with stochastic-ally generated
+utilizes a continuous optimization model with stochastically generated
 parameters, and propose it's use as a training set generator for ML driven
 heuristics selection and possibly generation. The full goal of this approach would
 be to not only find a means to evaluate the effectiveness of scheduling heuristics on a
@@ -773,7 +782,7 @@ able to evaluate the limitations of an architecture by analyzing the space of
 valid schedules via the continuous model used for optimization.
 
 \section{Optimization Model for Modulo Scheduling}
-\label{sec:org1e03012}
+\label{sec:org32c806a}
 \begin{align*}
     \color{lightblue}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
     \color{lightblue}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
@@ -799,23 +808,22 @@ variable \(t_i\),\(b_i\) represents the dispatch and completion times of the
 \(i^{th}\) instruction respectively. As we wish to model an Out-of-Order
 execution architecture, completion times are not necessarily fixed to dispatch
 times. The third variable, \(f_i\), which is constrained to be between 0 and 1, is
-the probability the instruction \(i\) should spill. The constant variable \(II\) is
+the probability that the instruction \(i\) should spill. The constant variable \(\textrm{II}\) is
 the pre-computed Initiation Interval
 
 Unlike the work of \parencite{malik2008optimal}, the proposed model makes little
 use of constraints. In fact the only constraints used are to enforce the
 resulting schedule is a valid modulo schedule. The notation \(i \rightarrow j\)
-used in the Hard Constraints equations above denotes instruction \(j\)
-depends on instruction \(i\). The first hard constraint enforces any 
+used in the Hard Constraints equations above denotes that instruction \(j\)
+depends on instruction \(i\). The first hard constraint enforces that any 
 instruction must be dispatched only after it's dependencies. The second
 constraint sets a limit on the overall execution time that instructions must
-fall within. And the third constraint enforces an instruction must complete
-within the same interval it was dispatched. 
+fall within. And the third constraint enforces that an instruction must complete
+within the same interval it was dispatched to avoid an anti-dependency hazard. 
 
 Without any \textbf{Penalties}, the above objective model would squash all dispatch and
 completion times down, moving dependent instructions apart only by a given
-\(\epsilon\) (a small constant chosen for the purpose of creating any arbitrary
-\emph{distance}) and assigning 0 to all \(f_i\). A \textbf{Key Idea} to this work: encode
+\(\epsilon\) (a small constant) and assigning 0 to all \(f_i\). A \textbf{Key Idea} to this work: encode
 choice heuristics as penalties, and adjust preference between heuristics by
 scaling. Heuristics, such as the ones detailed for use in List Scheduling, can
 all be encoded as Penalty Functions (functions that return a large value to push
@@ -823,10 +831,10 @@ down in the schedule, or a large negative value to push up). By picking a large
 or small number to scale a penalty function we can prioritize a schedule.
 
 \section{IO Penalty}
-\label{sec:orge5691a7}
+\label{sec:org4280186}
 Since we're not pushing instructions apart through latency constraints like
 in \parencite{malik2008optimal}, we need a penalty to compensate. We propose
-penalizing the dispatch time of instructions based o the quantity and
+penalizing the dispatch time of instructions based on the quantity and
 latencies of it's dependencies. \textbf{Note}: unlike a hard constraint on
 latencies, this won't cut off valid schedules that could be optimal on OoO
 architectures. 
@@ -844,24 +852,24 @@ architectures.
 \end{figure} 
 
 \section{Indicator Function}
-\label{sec:org9241a15}
+\label{sec:org7611519}
 The function \(\mathbb{IN}\) specified in the model and used in the IO Penalty
 above is what's known as an Indicator Function, and is important for
 implementing heuristics that rely on testing the proximity of two
 instructions. Essentially, the function can be used to indicate (via a
 non-zero value) whether two instructions are scheduled within a certain range
 of each-other. For this purpose, we developed a custom indicator function (an
-alteration of the famous sigmoid function often used in neural networks)
+alteration of the sigmoid function often used in neural networks)
 shown in Figure \ref{fig:sigmoid}.
 \begin{align}
      S(x) = \frac{1}{(1 + e^{s(-0.5 + v)})(1 + e^{s(-0.5-v)})}
 \end{align} 
 
 \section{Stochastic Scaling}
-\label{sec:org02437ef}
+\label{sec:org482f49e}
 The scaling \(\frac{1}{N_j}\) may be a good guess, but not necessarily effective in practice
 \begin{itemize}
-\item \textbf{IDEA} scale the \textbf{IO penalty} stochastic-ally by a multiple of the II
+\item \textbf{IDEA} scale the \textbf{IO penalty} stochastically by a multiple of the II
 \end{itemize}
 \begin{align}
  \color{lightblue}{\text{Define a Grouping}} \qquad & \mathbb{C} = \text{Group}(\forall i \mid i \rightarrow j) \\
@@ -870,18 +878,18 @@ The scaling \(\frac{1}{N_j}\) may be a good guess, but not necessarily effective
 \end{align}
 
 As previously mentioned, various other heuristics can be encoded and also scaled
-stochastic-ally, in basically the same manner as the IO penalty. The nature
+stochastically, in basically the same manner as the IO penalty. The nature
 of many heuristics can be encapsulated by simply choosing the same scaling
 based on the type of instruction (i.e push all loads up or down). 
 
 \section{Opportunity for Hyper-Heuristic Development}
-\label{sec:org157c03d}
+\label{sec:orgbd3c993}
 By representing the space of schedules in a continuous model (i.e the space of
 \(\mathbb{R}^n\)) and encoding heuristics as penalties, we can evaluate the
 merits of various heuristics in combination with each other. The continuous
 nature of the model provides more degrees of freedom when evaluating
-overlapping heuristics. By scaling these heuristics stochastic-ally, we
-already have a method to analysis heuristic selection through analyzing which
+overlapping heuristics. By scaling these heuristics stochastically, we
+already have a method to analyze heuristic selection through analyzing which
 scalings provide better performing schedules.
 
 By generating a variety of schedules for different types of basic blocks using
@@ -894,7 +902,7 @@ Principal Component Analysis is a dimension reduction tool that can be used
 to reduce a large set of variables to a small set that still contains most of
 the information in the large set. Principal component analysis can possibly
 be performed over the scaling parameters in conjunction with the training set
-results order to judge the influence of penalties on a given architecture.
+results in order to judge the influence of penalties on a given architecture.
 
 
 Clustering methods (unsupervised learning) can possibly be used for heuristic
