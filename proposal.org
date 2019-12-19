@@ -594,9 +594,12 @@ distance(e)}
    kernel is unrolled and multiple definitions of a variable are renamed at
    compile time \parencite{valluri1998modulo}. 
 
-*** TODO COMMENT update register pressure from beamer
-    
 ** Register Remapping/Renaming
+   Not to be confused with renaming of registers at compile time, register
+   renaming in hardware is a technique to remove false data dependencies ---
+   write after read (WAR) and write after write (WAW) --- between register
+   operands of subsequent instructions at runtime \parencite{sima2000design}.
+
    When executing machine code, hardware maps *Logical Registers* to *Physical Registers*
    -  *Logical Registers* are a set of registers usable directly when
      writing/generating assembly code (limited by system architecture)
@@ -883,6 +886,19 @@ between heuristics by scaling
    :PAGES:    334--341
    :YEAR:     1998
    :ORGANIZATION: IEEE
+   :END:
+** The design space of register renaming techniques :ignore:
+   :PROPERTIES:
+   :TITLE:    The design space of register renaming techniques
+   :BTYPE:    article
+   :CUSTOM_ID: sima2000design
+   :AUTHOR:   Sima, Dezso
+   :JOURNAL:  IEEE micro
+   :VOLUME:   20
+   :NUMBER:   5
+   :PAGES:    70--83
+   :YEAR:     2000
+   :PUBLISHER: IEEE
    :END:
 ** Computer organization and design MIPS edition: the hardware/software interface :ignore:
    :PROPERTIES:
