@@ -183,10 +183,13 @@ have been optimized with varying emphasis on heuristics. So
 far, we have used this method to effectively find schedules for performance
 critical code on IBM MASS libraries, gaining up to 20% speedup compared to
 previously scheduled code. Although unsuitable to be implemented in a
-conventional compiler, we believe the method may prove useful for architecture
+conventional compiler, we believe the method may prove useful for
+hyper-heuristic based architecture
 analysis. By analyzing generated datasets together with the space of the model
 for a given architecture, we hope to gain insights into how different heuristics
-impact different architectures. 
+impact different architectures. We give an overview of current efforts for
+hyper-heuristic development in compilers and propose this model as a basis for
+developing hyper-heuristic methods for instruction scheduling. 
 
 #+begin_center org
 #+begin_small
@@ -913,7 +916,10 @@ est(n,p) = earliest start time of n on p
    \parencite{beaty1991genetic},\parencite{kri2004genetic},\parencite{stephenson2003genetic},\parencite{wang2005instruction})
    no works have been found (at the time of writing for this proposal) on
    using heuristic selection / generation to analysis the effectiveness of
-   existing heuristics on architectures.
+   existing heuristics on scheduling in different architectures architectures.
+   Some work has been performed using ML in the form of Support-vector machines
+   (SVM) to learn compilation strategies (although not specific to scheduling)
+   in JiT compilers for the Java Virtual Machine \parencite{sanchez2011using}.
 
 *** TODO COMMENT read and summerize using Genetic Algorithms [[https://pdfs.semanticscholar.org/530b/e5eb7f81d8083cd0e4b47e38271c0529fd0f.pdf]]
 *** TODO COMMENT read and summerize learning heuristics for basic block scheduling [[https://link.springer.com/article/10.1007/s10732-007-9051-1]]   
@@ -958,7 +964,7 @@ $i^{th}$ instruction respectively. As we wish to model an Out-of-Order
 execution architecture, completion times are not necessarily fixed to dispatch
 times. The third variable, $f_i$, which is constrained to be between 0 and 1, is
 the probability that the instruction $i$ should spill. The constant variable $\textrm{II}$ is
-the pre-computed Initiation Interval
+the pre-computed Initiation Interval.
 
 Unlike the work of \parencite{malik2008optimal}, the proposed model makes little
 use of constraints. In fact the only constraints used are to enforce the
@@ -1035,9 +1041,11 @@ or small number to scale a penalty function we can prioritize a schedule.
 
   By generating a variety of schedules for different types of basic blocks using
   the stochastic method we can also obtain a "training set" which can
-  subsequently be used with various supervised Machine Learning (ML) algorithms, most
-  notably regression. The use of neural nets, ensemble methods or genetic
-  algorithms may also be worth exploring.  
+  subsequently be used with various supervised Machine Learning (ML) algorithms,
+  most notably Support Vector Machines (SVM), supervised learning models that
+  analyze data used for classification and regression analysis. The use of
+  neural nets, ensemble methods or genetic algorithms may also be worth
+  exploring.
 
    Principal Component Analysis is a dimension reduction tool that can be used
    to reduce a large set of variables to a small set that still contains most of
@@ -1048,12 +1056,13 @@ or small number to scale a penalty function we can prioritize a schedule.
    
   Clustering methods (unsupervised learning) can possibly be used for heuristic
   generation, by finding new groupings to scale. Given a clustering with scaling
-  $c_i$ we can check the following: *Assertion* For each scaling
+  $c_i$ we can check the following assertion: For each scaling
   $\color{lightgreen}{c_i \in \mathbb{RAND(R)}}$, there exists an
   $\color{lightgreen}{\epsilon \in \mathbb(R)}$ such that
   $\color{lightgreen}{c_i + \epsilon}$ produces a distinct schedule from
-  $\color{lightgreen}{c_i}$. If the assertion fails, the clustering is useless
-  (possible to avoid such clustering?)
+  $\color{lightgreen}{c_i}$. If the assertion fails, the clustering is useless.
+  A prominent research question would be for this work would be whether or not
+  it's possible to avoid such clusterings. 
 
 * Bib                                                                :ignore:
 # LaTeX: \addcontentsline{toc}{section}{References}
@@ -1063,6 +1072,17 @@ or small number to scale a penalty function we can prioritize a schedule.
 * Org-Bibtex                                                         :ignore:
 ** COMMENT PUT BIBTEX ENTRIES HERE IN SUBSECTION ENDED WITH IGNORE USING ORG-BIBTEX-YANK COMMAND :ignore:
 ** COMMENT EXPORT TO References.bib USING ORG-BIBTEX COMMAND :ignore:
+** Using machines to learn method-specific compilation strategies :ignore:
+   :PROPERTIES:
+   :TITLE:    Using machines to learn method-specific compilation strategies
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: sanchez2011using
+   :AUTHOR:   Sanchez, Ricardo Nabinger and Amaral, Jose Nelson and Szafron, Duane and Pirvu, Marius and Stoodley, Mark
+   :BOOKTITLE: International Symposium on Code Generation and Optimization (CGO 2011)
+   :PAGES:    257--266
+   :YEAR:     2011
+   :ORGANIZATION: IEEE
+   :END:
 ** Instruction scheduling using MAX-MIN ant system optimization :ignore:
    :PROPERTIES:
    :TITLE:    Instruction scheduling using MAX-MIN ant system optimization
