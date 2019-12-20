@@ -175,21 +175,25 @@ an ad-hoc basis.
 \vspace{1em}
 
 We present a stochastic non-linear programming algorithm, capable of spanning
-all valid schedules by relaxing the problem to a continuous domain and optimizing
-with constraints. We combine the optimization problem with heuristics by
-encoding them as penalty functions that can be scaled to adjust priority. By
-stochastically generating scaling parameters, we can generate datasets that
-have been optimized with varying emphasis on heuristics. So
-far, we have used this method to effectively find schedules for performance
-critical code on IBM MASS libraries, gaining up to 20% speedup compared to
-previously scheduled code. Although unsuitable to be implemented in a
-conventional compiler, we believe the method may prove useful for
-hyper-heuristic based architecture
-analysis. By analyzing generated datasets together with the space of the model
-for a given architecture, we hope to gain insights into how different heuristics
-impact different architectures. We give an overview of current efforts for
+all valid schedules by relaxing the problem to a continuous domain and
+optimizing with constraints. We combine the optimization problem with heuristics
+by encoding them as penalty functions that can be scaled to adjust priority. By
+stochastically generating scaling parameters, we can generate datasets of
+schedules that were obtained by optimizing a variety schedule spaces that model
+different combinations of priorities to sets of heuristics. So far, we have used
+this method to effectively find schedules for performance-critical code on IBM
+MASS libraries for the IBM Z15 architecture, gaining up to 20% speedup compared
+to previously scheduled code.
+
+\vspace{1em}
+
+Although unsuitable for implementation in a conventional compiler, we believe the
+method may prove useful for hyper-heuristic based architecture analysis. By
+analyzing generated datasets together with the space of the model for a given
+architecture, we hope to gain insights into how different heuristics impact
+different architectures. We give an overview of current efforts for
 hyper-heuristic development in compilers and propose this model as a basis for
-developing hyper-heuristic methods for instruction scheduling. 
+developing hyper-heuristic methods for instruction scheduling.
 
 #+begin_center org
 #+begin_small
