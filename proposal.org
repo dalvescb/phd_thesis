@@ -227,7 +227,7 @@ Given an a dependency graph (DAG) of instructions and resource limitations
 maximizing execution throughput 
 #+LaTex: \end{tcolorbox}
 
-Even simple formulations of optimal instruction scheduling is an NP-Complete
+Even simple formulations of optimal instruction scheduling are an NP-Complete
 search problem \parencite{hennessy1983postpass}, and problems attempting to
 integrate resource limitations on modern architectures are NP-Hard
 \parencite{motwani1995combining}. Thus practical solutions to instruction
@@ -253,7 +253,7 @@ These solutions can implemented in hardware to execute at run-time
    that are difficult to categorize and often forgotten through the evolution of
    architectures. However an effective scheduling algorithm must consider both criteria.
 
-   Within the first criteria (scheduling based on control flow), the following
+   Within the first criterion (scheduling based on control flow), the following
    categories are worth noting \parencite{rau1993instruction}:
    - *Basic Block:* (local acyclic) break code into blocks within branches (most commonly performed scheduling)
 	 - *Global Scheduling:* (global cyclic) schedule across basic block boundaries
@@ -311,7 +311,7 @@ These solutions can implemented in hardware to execute at run-time
    each type of functional unit. Figure [[fig:PipelinedArchitecture]] shows an
    example simple RISC architecture with a 5 stage pipeline (IF=Fetch,
    ID=Decode, EX=Execute,MEM=Memory Access,WB=Write Back) that exploits ILP while using only a single
-   execution unit. Conversely, figure [[fig:SuperScalarArchitecture]] shows a
+   execution unit. In contrast, figure [[fig:SuperScalarArchitecture]] shows a
    superscalar architecture that utilizes parallel execution units.  
    
    #+BEGIN_SRC ditaa :file figures/SuperScalarPipeline.png
@@ -346,7 +346,7 @@ These solutions can implemented in hardware to execute at run-time
    
   
    Superscalar architectures are all uniprocessors that can execute two or more
-   scalar operations in parallel, this encompasses a wide variety of
+   scalar operations in parallel; this encompasses a wide variety of
    architectures, but common to all these architectures is the existence of
    parallel and pipelined functional units, and the need to manage that
    parallelism \parencite{zyuban2001inherently}. In particular, superscalar
@@ -355,14 +355,14 @@ These solutions can implemented in hardware to execute at run-time
    often not sufficient to allow full utilization of machine
    resources \parencite{bernstein1991global}. 
 
-   An ideal architecture to schedule for would be a RISC architecture with
+   An simple architecture to schedule for would be a RISC architecture with
    a collection of functional units of $m$ types, where the machine has $n_1$,
    $n_2$, ..., $n_m$ units of each type. One could view optimizing a schedule over such
    an architecture as maximizing the amount of live functional units per
    cycle (i.e maximum throughput). This would generally be accomplished by
-   interleaving different types of instructions, however if you stretch data
-   dependent instructions too far apart doing this you risk running out of
-   available registers (you increase register pressure). 
+   interleaving different types of instructions, however stretching data
+   dependent instructions too far apart doing runs the risk of running out 
+   available registers (increasing register pressure). 
    
 ** Pipeline Stalls
    Both of the previous figures [[fig:PipelinedArchitecture]] and
@@ -370,19 +370,47 @@ These solutions can implemented in hardware to execute at run-time
    occurs when, because of various architecture *hazards* that can arise, full throughput
    cannot be achieved and a NOOP (No-Operation) instruction must be inserted.
    This is also known as inserting a bubble in the pipeline.
-   Figure \ref{fig:PipelineStall} gives an example of inserting a NOOP (bubble),
+   Figure [[fig:PipelineStall]] gives an example of inserting a NOOP (bubble),
    because of a Read After Write (RAW) hazard.
 
-#+LaTex: \begin{figure}[!h]
-  #+BEGIN_center
-  #+ATTR_LATEX: :width 0.4\textwidth :center
-    [[file:figures/bubbles.png]]
-  #+ATTR_LATEX: :width 0.46\textwidth :center
-    [[file:figures/bubbles2.png]]
-  #+END_center 
-#+LaTex: \label{fig:PipelineStall}
-#+LaTex: \caption{Example of a bubble (NOOP) being inserted to fix an unfullfilled data dependency}
-#+LaTex: \end{figure}
+   #+BEGIN_SRC ditaa :file figures/PipelineStall.png
+
+   +-------------+-------------+--------------+--------------+-------------+-------------+-------------+
+   |                                            Cycles                                                 | 
+   +-------------+-------------+--------------+--------------+-------------+-------------+-------------+
+   |    1        |     2       |      3       |      4       |      5      |      6      |      7      |
+   +-------------+-------------+--------------+--------------+-------------+-------------+-------------+
+
+   Example: Invalid Pipeline 
+   +----------+   +---------+   +----------+   +----------+   +----------+
+   |       IF |---|      ID |---|       EX |---|      MEM |-+-|       WB |
+   +----------+   +---------+   +----------+   +----------+ | +----------+ 
+                                                            |   Cannot pass data backwords
+                                             +--------------+ 
+                  +----------+   +---------+ | +----------+   +----------+   +----------+
+                  |       IF |---| cRED ID |-+-|  cRED EX |---|      MEM |---|       WB |
+                  +----------+   +---------+   +----------+   +----------+   +----------+ 
+                                 Bad Data
+
+
+
+   Example: Valid Pipeline With NOOP Inserted
+   +----------+   +---------+   +----------+   +----------+   +----------+
+   |       IF |---|      ID |---|       EX |---|      MEM |-+-|       WB |
+   +----------+   +---------+   +----------+   +----------+ | +----------+ 
+                                                            |  Can pass data forwards 
+                                                            | 
+                  +----------+   +---------+   /----------\ | +----------+   +----------+   +----------+
+                  |       IF |---| cRED ID |---|  cBLU    |-+-|  cGRE EX |---|      MEM |---|       WB |
+                  +----------+   +---------+   \----------/   +----------+   +----------+   +----------+ 
+                                 Bad Data
+   #+END_SRC
+
+   #+ATTR_LATEX: :width 1.0\textwidth 
+   #+CAPTION: Example of a bubble (NOOP) being inserted to fix an unfullfilled data dependency
+   #+LABEL: fig:PipelineStall
+   #+RESULTS:
+   [[file:figures/PipelineStall.png]]
 
 ** Hazards
    Architecture hazards can be broken up broadly into three categories
@@ -506,7 +534,7 @@ D <- ...     /--------\         /--------\     R1 <- ...
                |         v           |         v
 /-----------\  |   /-----------\     |   /-----------\
 |   c1FF    |  |   |    c1FF   |     |   |   c1FF    | 
-| 1_1 |  |   | Stage 1_2 |     |   | Stage 1_3 |
+| Stage 1_1 |  |   | Stage 1_2 |     |   | Stage 1_3 |
 \-----------/  |   \-----------/     |   \-----------/
      |         |         |           |         
      \---------/         \-----------/
