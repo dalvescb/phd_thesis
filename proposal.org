@@ -1098,6 +1098,44 @@ or small number to scale a penalty function we can prioritize a schedule.
   A prominent research question would be for this work would be whether or not
   it's possible to avoid such clusterings. 
 
+* Timeline
+
+#+CAPTION: Proposed Timeline   
+#+NAME: tab:ProposedTimeline 
+| *Schedule*      | *Goals*                                                      |
+|-----------------+--------------------------------------------------------------|
+| *2020 Jan-Feb*  | Write paper on stochastic scheduling                         |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+| *2020 Jan-Mar*  | Update Coconut to schedule for POWER and release open-source |
+|                 | - *Jan* Simulator                                            |
+|                 | - *Feb* CodeGraph Library                                    |
+|                 | - *Mar* Update DSL                                           |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+| *2020 May*      | Present at IBM TechConnect                                   |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+| *2020 Jun-Sept* | Generate Schedules for MASS on Power and experiment          |
+|                 | with Hyper-Heuristic methods                                 |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+| *2020 Jun-Aug*  | Write paper on schedule optimization for OoO architectures   |
+|                 | to submit to TACO                                            |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+| *2020 Aug-Oct*  | Write paper on Hyper-Heuristics to submit to one of the big  |
+|                 | ML conferences (ICML,IJCAI,etc)                              |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+| *2020 Oct-Dec*  | Attmpt to apply Hypr-Heuristic methods developed on power    |
+|                 | to schedule for Z                                            |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+| *2021 Jun*      | Defend Thesis                                                |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+
 * Bib                                                                :ignore:
 # LaTeX: \addcontentsline{toc}{section}{References}
 #+LaTeX: \addcontentsline{toc}{part}{References}
