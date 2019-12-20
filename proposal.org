@@ -506,7 +506,7 @@ D <- ...     /--------\         /--------\     R1 <- ...
 
    Attempts to combine register allocation and scheduling are rare in
    conventional compilers, as even a simple instance of the problem (single
-   register,no latency's, single functional unit) is /NP-hard/
+   register, no latencies, single functional unit) is /NP-hard/
    \parencite{motwani1995combining} \parencite{Pinter:1993:RAI:173262.155114}.
    Heuristics developed for combining register allocation and scheduling
    generally involve estimating a tradeoff between controlling register pressure
@@ -648,7 +648,7 @@ R2 \leftarrow \textbf{R4} + R3    & \qquad &                 R2 \leftarrow \text
      writing/generating assembly code (limited by system architecture)
    - *Physical Registers* are a set of registers actually available in hardware
    Having a larger number of Physical registers than Logical registers gives
-   hardware extra flexibility when dispatching instructions for *Out of Order Execution*.
+   hardware extra flexibility when dispatching instructions for *Out-of-Order Execution*.
     
 ** Out-of-Order Execution
    
@@ -656,17 +656,17 @@ R2 \leftarrow \textbf{R4} + R3    & \qquad &                 R2 \leftarrow \text
    two paradigms: *in-order* or *out-of-order* (OoO, also known as dynamic)
    execution. Execution of an instruction cycle in each paradigm comprises
    different steps:
-   
-   *In-Order Execution*
+  
+#+LATEX:\noindent 
+*In-Order Execution*
     1. Instruction fetch
     2. Stall until all operands are available
     3. Dispatch to appropriate functional unit
     4. Execute (on appropriate functional unit)
     5. Write back to register file
 
-#+LATEX: \newpage
- 
-   *Out-Of-Order Execution*
+#+LATEX: \noindent
+*Out-Of-Order Execution*
     1. Instruction fetch
     2. Dispatch to a temporary queue known as *Reservation Station*
     3. Wait in the reservation station until operands are available
@@ -728,11 +728,11 @@ R2 \leftarrow \textbf{R4} + R3    & \qquad &                 R2 \leftarrow \text
 
    #+CAPTION: Out-Of-Order Execution Control Flow
    #+NAME: fig:OutOfOrder 
-   #+ATTR_LATEX: :width 1.0\textwidth
+   #+ATTR_LATEX: :width 0.7\textwidth
    #+RESULTS:
    [[file:figures/OoODiagram.png]]
 
-  Out of Order execution requires dynamic scheduling (scheduling at runtime by
+  Out-of-Order execution requires dynamic scheduling (scheduling at runtime by
   hardware) performed via methods such as *Tomasulo's Algorithm* or a *Register
   Score-board*. Both methods seek to enable more efficient use of multiple
   execution units while preventing breaking of data dependencies. A register
@@ -849,7 +849,7 @@ est(n,p) = earliest start time of n on p
 
    The approach has some limitations on sophisticated enough architectures. The
    hard constraints on latency would not account for *Register Remapping* in
-   *Out Of Order Execution* architectures that would be able to find more
+   *Out-Of-Order Execution* architectures that would be able to find more
    optimal schedules despite the fact that latencies in normal execution would
    create *pipeline stalls*.
    
@@ -917,7 +917,7 @@ est(n,p) = earliest start time of n on p
 ** Meta-Optimization / Hyper-Heuristics
    Meta-optimization deals with the use of one optimization method to tune
    another one. 
-   Hyper-heuristics are an off-spring of meta-optimization, that search within the search space of just heuristics vs the entire problem solution space.
+   Hyper-heuristics are an off-spring of meta-optimization, that search within the search space of heuristics vs. the entire problem solution space.
    Hyper-heuristics are a relatively new concept (first used in 2000 to describe
    heuristics to choose heuristics) the definition has more recently been
    extended to refer to a search method or learning mechanism for selecting or
@@ -968,35 +968,37 @@ est(n,p) = earliest start time of n on p
   valid schedules via the continuous model used for optimization.
 
 ** Optimization Model for Modulo Scheduling
+
+   The following is a specification for a continuous optimization model for instruction scheduling
+   
 \begin{align*}
     \color{lightblue}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
-    \color{lightblue}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
-    \color{lightblue}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
+    \color{lightblue}{\text{Indicator Function }} & \operatorname{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
     & t_i :& \text{dispatch time} \\
     & b_i :& \text{completion time} \\
     & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
-    & \textrm{II} :& \text{iteration interval} = \frac{\# instructions}{dispatches/cycle} \\
+     \color{lightblue}{\text{Constants }}& \operatorname{II} : & \text{iteration interval} = \frac{\# instructions}{dispatches/cycle} \\
 \end{align*}
 
 \begin{align}
     \color{lightblue}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
-								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  \\
-								 & b_i + \epsilon \leq t_i + \textrm{II} \\
+								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \operatorname{II}  \\
+								 & b_i + \epsilon \leq t_i + \operatorname{II} \\
     \color{lightblue}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
 \end{align}
 
-The above model is a continuous optimization problem for scheduling, similar to
-the work detailed in Constraint Programming by
-\parencite{malik2008optimal}, but only maintaining the constraints necessary for
-ensuring a valid schedule, and relaxing the problem into a continuous domain as
-opposed to the Integer Linear Programming models mentioned. The model optimizes over a set of objective
+The above is similar
+to the work detailed in Constraint Programming by \parencite{malik2008optimal},
+but only maintaining the constraints necessary for ensuring a valid schedule,
+and relaxing the problem into a continuous domain as opposed to the Integer
+Linear Programming models mentioned. This model contains a set of objective
 variables: $t_i$,$b_i$,$f_i$ for each instruction $i$ to be scheduled. Each
 variable $t_i$,$b_i$ represents the dispatch and completion times of the
-$i^{th}$ instruction respectively. As we wish to model an Out-of-Order
-execution architecture, completion times are not necessarily fixed to dispatch
-times. The third variable, $f_i$, which is constrained to be between 0 and 1, is
-the probability that the instruction $i$ should spill. The constant variable $\textrm{II}$ is
-the pre-computed Initiation Interval.
+$i^{th}$ instruction respectively. As we wish to model an Out-of-Order execution
+architecture, completion times are not necessarily fixed to dispatch times. The
+third variable, $f_i$, which is constrained to be between 0 and 1, is the
+probability that the instruction $i$ should spill. The constant variable
+$\operatorname{II}$ is the pre-computed Initiation Interval.
 
 Unlike the work of \parencite{malik2008optimal}, the proposed model makes little
 use of constraints. In fact the only constraints used are to enforce the
@@ -1028,7 +1030,7 @@ or small number to scale a penalty function we can prioritize a schedule.
             \color{lightblue}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
             \color{lightblue}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
             \qquad & \qquad & \qquad \\
-            \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
+            \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \operatorname{IN}(t_i - t_j) & \qquad 
     \end{align}
    
     #+NAME: fig:sigmoid
@@ -1036,7 +1038,7 @@ or small number to scale a penalty function we can prioritize a schedule.
     [[file:figures/sigmoid.jpg]] 
 
 ** Indicator Function
-   The function $\mathbb{IN}$ specified in the model and used in the IO Penalty
+   The function $\operatorname{IN}$ specified in the model and used in the IO Penalty
    above is what's known as an Indicator Function, and is important for
    implementing heuristics that rely on testing the proximity of two
    instructions. Essentially, the function can be used to indicate (via a
