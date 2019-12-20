@@ -1128,6 +1128,9 @@ or small number to scale a penalty function we can prioritize a schedule.
 |                 | ML conferences (ICML,IJCAI,etc)                              |
 |                 |                                                              |
 |-----------------+--------------------------------------------------------------|
+| *2020 Nov*      | Present at IBM CASCON                                        |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
 | *2020 Oct-Dec*  | Attmpt to apply Hypr-Heuristic methods developed on power    |
 |                 | to schedule for Z                                            |
 |                 |                                                              |
