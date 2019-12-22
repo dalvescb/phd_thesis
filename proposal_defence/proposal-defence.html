@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title><h3><font color="navy">Stochastic Optimization for Instruction Scheduling and Their Potential for Architecture Analysis</font></h3></title>
+<meta name="author" content="@@html:<h4>Curtis D'Alves</h4>@@"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/sky.css" id="theme"/>
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title"><h3><font color="navy">Stochastic Optimization for Instruction Scheduling and Their Potential for Architecture Analysis</font></h3></h1><h2 class="author"><h4>Curtis D'Alves</h4></h2><h2 class="date"><h4>2019-11-26</h4></h2>
+</section>
+
+<section>
+<section id="slide-org69bfb02">
+<h2 id="org69bfb02">Background</h2>
+<div class="outline-text-2" id="text-org69bfb02">
+</div>
+</section>
+<section id="slide-org134cc41">
+<h3 id="org134cc41">Who Am I?</h3>
+<ul>
+<li><font color="navy">Ph.D Candidate</font> McMaster University</li>
+<li>Did my Master's in <font color="navy">Continuous Optimization Algorithms</font></li>
+<li>Working on <font color="navy">CAS Project 1006</font> (Stochastic Algorithms for Instructions Scheduling)
+<ul>
+<li>Working with Robert Enenkel <font color="navy">optimizing MASS libraries</font></li>
+
+</ul></li>
+<li>Emacs enthusiast</li>
+
+</ul>
+
+</section>
+<section id="slide-orga0ccdf8">
+<h3 id="orga0ccdf8">Previous Work: Kriston Costa</h3>
+<ul>
+<li>Utilized modified version of <font color="navy">Kargers Min Cut Algorithm</font></li>
+<li><font color="navy">Approximation Algorithm</font> that can be performed <font color="navy">stochastically</font></li>
+<li>Takes successive <b>min-cuts</b> across a graph (dependency graph will <font color="navy">minimize register pressure</font>)</li>
+
+</ul>
+
+</section>
+<section id="slide-orgbe6cd6f">
+<h3 id="orgbe6cd6f">Karger's Minimum Cut Algorithm</h3>
+<p>
+<img src="figures/kargermincut.png" alt="kargermincut.png" />
+Cuts create <font color="navy">groups</font> that are candidates to <font color="navy">interleave across stages</font> in <b>modulo scheduling</b>
+</p>
+
+</section>
+<section id="slide-org2fa37eb">
+<h3 id="org2fa37eb">Previous Work: Instruction Scheduling using Constraint Programming</h3>
+<ul>
+<li>Abid Malik, Jim McInnes, Peter van Beek</li>
+<li>Used <font color="navy">Linear Optimization</font> with <font color="navy">Constraints</font> to find optimal schedules for basic blocks</li>
+<li>Optimized over a <font color="navy">Dependency Graph</font> \(G = (N,E)\)</li>
+<li>Used hard <font color="navy">Latency Constraints</font>
+\[\forall (i,j) \in E \cdot j \geq i + l(i,j)\]</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org9620802">
+<h2 id="org9620802">Rapid Prototyping With COCONUT</h2>
+<div class="outline-text-2" id="text-org9620802">
+</div>
+</section>
+<section id="slide-orgd31fdcd">
+<h3 id="orgd31fdcd">Rapid Prototyping With COCONUT</h3>
+<p>
+<font color="navy">COCONUT</font>:( <font color="navy">CO</font>ode <font color="navy">CON</font>structing <font color="navy">U</font>ser <font color="navy">T</font>ool )
+</p>
+
+<ul>
+<li><p>
+COCONUT is an <font color="navy">Interactive Development ToolSet</font> for performance critical assembly code,
+with existing implementations for <font color="navy">PowerPC and Z</font>
+</p>
+
+<div class="figure">
+<p><img src="figures/prototyping.jpg" alt="prototyping.jpg" width="70%" height="50%" />  
+</p>
+</div></li>
+
+</ul>
+
+</section>
+<section id="slide-org14b4e27">
+<h3 id="org14b4e27">Rapid Prototyping With COCONUT</h3>
+<ul>
+<li>Performance critical assembly code can be encoded in the Coconut <font color="navy">eDSL</font></li>
+<li><font color="navy">Example COCONUT CODE</font></li>
+
+</ul>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #50fa7b;">some_func</span> <span style="color: #ffb86c;">::</span> <span style="color: #61bfff;">(</span><span style="color: #61bfff;">VR</span> n<span style="color: #ffb86c;">,</span><span style="color: #61bfff;">GPR</span> n<span style="color: #ffb86c;">,</span><span style="color: #61bfff;">VR</span> n <span style="color: #ffb86c;">,...</span><span style="color: #61bfff;">)</span> &#8722;<span style="color: #ffb86c;">&gt;</span> <span style="color: #61bfff;">(</span><span style="color: #61bfff;">MR</span> n<span style="color: #ffb86c;">,</span> <span style="color: #61bfff;">VR</span> n <span style="color: #ffb86c;">,...</span><span style="color: #61bfff;">)</span>
+<span style="color: #50fa7b;">some_func</span> <span style="color: #61bfff;">(</span>a0<span style="color: #ffb86c;">,</span>b0<span style="color: #ffb86c;">,</span>c0 <span style="color: #ffb86c;">,...</span><span style="color: #61bfff;">)</span> <span style="color: #ffb86c;">=</span> <span style="color: #ff79c6;">let</span>
+    a0_0 <span style="color: #ffb86c;">=</span> vadd b0 a0
+    a0_1 <span style="color: #ffb86c;">=</span> vsub c0 a0_0
+    <span style="color: #ffb86c;">...</span>
+  <span style="color: #ff79c6;">in</span> <span style="color: #61bfff;">(</span>a0_0<span style="color: #ffb86c;">,</span>a0_1 <span style="color: #ffb86c;">,...</span><span style="color: #61bfff;">)</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-org330b1a6">
+<h3 id="org330b1a6">COCONUT Features</h3>
+<ul>
+<li>Provides <font color="navy">Code Graph Library</font> for modeling dependency <b>DAG</b></li>
+<li>Provides <font color="navy">Register Allocator</font></li>
+<li>Provides <font color="navy">Hardware Simulator</font></li>
+<li>Provides <font color="navy">Code Generation</font></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org846e8c8">
+<h2 id="org846e8c8">Research Efforts Thus Far</h2>
+<div class="outline-text-2" id="text-org846e8c8">
+</div>
+</section>
+<section id="slide-org5f1ba87">
+<h3 id="org5f1ba87">Focus on Finding Near-Optimal Schedules for MASS Libraries</h3>
+<ul>
+<li>scheduling inside a loop (<font color="navy">modulo scheduling</font>)</li>
+<li>ignoring <font color="navy">global/trace</font> scheduling techniques</li>
+<li>scheduling on <font color="navy">IBM Z</font> (hopefully <font color="navy">POWER</font> coming soon)</li>
+<li>little consideration for cost of schedule generation</li>
+
+</ul>
+
+</section>
+<section id="slide-org4cea834">
+<h3 id="org4cea834">Constrained Optimization Model For Modulo Scheduling</h3>
+<div class="cmath">
+<small>
+<div>
+\begin{align*}
+    \color{navy}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
+    \color{navy}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
+    \color{navy}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
+    & t_i :& \text{dispatch time} \\
+    & b_i :& \text{completion time} \\
+    & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
+    & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
+\end{align*}
+
+</div>
+</small>
+
+</div>
+
+<p>
+<font color="navy">NOTE</font>: dispatch and completion times are designed to model <b>OoO</b> (Out of Order) execution machines 
+</p>
+
+</section>
+<section id="slide-org2c81719">
+<h3 id="org2c81719">Constrained Optimization Model</h3>
+<div class="cmath">
+<small>
+<div>
+\begin{align}
+    \color{navy}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
+								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  \\
+								 & b_i + \epsilon \leq t_i + \textrm{II} \\
+    \color{navy}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
+\end{align}
+
+</div>
+</small>
+
+</div>
+
+<p>
+<font color="navy">Key Idea:</font> Encode choice heuristics as penalties, adjust preference
+between heuristics by scaling
+</p>
+
+</section>
+<section id="slide-org63d8809">
+<h3 id="org63d8809">IO Penalty</h3>
+<ul>
+<li><font color="navy">IDEA</font> penalize dispatch time of instructions based on the quantity and
+latencies of it's dependencies</li>
+<li><font color="navy">Note</font> This is a <b>penalty</b> not a <b>hard</b> constraint on latencies</li>
+
+</ul>
+
+<div class="cmath">
+<small>
+<div>
+\begin{align*}
+         \color{navy}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
+         \color{navy}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
+         \qquad & \qquad & \qquad \\
+         \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
+ \end{align*}
+
+</div>
+</small>
+
+</div>
+
+</section>
+<section id="slide-org3b93d2d">
+<h3 id="org3b93d2d">Indicator Function (Sigmoid Logistic Curve)</h3>
+<p>
+<object type="image/svg+xml" data="figures/sigmoid.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+\[S(x) = \frac{1}{1 + e^{-x}}\] 
+</p>
+
+</section>
+<section id="slide-org463a4b7">
+<h3 id="org463a4b7">Indicator Function (Custom Sigmoid)</h3>
+
+<div class="figure">
+<p><img src="figures/sigmoid.jpg" alt="sigmoid.jpg" width="70%" height="70%" />
+</p>
+</div>
+
+<p>
+\[ S(x) = \frac{1}{(1 + e^{s(-0.5 + v)})(1 + e^{s(-0.5-v)})} \]
+</p>
+
+</section>
+<section id="slide-org9767da4">
+<h3 id="org9767da4">Stochastic Scaling</h3>
+<ul>
+<li>The scaling \(\color{black}{\frac{1}{N_j}}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
+<li><font color="navy">IDEA</font> scale the <font color="navy">IO penalty</font> stochastically</li>
+
+</ul>
+<div class="cmath">
+<small>
+<div>
+\begin{align*}
+    \color{navy}{\text{Define a Grouping}} \qquad & \mathbb{C} = \text{Group}(\forall i \mid i \rightarrow j) \\
+    \color{navy}{\text{For each Group i}} \qquad & c_i \in \mathbb{RAND(R)} \\
+    \color{navy}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
+  \end{align*}
+
+</div>
+</small>
+
+</div>
+
+</section>
+<section id="slide-org558acfc">
+<h3 id="org558acfc">Forming Heuristics as Penalties</h3>
+<p>
+Different categories of heuristics can be formed by 
+</p>
+<ul>
+<li><font color="navy">Grouping</font> different types of instructions</li>
+<li>using the right <font color="navy">Indicator Function</font></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orga390065">
+<h2 id="orga390065">What do we gain from this approach?</h2>
+<ul>
+<li><font color="navy">Continuous Optimization</font> algorithm provides a flexible space for schedules to span
+<ul>
+<li>Different heuristics can be encoded as penalties, scaled for priority</li>
+
+</ul></li>
+<li><font color="navy">Stochastic</font> element provides a means to generate a variety of schedules</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgd23d0a4">
+<h2 id="orgd23d0a4">Next Steps</h2>
+<div class="outline-text-2" id="text-orgd23d0a4">
+</div>
+</section>
+<section id="slide-org36f607f">
+<h3 id="org36f607f">RoadMap</h3>
+<ul>
+<li>Construct optimization model that can <b>encode heuristics</b> as penalties <font color="green">CHECK</font></li>
+<li>Verify we can use <b>stochastic scaling</b> to span a variety of schedules <font color="green">CHECK</font></li>
+<li>Verify we can use model to find <b>near-optimal</b> schedules <font color="green">CHECK</font></li>
+<li><b>Generate data sets</b> of varying schedules and their corresponding heuristics <font color="red">TBA</font></li>
+<li>Utilize <b>data analysis</b> to rate effectiveness of different heuristics on different architectures <font color="red">TBA</font></li>
+
+</ul>
+
+</section>
+<section id="slide-orgcb31b85">
+<h3 id="orgcb31b85">Topological Analysis</h3>
+<ul>
+<li><b>Instruction Schedules</b> presents a <font color="navy">metric space</font> (slightly stronger topological space)</li>
+<li><b>TDA</b> Topological Data Analysis consists of many approach's for analysis of datasets using techniques from topology
+<ul>
+<li><font color="navy">Persistent Homology</font> method for computing common topological features of a space at difference spatial resolutions</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section id="slide-org0bb50b4">
+<h3 id="org0bb50b4">Principle Component Analysis</h3>
+<ul>
+<li><font color="navy">PCA</font> is a statistical procedure commonly used to <b>judge the importance of parameters</b> involved in a predictive model</li>
+<li>Various models (say linear regressive) could be used to predict <b>scaling parameters</b> for penalties</li>
+<li>Performing <font color="navy">PCA</font> on scaling parameters could reveal the importance of heuristics on an architecture</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org0430cef">
+<h2 id="org0430cef">Questions? Constructive Criticisms Are Very Welcome</h2>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'convex', // see README of reveal.js for options
+transitionSpeed: 'default',
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }]
+
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+* Header :ignore:
+# -*- mode: org; -*-
+
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/reveal.js/3.0.0/
+# #+REVEAL_ROOT: /home/dalvescb/reveal.js/
+# #+REVEAL_THEME: league
+#+REVEAL_THEME: sky
+
+#+OPTIONS: reveal_title_slide:auto num:nil toc:nil timestamp:nil
+
+#+MACRO: color @@html:<font color="$1">$2</font>@@
+#+MACRO: alert @@html:<font color="navy">$1</font>@@
+#+MACRO: small @@html:<h3><font color="navy">$1</font></h3>@@
+#+MACRO: smaller @@html:<h4>$1</h4>@@
+
+# #+REVEAL_EXTRA_CSS: ./mystyle.css
+# #+REVEAL_EXTRA_CSS: /Users/curtis/reveal.js/css/theme/night.css
+
+# To load Org-reveal, type “M-x load-library”, then type “ox-reveal”.
+
+
+#+Title: {{{small(Stochastic Optimization for Instruction Scheduling and Their Potential for Architecture Analysis)}}}  
+# Stochastic Optimization for Instruction Scheduling and Their Potential for Architecture Analysis 
+#+Date: {{{smaller(2019-11-26)}}}
+#+Email: curtis.dalves@gmail.com
+#+Author: {{{smaller(Curtis D'Alves)}}}
+
+#+REVEAL_TITLE_SLIDE_TEMPLATE:"<h6>%t<\h6>"
+
+* Background
+** Who Am I?
+   - {{{alert(Ph.D Candidate)}}} McMaster University
+   - Did my Master's in {{{alert(Continuous Optimization Algorithms)}}}
+   - Working on {{{alert(CAS Project 1006)}}} (Stochastic Algorithms for Instructions Scheduling)
+     - Working with Robert Enenkel {{{alert(optimizing MASS libraries)}}}
+   - Emacs enthusiast
+
+** Previous Work: Kriston Costa
+   - Utilized modified version of {{{alert(Kargers Min Cut Algorithm)}}}
+   - {{{alert(Approximation Algorithm)}}} that can be performed {{{alert(stochastically)}}}
+   - Takes successive *min-cuts* across a graph (dependency graph will {{{alert(minimize register pressure)}}})
+
+** Karger's Minimum Cut Algorithm     
+   [[file:figures/kargermincut.png]]
+   Cuts create {{{alert(groups)}}} that are candidates to {{{alert(interleave across stages)}}} in *modulo scheduling*
+
+** Previous Work: Instruction Scheduling using Constraint Programming
+   - Abid Malik, Jim McInnes, Peter van Beek
+   - Used {{{alert(Linear Optimization)}}} with {{{alert(Constraints)}}} to find optimal schedules for basic blocks
+   - Optimized over a {{{alert(Dependency Graph)}}} $G = (N,E)$
+   - Used hard {{{alert(Latency Constraints)}}}
+     $$\forall (i,j) \in E \cdot j \geq i + l(i,j)$$ 
+     
+     
+* Research Efforts Thus Far
+** Focus on Finding Near-Optimal Schedules for MASS Libraries
+   - scheduling inside a loop ({{{alert(modulo scheduling)}}})
+   - ignoring {{{alert(global/trace)}}} scheduling techniques
+   - scheduling on {{{alert(IBM Z)}}} (hopefully {{{alert(POWER)}}} coming soon) 
+   - little consideration for cost of schedule generation
+
+** Constrained Optimization Model For Modulo Scheduling
+#+BEGIN_cmath
+#+HTML: <small>
+\begin{align*}
+    \color{navy}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
+    \color{navy}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
+    \color{navy}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
+    & t_i :& \text{dispatch time} \\
+    & b_i :& \text{completion time} \\
+    & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
+    & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
+\end{align*}
+#+HTML: </small>
+#+END_cmath
+
+  {{{alert(NOTE)}}}: dispatch and completion times are designed to model *OoO* (Out of Order) execution machines 
+  
+** Constrained Optimization Model
+#+BEGIN_cmath
+#+HTML: <small>
+\begin{align}
+    \color{navy}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
+								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  \\
+								 & b_i + \epsilon \leq t_i + \textrm{II} \\
+    \color{navy}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
+\end{align}
+#+HTML: </small>    
+#+END_cmath
+
+{{{alert(Key Idea:)}}} Encode choice heuristics as penalties, adjust preference
+between heuristics by scaling
+
+** IO Penalty
+   - {{{alert(IDEA)}}} penalize dispatch time of instructions based on the quantity and
+    latencies of it's dependencies
+   - {{{alert(Note)}}} This is a *penalty* not a *hard* constraint on latencies
+
+#+BEGIN_cmath
+#+HTML: <small>
+   \begin{align*}
+            \color{navy}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
+            \color{navy}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
+            \qquad & \qquad & \qquad \\
+            \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
+    \end{align*}
+#+HTML: </small>
+#+END_cmath
+
+** Indicator Function (Sigmoid Logistic Curve)
+   [[file:figures/sigmoid.svg]]
+   $$S(x) = \frac{1}{1 + e^{-x}}$$ 
+ 
+** Indicator Function (Custom Sigmoid)
+   #+ATTR_HTML: :width 70% :height 70%
+   [[file:figures/sigmoid.jpg]]
+
+    \[ S(x) = \frac{1}{(1 + e^{s(-0.5 + v)})(1 + e^{s(-0.5-v)})} \]
+    
+** Stochastic Scaling
+   - The scaling $\color{black}{\frac{1}{N_j}}$ may be a good *guess*, but not necessarily effective in practice
+   - {{{alert(IDEA)}}} scale the {{{alert(IO penalty)}}} stochastically
+#+BEGIN_cmath
+#+HTML: <small>
+      \begin{align*}
+          \color{navy}{\text{Define a Grouping}} \qquad & \mathbb{C} = \text{Group}(\forall i \mid i \rightarrow j) \\
+          \color{navy}{\text{For each Group i}} \qquad & c_i \in \mathbb{RAND(R)} \\
+          \color{navy}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
+        \end{align*}
+#+HTML: </small>
+#+END_cmath
+
+** Forming Heuristics as Penalties
+   Different categories of heuristics can be formed by 
+    - {{{alert(Grouping)}}} different types of instructions
+    - using the right {{{alert(Indicator Function)}}}
+
+* What do we gain from this approach?
+  - {{{alert(Continuous Optimization)}}} algorithm provides a flexible space for schedules to span
+    - Different heuristics can be encoded as penalties, scaled for priority
+  - {{{alert(Stochastic)}}} element provides a means to generate a variety of schedules
+    
+* Next Steps
+
+** RoadMap
+   - Construct optimization model that can *encode heuristics* as penalties {{{color(green,CHECK)}}}
+   - Verify we can use *stochastic scaling* to span a variety of schedules {{{color(green,CHECK)}}}
+   - Verify we can use model to find *near-optimal* schedules {{{color(green,CHECK)}}}
+   - *Generate data sets* of varying schedules and their corresponding heuristics {{{color(red,TBA)}}}
+   - Utilize *data analysis* to rate effectiveness of different heuristics on different architectures {{{color(red,TBA)}}}
+
+** Topological Analysis
+   - *Instruction Schedules* presents a {{{alert(metric space)}}} (slightly stronger topological space)
+   - *TDA* Topological Data Analysis consists of many approach's for analysis of datasets using techniques from topology
+     - {{{alert(Persistent Homology)}}} method for computing common topological features of a space at difference spatial resolutions
+
+** Principle Component Analysis
+   - {{{alert(PCA)}}} is a statistical procedure commonly used to *judge the importance of parameters* involved in a predictive model
+   - Various models (say linear regressive) could be used to predict *scaling parameters* for penalties
+   - Performing {{{alert(PCA)}}} on scaling parameters could reveal the importance of heuristics on an architecture
+     
+* Test Ditaa
+#+BEGIN_SRC ditaa :eps :file figures/test.eps
+ --------------------------------->
+     time 
+
+              /-----------\        
+              |   c1FF    | 
+              | Iter 3    | 
+              \-----------/ 
+        /-----------\               
+  II    |   c1FF    |       
+<---->  | Iter 2    |       
+        \-----------/       
+/-----------\  
+|   c1FF    |   
+| Iter 1    |  
+\-----------/  
+#+END_SRC
+
+#+RESULTS:
+[[file:figures/test.eps]]
+
+  
