@@ -10,8 +10,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/sky.css" id="theme"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/css/zenburn.css"/>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/css/zenburn.css"/>
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
     if( window.location.search.match( /print-pdf/gi ) ) {
@@ -32,40 +32,42 @@
 </section>
 
 <section>
-<section id="slide-org9987163">
-<h2 id="org9987163">Background</h2>
-<div class="outline-text-2" id="text-org9987163">
+<section id="slide-orgcf081cc">
+<h2 id="orgcf081cc">Background</h2>
+<div class="outline-text-2" id="text-orgcf081cc">
 </div>
 </section>
-<section id="slide-orgd4bf5fe">
-<h3 id="orgd4bf5fe">Instruction Scheduling</h3>
+<section id="slide-org19e8e3b">
+<h3 id="org19e8e3b">Instruction Scheduling</h3>
 <ul>
 <li><font color="navy">Problem:</font> 
 Given a set of instructions and dependencies, designate an order 
 (find a <b>schedule</b>) satisfying the dependencies and optimizing performance</li>
 <li>Known <font color="navy">NP-Complete Problem:</font> practically solved by either
 <ul>
-<li><b>Heuristics</b></li>
+<li><b>Heuristics</b> (most commonly)</li>
 <li><b>Approximation Algorithms</b></li>
 
 </ul></li>
+<li>Compiler Heuristics <font color="navy">need to evolve with their target architectures</font>, making it a constantly ongoing problem in the field of
+compiler development</li>
 
 </ul>
 
 </section>
-<section id="slide-orgdf5e4da">
-<h3 id="orgdf5e4da">Example: Instruction Dependency DAG</h3>
+<section id="slide-org46b66b6">
+<h3 id="org46b66b6">Example: Instruction Dependency DAG</h3>
 
 <div class="figure">
-<p><object type="image/svg+xml" data="../figures/DAG.svg" class="org-svg" width="95%" height="95%">
+<p><object type="image/svg+xml" data="../figures/DAG.svg" class="org-svg" width="110%" height="110%">
 Sorry, your browser does not support SVG.</object>
 </p>
 <p><span class="figure-number">Figure 1: </span>IBM MASS Library COS DAG on Z14 Architecture</p>
 </div>
 
 </section>
-<section id="slide-org80a5d87">
-<h3 id="org80a5d87">Instruction Level Parallelism (Pipelining)</h3>
+<section id="slide-orge6b693b">
+<h3 id="orge6b693b">Instruction Level Parallelism (Pipelining)</h3>
 <p>
 Instruction execution can be broken into stages, the following pipeline uses four stages
 </p>
@@ -85,8 +87,8 @@ Instruction execution can be broken into stages, the following pipeline uses fou
 </div>
 
 </section>
-<section id="slide-org67919e6">
-<h3 id="org67919e6">Instruction Level Parallelism (SuperScalar Architectures)</h3>
+<section id="slide-org6c6e922">
+<h3 id="org6c6e922">Instruction Level Parallelism (SuperScalar Architectures)</h3>
 <p>
 Superscalar Architectures exploit <font color="navy">Parallel Functional Units</font> to
 execute multiple functions at once
@@ -99,17 +101,21 @@ execute multiple functions at once
 </div>
 
 </section>
-<section id="slide-org5fe90e5">
-<h3 id="org5fe90e5">Architecture Hazards</h3>
+<section id="slide-org8e4ada3">
+<h3 id="org8e4ada3">Architecture Hazards</h3>
 <ul>
 <li><font color="navy">Data Hazards</font> occur when a data dependency is broken. There are 3 types:</li>
 
 </ul>
 <div>
 \begin{align*}
-\textbf{RAW}                    & \qquad & \textbf{WAR}                   & \qquad & \textbf{WAW} \\
-\textbf{R2} \leftarrow R5 + R3  & \qquad & R4 \leftarrow R1 + \textbf{R5} & \qquad & \textbf{R2} \leftarrow R4 + R7 \\
-R4 \leftarrow \textbf{R2} + R3  & \qquad & \textbf{R5} \leftarrow R1 + R2 & \qquad & \textbf{R2} \leftarrow R1 + R3
+\qquad & \qquad & \\
+\textbf{RAW}                    & \qquad & \textbf{WAR}                   \\ 
+\textbf{R2} \leftarrow R5 + R3  & \qquad & R4 \leftarrow R1 + \textbf{R5} \\ 
+R4 \leftarrow \textbf{R2} + R3  & \qquad & \textbf{R5} \leftarrow R1 + R2 \\ 
+\textbf{WAW} & & \\
+\textbf{R2} \leftarrow R4 + R7 & & \\
+\textbf{R2} \leftarrow R1 + R3 & & 
 \end{align*}
 
 </div>
@@ -122,8 +128,8 @@ prediction is made</li>
 </ul>
 
 </section>
-<section id="slide-org7b8fe88">
-<h3 id="org7b8fe88">Pipeline Stalls</h3>
+<section id="slide-org2f0f402">
+<h3 id="org2f0f402">Pipeline Stalls</h3>
 <p>
 When a <font color="navy">Hazard</font> occurs, a <font color="navy">No Operation (NOOP)</font> must be
 inserted, effectively <font color="navy">Stalling the Pipeline</font>
@@ -137,8 +143,8 @@ inserted, effectively <font color="navy">Stalling the Pipeline</font>
 </div>
 
 </section>
-<section id="slide-org7d4de5d">
-<h3 id="org7d4de5d">Types Of Instruction Scheduling</h3>
+<section id="slide-orgc69a8f9">
+<h3 id="orgc69a8f9">Types Of Instruction Scheduling</h3>
 <p>
 A scheduler attempts to <font color="navy">maximize throughput</font> (by avoiding
 pipeline stalls). The following different types of scheduling are worth
@@ -156,8 +162,8 @@ taken on branches</li>
 </ul>
 
 </section>
-<section id="slide-org3537bb6">
-<h3 id="org3537bb6">Register Allocation</h3>
+<section id="slide-org855356c">
+<h3 id="org855356c">Register Allocation</h3>
 <ul>
 <li>CPU's have a <font color="navy">limited number of registers</font> that must be
 allocated (generally after scheduling)</li>
@@ -174,8 +180,8 @@ of <font color="navy">Graph Coloring</font></li>
 </div>
 
 </section>
-<section id="slide-org5055e27">
-<h3 id="org5055e27">Spilling</h3>
+<section id="slide-org99b8fa3">
+<h3 id="org99b8fa3">Spilling</h3>
 <p>
 When <font color="navy">Register Allocation fails</font>, a <font color="navy">spill must be inserted</font>
 </p>
@@ -206,8 +212,8 @@ Generally has a <font color="navy">large performance deficit</font>. A <font col
 </p>
 
 </section>
-<section id="slide-orgb85e76a">
-<h3 id="orgb85e76a">In-Order vs Out-Of-Order Execution</h3>
+<section id="slide-orgf8947c6">
+<h3 id="orgf8947c6">In-Order vs Out-Of-Order Execution</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -270,8 +276,8 @@ Generally has a <font color="navy">large performance deficit</font>. A <font col
 </table>
 
 </section>
-<section id="slide-org34e2c95">
-<h3 id="org34e2c95">Out-Of-Order Execution</h3>
+<section id="slide-org9bd6f94">
+<h3 id="org9bd6f94">Out-Of-Order Execution</h3>
 <p>
 Used in most modern architectures, <font color="navy">increases potential for ILP</font> but
 further complicates scheduling considerations 
@@ -287,13 +293,13 @@ further complicates scheduling considerations
 </section>
 </section>
 <section>
-<section id="slide-org09b4a06">
-<h2 id="org09b4a06">Motivation</h2>
-<div class="outline-text-2" id="text-org09b4a06">
+<section id="slide-org56d5487">
+<h2 id="org56d5487">Motivation</h2>
+<div class="outline-text-2" id="text-org56d5487">
 </div>
 </section>
-<section id="slide-org5d1c2af">
-<h3 id="org5d1c2af">Motivation For Performance Oriented Scheduling</h3>
+<section id="slide-org4677955">
+<h3 id="org4677955">Motivation For Performance Oriented Scheduling</h3>
 <ul>
 <li><font color="navy">Conventional Heuristics</font> used in compilers are suitable for
 finding near-optimal schedule for most code with moderate ILP available</li>
@@ -308,13 +314,13 @@ functions that should be scheduled for near-optimal performance</li>
 </ul>
 
 </section>
-<section id="slide-org59eb75e">
-<h3 id="org59eb75e">Motivation For Schedule Space/Heuristic Analysis</h3>
+<section id="slide-orgd66adcd">
+<h3 id="orgd66adcd">Motivation For Schedule Space/Heuristic Analysis</h3>
 <ul>
 <li>Architectures are becoming <font color="navy">increasing complicated</font></li>
 <li>Design decisions are sometimes made by fad (i.e favoring micro-benchmarks
 for applications such as ML functions like sigmoid)</li>
-<li>Heuristic effectiveness <font color="navy">need to be re-evaluated</font> as
+<li>Heuristic relevance <font color="navy">need to be re-evaluated</font> as
 architectures are updated</li>
 <li><font color="navy">Developing Heuristics</font> is difficult and costly (requires a lot
 of man power)</li>
@@ -324,16 +330,16 @@ of man power)</li>
 </section>
 </section>
 <section>
-<section id="slide-org51c985c">
-<h2 id="org51c985c">Current State of the Art and Notable/Relevant Works in Instruction Scheduling</h2>
-<div class="outline-text-2" id="text-org51c985c">
+<section id="slide-orge8d094e">
+<h2 id="orge8d094e">Current State of the Art and Notable/Relevant Works in Instruction Scheduling</h2>
+<div class="outline-text-2" id="text-orge8d094e">
 </div>
 </section>
-<section id="slide-orgaa09c6f">
-<h3 id="orgaa09c6f">List Scheduling</h3>
+<section id="slide-orgde4388c">
+<h3 id="orgde4388c">List Scheduling</h3>
 <div class="org-src-container">
 
-<pre><code class=" fortran" >while there are instrs to be scheduled do 
+<pre><code class=" ada" >while there are instrs to be scheduled do 
       Identify highest priority instr n
       Choose a processor p for n
       Schedule n on p at est(n,p)
@@ -350,8 +356,8 @@ conventional compiler</li>
 </ul>
 
 </section>
-<section id="slide-orgf3ef85c">
-<h3 id="orgf3ef85c">Instruction Scheduling using Constraint Programming</h3>
+<section id="slide-org779f8b9">
+<h3 id="org779f8b9">Instruction Scheduling using Constraint Programming</h3>
 <ul>
 <li>Abid Malik, Jim McInnes, Peter van Beek</li>
 <li>Used <font color="navy">Constraint Programming</font> to optimize over a given DAG \(G =
@@ -382,8 +388,8 @@ conventional compiler</li>
 </ul>
 
 </section>
-<section id="slide-org986f5db">
-<h3 id="org986f5db">Stochastic Search</h3>
+<section id="slide-org089da96">
+<h3 id="org089da96">Stochastic Search</h3>
 <ul>
 <li>Schkufza, Sharma, Aiken at Stanford</li>
 <li>Uses a <font color="navy">Multi-Pass Stochastic Algorithm</font> to <font color="navy">iteratively transform basic block schedules</font> by minimizing the following cost function</li>
@@ -391,9 +397,11 @@ conventional compiler</li>
 </ul>
 
 <div>
-\begin{equation*}
-  \operatorname{cost}(R; T) = w_e \times \operatorname{eq}(R; T) + w_p \times \operatorname{perf}(R; T)
-\end{equation*}
+\begin{align*}
+  \qquad \\
+  \operatorname{cost}(R; T) = w_e \times \operatorname{eq}(R; T) + w_p \times \operatorname{perf}(R; T) \\
+  \qquad 
+\end{align*}
 
 </div>
 
@@ -438,16 +446,22 @@ conventional compiler</li>
 </tbody>
 </table>
 
+<ul>
+<li>Uses <font color="navy">Markov-Chain-Monte-Carlo (MCMC)</font> sampling to stochastically
+explore schedule space</li>
+
+</ul>
+
 </section>
 </section>
 <section>
-<section id="slide-org8ddc9a2">
-<h2 id="org8ddc9a2">Research Efforts Thus Far</h2>
-<div class="outline-text-2" id="text-org8ddc9a2">
+<section id="slide-org07bcbb9">
+<h2 id="org07bcbb9">Research Efforts Thus Far</h2>
+<div class="outline-text-2" id="text-org07bcbb9">
 </div>
 </section>
-<section id="slide-orgfcec1ca">
-<h3 id="orgfcec1ca">Focus on Finding Near-Optimal Schedules for MASS Libraries</h3>
+<section id="slide-orgfce506f">
+<h3 id="orgfce506f">Focus on Finding Near-Optimal Schedules for MASS Libraries</h3>
 <ul>
 <li>scheduling inside a loop (<font color="navy">modulo scheduling</font>)</li>
 <li>ignoring <font color="navy">global/trace</font> scheduling techniques</li>
@@ -458,8 +472,8 @@ conventional compiler</li>
 </ul>
 
 </section>
-<section id="slide-org0860436">
-<h3 id="org0860436">Continuous Optimization Model For Modulo Scheduling</h3>
+<section id="slide-org7073be9">
+<h3 id="org7073be9">Continuous Optimization Model For Modulo Scheduling</h3>
 <div class="cmath">
 <small>
 <div>
@@ -483,8 +497,8 @@ conventional compiler</li>
 </p>
 
 </section>
-<section id="slide-org92e401a">
-<h3 id="org92e401a">Continuous Optimization Model</h3>
+<section id="slide-orgdbfafc8">
+<h3 id="orgdbfafc8">Continuous Optimization Model</h3>
 <div class="cmath">
 <small>
 <div>
@@ -506,8 +520,8 @@ between heuristics by scaling
 </p>
 
 </section>
-<section id="slide-orgde59d62">
-<h3 id="orgde59d62">IO Penalty</h3>
+<section id="slide-org0fa0048">
+<h3 id="org0fa0048">IO Penalty</h3>
 <ul>
 <li><font color="navy">IDEA</font> penalize dispatch time of instructions based on the quantity and
 latencies of it's dependencies</li>
@@ -531,8 +545,8 @@ latencies of it's dependencies</li>
 </div>
 
 </section>
-<section id="slide-orgc6ee830">
-<h3 id="orgc6ee830">Indicator Function (Custom Sigmoid)</h3>
+<section id="slide-org7e82253">
+<h3 id="org7e82253">Indicator Function (Custom Sigmoid)</h3>
 
 <div class="figure">
 <p><img src="../figures/sigmoid.jpg" alt="sigmoid.jpg" width="70%" height="70%" />
@@ -544,8 +558,8 @@ latencies of it's dependencies</li>
 </p>
 
 </section>
-<section id="slide-orgf35b107">
-<h3 id="orgf35b107">Stochastic Scaling</h3>
+<section id="slide-org441e513">
+<h3 id="org441e513">Stochastic Scaling</h3>
 <ul>
 <li>The scaling \(\color{black}{\frac{1}{N_j}}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
 <li><font color="navy">IDEA</font> scale the <font color="navy">IO penalty</font> stochastically</li>
@@ -566,8 +580,8 @@ latencies of it's dependencies</li>
 </div>
 
 </section>
-<section id="slide-org3f35a60">
-<h3 id="org3f35a60">Forming Heuristics as Penalties</h3>
+<section id="slide-org44bf46c">
+<h3 id="org44bf46c">Forming Heuristics as Penalties</h3>
 <p>
 Different categories of heuristics can be formed by 
 </p>
@@ -580,8 +594,8 @@ Different categories of heuristics can be formed by
 </section>
 </section>
 <section>
-<section id="slide-org9d1884c">
-<h2 id="org9d1884c">What do we gain from this approach?</h2>
+<section id="slide-org2119a66">
+<h2 id="org2119a66">What do we gain from this approach?</h2>
 <ul>
 <li><font color="navy">Continuous Optimization</font> algorithm provides a flexible space for schedules to span
 <ul>
@@ -589,20 +603,20 @@ Different categories of heuristics can be formed by
 
 </ul></li>
 <li><font color="navy">Stochastic</font> element provides a means to generate a variety of
-schedules (i.e generate datatsets)</li>
+schedules (i.e generate datasets)</li>
 
 </ul>
 
 </section>
 </section>
 <section>
-<section id="slide-orgb0c1912">
-<h2 id="orgb0c1912">Proposed research</h2>
-<div class="outline-text-2" id="text-orgb0c1912">
+<section id="slide-org32496a0">
+<h2 id="org32496a0">Proposed research</h2>
+<div class="outline-text-2" id="text-org32496a0">
 </div>
 </section>
-<section id="slide-org42bd40e">
-<h3 id="org42bd40e">Hyper-Heuristics For Instruction Scheduling</h3>
+<section id="slide-orge806f24">
+<h3 id="orge806f24">Hyper-Heuristics For Instruction Scheduling</h3>
 <ul>
 <li><font color="navy">Meta-Optimization</font> is the use of one optimization method to
 tune another</li>
@@ -612,16 +626,16 @@ focuses on <font color="navy">learning the space of heuristics</font></li>
 penalties provides a <font color="navy">heuristic space to learn</font></li>
 <li>Various ML techniques should be explored, in particular:
 <ul>
-<li>Genetic Programming</li>
-<li>Support-Vector Machines (SVM)</li>
+<li><font color="navy">Genetic Programming</font></li>
+<li><font color="navy">Support-Vector Machines (SVM)</font></li>
 
 </ul></li>
 
 </ul>
 
 </section>
-<section id="slide-org459d430">
-<h3 id="org459d430">Heuristic Analysis</h3>
+<section id="slide-org9488765">
+<h3 id="org9488765">Heuristic Analysis</h3>
 <ul>
 <li>By developing hyper-heuristics <font color="navy">on a variety of architectures</font>
 (i.e IBM Z, POWER, &#x2026;. possibly ARM) and in-between versions of each
@@ -634,15 +648,51 @@ techniques to <font color="navy">analyze heuristic effectiveness</font></li>
 </ul>
 
 </section>
+<section id="slide-orgb53cd75">
+<h3 id="orgb53cd75">Evaluation of Methods</h3>
+<ul>
+<li>Performance oriented schedules for MASS libraries generated with our
+stochastic algorithm are
+<font color="navy">evaluated for speedup against previous iterations</font> of the libraries</li>
+<li>Evaluation of <font color="navy">hyper-heuristic</font> methods will performed by
+comparing against current <font color="navy">IBM XL C Compiler Heuristics</font></li>
+<li><font color="navy">Qualitative analysis</font> of architecture design feature's influence
+on common heuristics should be performed</li>
+
+</ul>
+
+</section>
 </section>
 <section>
-<section id="slide-orga16b75b">
-<h2 id="orga16b75b">RoadMap</h2>
+<section id="slide-org1be68ee">
+<h2 id="org1be68ee">Overview / Conclusions</h2>
+<ul>
+<li>My proposal is to <font color="navy">explore the use of hyper-heuristics for instruction scheduling</font> by learning parameters from my continuous
+optimization model</li>
+<li>This is an ambitious project requiring the use of methods spanning a wide
+range of fields, including 
+<ul>
+<li>compiler development</li>
+<li>computer architecture design</li>
+<li>continuous optimization</li>
+<li>machine learning</li>
+
+</ul></li>
+<li>If successful, this research could have a <font color="navy">large impact on compiler and computer architecture design</font> process in industry</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org4a3c252">
+<h2 id="org4a3c252">RoadMap</h2>
 <ul>
 <li>Construct optimization model that can <b>encode heuristics</b> as penalties <font color="green">CHECK</font></li>
 <li>Verify we can use <b>stochastic scaling</b> to span a variety of schedules <font color="green">CHECK</font></li>
 <li>Verify we can use model to find <b>near-optimal</b> schedules <font color="green">CHECK</font></li>
-<li><b>Generate data sets</b> of varying schedules and their corresponding heuristics <font color="red">TBA</font></li>
+<li><b>Generate data sets</b> for various architectures and heuristics <font color="red">TBA</font></li>
+<li>Experiment with ML techniques for developing <b>hyper-heuristic</b> methods <font color="red">TBA</font></li>
 <li>Utilize <b>data analysis</b> to rate effectiveness of different heuristics on different architectures <font color="red">TBA</font></li>
 
 </ul>
@@ -650,8 +700,8 @@ techniques to <font color="navy">analyze heuristic effectiveness</font></li>
 </section>
 </section>
 <section>
-<section id="slide-orgdada8bd">
-<h2 id="orgdada8bd">Questions?</h2>
+<section id="slide-org5c6fe74">
+<h2 id="org5c6fe74">Questions?</h2>
 </section>
 </section>
 </div>
@@ -681,7 +731,7 @@ theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
 transition: Reveal.getQueryHash().transition || 'convex', // see README of reveal.js for options
 transitionSpeed: 'default',
 
-// Optional libraries used to extend reveal.js
+// Optional libraries used to extend on reveal.js
 dependencies: [
  { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }]
 

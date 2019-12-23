@@ -35,12 +35,15 @@
     Given a set of instructions and dependencies, designate an order 
     (find a *schedule*) satisfying the dependencies and optimizing performance
   - Known {{{alert(NP-Complete Problem:)}}} practically solved by either
-    - *Heuristics*
+    - *Heuristics* (most commonly)
     - *Approximation Algorithms*
+  - Compiler Heuristics {{{alert(need to evolve with their target
+    architectures)}}}, making it a constantly ongoing problem in the field of
+    compiler development
 
 ** Example: Instruction Dependency DAG
    #+CAPTION: IBM MASS Library COS DAG on Z14 Architecture
-   #+ATTR_HTML: :width 95% :height 95%
+   #+ATTR_HTML: :width 110% :height 110%
    [[file:../figures/DAG.svg]]
 
 ** Instruction Level Parallelism (Pipelining)  
@@ -64,9 +67,13 @@
 ** Architecture Hazards
    - {{{alert(Data Hazards)}}} occur when a data dependency is broken. There are 3 types:
 \begin{align*}
-\textbf{RAW}                    & \qquad & \textbf{WAR}                   & \qquad & \textbf{WAW} \\
-\textbf{R2} \leftarrow R5 + R3  & \qquad & R4 \leftarrow R1 + \textbf{R5} & \qquad & \textbf{R2} \leftarrow R4 + R7 \\
-R4 \leftarrow \textbf{R2} + R3  & \qquad & \textbf{R5} \leftarrow R1 + R2 & \qquad & \textbf{R2} \leftarrow R1 + R3
+\qquad & \qquad & \\
+\textbf{RAW}                    & \qquad & \textbf{WAR}                   \\ 
+\textbf{R2} \leftarrow R5 + R3  & \qquad & R4 \leftarrow R1 + \textbf{R5} \\ 
+R4 \leftarrow \textbf{R2} + R3  & \qquad & \textbf{R5} \leftarrow R1 + R2 \\ 
+\textbf{WAW} & & \\
+\textbf{R2} \leftarrow R4 + R7 & & \\
+\textbf{R2} \leftarrow R1 + R3 & & 
 \end{align*}
      - {{{alert(Structural Hazards)}}} occurs when an aspect of hardware is accessed at the
        same time (such as a functional unit)
@@ -153,7 +160,7 @@ R4 \leftarrow \textbf{R2} + R3  & \qquad & \textbf{R5} \leftarrow R1 + R2 & \qqu
    - Architectures are becoming {{{alert(increasing complicated)}}}
    - Design decisions are sometimes made by fad (i.e favoring micro-benchmarks
      for applications such as ML functions like sigmoid)
-   - Heuristic effectiveness {{{alert(need to be re-evaluated)}}} as
+   - Heuristic relevance {{{alert(need to be re-evaluated)}}} as
      architectures are updated
    - {{{alert(Developing Heuristics)}}} is difficult and costly (requires a lot
      of man power)
@@ -161,7 +168,7 @@ R4 \leftarrow \textbf{R2} + R3  & \qquad & \textbf{R5} \leftarrow R1 + R2 & \qqu
 * Current State of the Art and Notable/Relevant Works in Instruction Scheduling
 
 ** List Scheduling 
-#+BEGIN_SRC fortran
+#+BEGIN_SRC ada
 while there are instrs to be scheduled do 
       Identify highest priority instr n
       Choose a processor p for n
@@ -192,9 +199,11 @@ est(n,p) = earliest start time of n on p
    - Uses a {{{alert(Multi-Pass Stochastic Algorithm)}}} to {{{alert(iteratively
      transform basic block schedules)}}} by minimizing the following cost function
 
-  \begin{equation*}
-    \operatorname{cost}(R; T) = w_e \times \operatorname{eq}(R; T) + w_p \times \operatorname{perf}(R; T)
-  \end{equation*}
+  \begin{align*}
+    \qquad \\
+    \operatorname{cost}(R; T) = w_e \times \operatorname{eq}(R; T) + w_p \times \operatorname{perf}(R; T) \\
+    \qquad 
+  \end{align*}
 
   | $\color{darkblue}{\boldsymbol{R}}$             | any rewrite of the program                                      |
   | $\color{darkblue}{\boldsymbol{T}}$             | the input program sequence                                      |
@@ -202,6 +211,9 @@ est(n,p) = earliest start time of n on p
   | $\color{darkblue}{\operatorname{perf}(\cdot)}$ | a metric for performance                                        |
   | $\color{darkblue}{\boldsymbol{w_e}}$           | weight for the equivalence term                                 |
   | $\color{darkblue}{\boldsymbol{w_p}}$           | weight for the performance term                                 |
+
+ - Uses {{{alert(Markov-Chain-Monte-Carlo (MCMC))}}} sampling to stochastically
+   explore schedule space
 
 * Research Efforts Thus Far
 ** Focus on Finding Near-Optimal Schedules for MASS Libraries
@@ -287,7 +299,7 @@ between heuristics by scaling
   - {{{alert(Continuous Optimization)}}} algorithm provides a flexible space for schedules to span
     - Different heuristics can be encoded as penalties, scaled for priority
   - {{{alert(Stochastic)}}} element provides a means to generate a variety of
-    schedules (i.e generate datatsets)
+    schedules (i.e generate datasets)
 
 * Proposed research    
 
@@ -299,8 +311,8 @@ between heuristics by scaling
    - The set of {{{alert(penalty scalings)}}} from encoding heuristics as
      penalties provides a {{{alert(heuristic space to learn)}}} 
    - Various ML techniques should be explored, in particular:
-     - Genetic Programming
-     - Support-Vector Machines (SVM)
+     - {{{alert(Genetic Programming)}}}
+     - {{{alert(Support-Vector Machines (SVM))}}}
        
 ** Heuristic Analysis
   - By developing hyper-heuristics {{{alert(on a variety of architectures)}}}
@@ -311,12 +323,35 @@ between heuristics by scaling
     for {{{alert(dimensionality reduction)}}} used in conjunction with ML techniques
   - Possibly {{{alert(use PCA)}}} and other statistical correlation analysis
     techniques to {{{alert(analyze heuristic effectiveness)}}}
+
+** Evaluation of Methods   
+  - Performance oriented schedules for MASS libraries generated with our
+    stochastic algorithm are
+    {{{alert(evaluated for speedup against previous iterations)}}} of the libraries 
+  - Evaluation of {{{alert(hyper-heuristic)}}} methods will performed by
+    comparing against current {{{alert(IBM XL C Compiler Heuristics)}}}
+  - {{{alert(Qualitative analysis)}}} of architecture design feature's influence
+    on common heuristics should be performed
+
+* Overview / Conclusions 
+  - My proposal is to {{{alert(explore the use of hyper-heuristics for
+    instruction scheduling)}}} by learning parameters from my continuous
+    optimization model
+  - This is an ambitious project requiring the use of methods spanning a wide
+    range of fields, including 
+    - compiler development
+    - computer architecture design
+    - continuous optimization
+    - machine learning
+  - If successful, this research could have a {{{alert(large impact on compiler
+    and computer architecture design)}}} process in industry
     
 * RoadMap
    - Construct optimization model that can *encode heuristics* as penalties {{{color(green,CHECK)}}}
    - Verify we can use *stochastic scaling* to span a variety of schedules {{{color(green,CHECK)}}}
    - Verify we can use model to find *near-optimal* schedules {{{color(green,CHECK)}}}
-   - *Generate data sets* of varying schedules and their corresponding heuristics {{{color(red,TBA)}}}
+   - *Generate data sets* for various architectures and heuristics {{{color(red,TBA)}}}
+   - Experiment with ML techniques for developing *hyper-heuristic* methods {{{color(red,TBA)}}}
    - Utilize *data analysis* to rate effectiveness of different heuristics on different architectures {{{color(red,TBA)}}}
 
 * Questions?
