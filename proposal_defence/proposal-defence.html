@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title><h3><font color="navy">Stochastic Optimization for Instruction Scheduling and Their Potential for Architecture Analysis</font></h3></title>
-<meta name="author" content="@@html:<h4>Curtis D'Alves</h4>@@"/>
+<title><h3><font color="navy">Analysis of Compiler Heuristics via Stochastic Scheduling and Hyper-Heuristics</font></h3></title>
+<meta name="author" content="@@html:<h4>A Thesis Proposal by Curtis D'Alves</h4>@@"/>
 <style type="text/css">
 .underline { text-decoration: underline; }
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/sky.css" id="theme"/>
+
 
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
@@ -27,32 +28,51 @@
 <div class="reveal">
 <div class="slides">
 <section id="sec-title-slide">
-<h1 class="title"><h3><font color="navy">Stochastic Optimization for Instruction Scheduling and Their Potential for Architecture Analysis</font></h3></h1><h2 class="author"><h4>Curtis D'Alves</h4></h2><h2 class="date"><h4>2019-11-26</h4></h2>
+<h1 class="title"><h3><font color="navy">Analysis of Compiler Heuristics via Stochastic Scheduling and Hyper-Heuristics</font></h3></h1><h2 class="author"><h4>A Thesis Proposal by Curtis D'Alves</h4></h2><h2 class="date"><h4>2019-12-23</h4></h2>
 </section>
 
 <section>
-<section id="slide-org69bfb02">
-<h2 id="org69bfb02">Background</h2>
-<div class="outline-text-2" id="text-org69bfb02">
+<section id="slide-org4bd434b">
+<h2 id="org4bd434b">Background</h2>
+<div class="outline-text-2" id="text-org4bd434b">
 </div>
 </section>
-<section id="slide-org134cc41">
-<h3 id="org134cc41">Who Am I?</h3>
+<section id="slide-org58ec5ba">
+<h3 id="org58ec5ba">Instruction Scheduling</h3>
 <ul>
-<li><font color="navy">Ph.D Candidate</font> McMaster University</li>
-<li>Did my Master's in <font color="navy">Continuous Optimization Algorithms</font></li>
-<li>Working on <font color="navy">CAS Project 1006</font> (Stochastic Algorithms for Instructions Scheduling)
+<li><font color="navy">Problem:</font> 
+Given a set of instructions and dependencies, designate an order 
+(find a <b>schedule</b>) satisfying the dependencies and optimizing performance</li>
+<li>Known <font color="navy">NP-Complete Problem:</font> practically solved by
 <ul>
-<li>Working with Robert Enenkel <font color="navy">optimizing MASS libraries</font></li>
+<li><b>Heuristics</b></li>
+<li><b>Approximation Algorithms</b></li>
 
 </ul></li>
-<li>Emacs enthusiast</li>
 
 </ul>
 
 </section>
-<section id="slide-orga0ccdf8">
-<h3 id="orga0ccdf8">Previous Work: Kriston Costa</h3>
+<section id="slide-org20f2f19">
+<h3 id="org20f2f19">Example: Instruction Dependency DAG</h3>
+
+<div class="figure">
+<p><object type="image/svg+xml" data="../figures/DAG.svg" class="org-svg" width="95%" height="95%">
+Sorry, your browser does not support SVG.</object>
+</p>
+<p><span class="figure-number">Figure 1: </span>IBM MASS Library COS DAG on Z14 Architecture</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org7bb04ac">
+<h2 id="org7bb04ac">Previous Work</h2>
+<div class="outline-text-2" id="text-org7bb04ac">
+</div>
+</section>
+<section id="slide-org3a18c14">
+<h3 id="org3a18c14">Previous Work: Kriston Costa</h3>
 <ul>
 <li>Utilized modified version of <font color="navy">Kargers Min Cut Algorithm</font></li>
 <li><font color="navy">Approximation Algorithm</font> that can be performed <font color="navy">stochastically</font></li>
@@ -61,16 +81,17 @@
 </ul>
 
 </section>
-<section id="slide-orgbe6cd6f">
-<h3 id="orgbe6cd6f">Karger's Minimum Cut Algorithm</h3>
+<section id="slide-orgcab23bb">
+<h3 id="orgcab23bb">Karger's Minimum Cut Algorithm</h3>
 <p>
-<img src="figures/kargermincut.png" alt="kargermincut.png" />
+<img src="../figures/kargermincut.png" alt="kargermincut.png" />
 Cuts create <font color="navy">groups</font> that are candidates to <font color="navy">interleave across stages</font> in <b>modulo scheduling</b>
 </p>
 
+
 </section>
-<section id="slide-org2fa37eb">
-<h3 id="org2fa37eb">Previous Work: Instruction Scheduling using Constraint Programming</h3>
+<section id="slide-org5de3157">
+<h3 id="org5de3157">Instruction Scheduling using Constraint Programming</h3>
 <ul>
 <li>Abid Malik, Jim McInnes, Peter van Beek</li>
 <li>Used <font color="navy">Linear Optimization</font> with <font color="navy">Constraints</font> to find optimal schedules for basic blocks</li>
@@ -80,73 +101,17 @@ Cuts create <font color="navy">groups</font> that are candidates to <font color=
 
 </ul>
 
-</section>
-</section>
-<section>
-<section id="slide-org9620802">
-<h2 id="org9620802">Rapid Prototyping With COCONUT</h2>
-<div class="outline-text-2" id="text-org9620802">
-</div>
-</section>
-<section id="slide-orgd31fdcd">
-<h3 id="orgd31fdcd">Rapid Prototyping With COCONUT</h3>
-<p>
-<font color="navy">COCONUT</font>:( <font color="navy">CO</font>ode <font color="navy">CON</font>structing <font color="navy">U</font>ser <font color="navy">T</font>ool )
-</p>
-
-<ul>
-<li><p>
-COCONUT is an <font color="navy">Interactive Development ToolSet</font> for performance critical assembly code,
-with existing implementations for <font color="navy">PowerPC and Z</font>
-</p>
-
-<div class="figure">
-<p><img src="figures/prototyping.jpg" alt="prototyping.jpg" width="70%" height="50%" />  
-</p>
-</div></li>
-
-</ul>
-
-</section>
-<section id="slide-org14b4e27">
-<h3 id="org14b4e27">Rapid Prototyping With COCONUT</h3>
-<ul>
-<li>Performance critical assembly code can be encoded in the Coconut <font color="navy">eDSL</font></li>
-<li><font color="navy">Example COCONUT CODE</font></li>
-
-</ul>
-<div class="org-src-container">
-
-<pre  class="src src-elm"><span style="color: #50fa7b;">some_func</span> <span style="color: #ffb86c;">::</span> <span style="color: #61bfff;">(</span><span style="color: #61bfff;">VR</span> n<span style="color: #ffb86c;">,</span><span style="color: #61bfff;">GPR</span> n<span style="color: #ffb86c;">,</span><span style="color: #61bfff;">VR</span> n <span style="color: #ffb86c;">,...</span><span style="color: #61bfff;">)</span> &#8722;<span style="color: #ffb86c;">&gt;</span> <span style="color: #61bfff;">(</span><span style="color: #61bfff;">MR</span> n<span style="color: #ffb86c;">,</span> <span style="color: #61bfff;">VR</span> n <span style="color: #ffb86c;">,...</span><span style="color: #61bfff;">)</span>
-<span style="color: #50fa7b;">some_func</span> <span style="color: #61bfff;">(</span>a0<span style="color: #ffb86c;">,</span>b0<span style="color: #ffb86c;">,</span>c0 <span style="color: #ffb86c;">,...</span><span style="color: #61bfff;">)</span> <span style="color: #ffb86c;">=</span> <span style="color: #ff79c6;">let</span>
-    a0_0 <span style="color: #ffb86c;">=</span> vadd b0 a0
-    a0_1 <span style="color: #ffb86c;">=</span> vsub c0 a0_0
-    <span style="color: #ffb86c;">...</span>
-  <span style="color: #ff79c6;">in</span> <span style="color: #61bfff;">(</span>a0_0<span style="color: #ffb86c;">,</span>a0_1 <span style="color: #ffb86c;">,...</span><span style="color: #61bfff;">)</span>
-</pre>
-</div>
-
-</section>
-<section id="slide-org330b1a6">
-<h3 id="org330b1a6">COCONUT Features</h3>
-<ul>
-<li>Provides <font color="navy">Code Graph Library</font> for modeling dependency <b>DAG</b></li>
-<li>Provides <font color="navy">Register Allocator</font></li>
-<li>Provides <font color="navy">Hardware Simulator</font></li>
-<li>Provides <font color="navy">Code Generation</font></li>
-
-</ul>
 
 </section>
 </section>
 <section>
-<section id="slide-org846e8c8">
-<h2 id="org846e8c8">Research Efforts Thus Far</h2>
-<div class="outline-text-2" id="text-org846e8c8">
+<section id="slide-org08c46e8">
+<h2 id="org08c46e8">Research Efforts Thus Far</h2>
+<div class="outline-text-2" id="text-org08c46e8">
 </div>
 </section>
-<section id="slide-org5f1ba87">
-<h3 id="org5f1ba87">Focus on Finding Near-Optimal Schedules for MASS Libraries</h3>
+<section id="slide-org6a7bcea">
+<h3 id="org6a7bcea">Focus on Finding Near-Optimal Schedules for MASS Libraries</h3>
 <ul>
 <li>scheduling inside a loop (<font color="navy">modulo scheduling</font>)</li>
 <li>ignoring <font color="navy">global/trace</font> scheduling techniques</li>
@@ -156,8 +121,8 @@ with existing implementations for <font color="navy">PowerPC and Z</font>
 </ul>
 
 </section>
-<section id="slide-org4cea834">
-<h3 id="org4cea834">Constrained Optimization Model For Modulo Scheduling</h3>
+<section id="slide-orga58d769">
+<h3 id="orga58d769">Constrained Optimization Model For Modulo Scheduling</h3>
 <div class="cmath">
 <small>
 <div>
@@ -181,8 +146,8 @@ with existing implementations for <font color="navy">PowerPC and Z</font>
 </p>
 
 </section>
-<section id="slide-org2c81719">
-<h3 id="org2c81719">Constrained Optimization Model</h3>
+<section id="slide-org09c189a">
+<h3 id="org09c189a">Constrained Optimization Model</h3>
 <div class="cmath">
 <small>
 <div>
@@ -204,8 +169,8 @@ between heuristics by scaling
 </p>
 
 </section>
-<section id="slide-org63d8809">
-<h3 id="org63d8809">IO Penalty</h3>
+<section id="slide-orgcaccdff">
+<h3 id="orgcaccdff">IO Penalty</h3>
 <ul>
 <li><font color="navy">IDEA</font> penalize dispatch time of instructions based on the quantity and
 latencies of it's dependencies</li>
@@ -229,20 +194,20 @@ latencies of it's dependencies</li>
 </div>
 
 </section>
-<section id="slide-org3b93d2d">
-<h3 id="org3b93d2d">Indicator Function (Sigmoid Logistic Curve)</h3>
+<section id="slide-org32db92e">
+<h3 id="org32db92e">Indicator Function (Sigmoid Logistic Curve)</h3>
 <p>
-<object type="image/svg+xml" data="figures/sigmoid.svg" class="org-svg">
+<object type="image/svg+xml" data="../figures/sigmoid.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 \[S(x) = \frac{1}{1 + e^{-x}}\] 
 </p>
 
 </section>
-<section id="slide-org463a4b7">
-<h3 id="org463a4b7">Indicator Function (Custom Sigmoid)</h3>
+<section id="slide-org1ce2174">
+<h3 id="org1ce2174">Indicator Function (Custom Sigmoid)</h3>
 
 <div class="figure">
-<p><img src="figures/sigmoid.jpg" alt="sigmoid.jpg" width="70%" height="70%" />
+<p><img src="../figures/sigmoid.jpg" alt="sigmoid.jpg" width="70%" height="70%" />
 </p>
 </div>
 
@@ -251,8 +216,8 @@ Sorry, your browser does not support SVG.</object>
 </p>
 
 </section>
-<section id="slide-org9767da4">
-<h3 id="org9767da4">Stochastic Scaling</h3>
+<section id="slide-orgddbc39f">
+<h3 id="orgddbc39f">Stochastic Scaling</h3>
 <ul>
 <li>The scaling \(\color{black}{\frac{1}{N_j}}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
 <li><font color="navy">IDEA</font> scale the <font color="navy">IO penalty</font> stochastically</li>
@@ -273,8 +238,8 @@ Sorry, your browser does not support SVG.</object>
 </div>
 
 </section>
-<section id="slide-org558acfc">
-<h3 id="org558acfc">Forming Heuristics as Penalties</h3>
+<section id="slide-org31182d9">
+<h3 id="org31182d9">Forming Heuristics as Penalties</h3>
 <p>
 Different categories of heuristics can be formed by 
 </p>
@@ -287,8 +252,8 @@ Different categories of heuristics can be formed by
 </section>
 </section>
 <section>
-<section id="slide-orga390065">
-<h2 id="orga390065">What do we gain from this approach?</h2>
+<section id="slide-org7d05e46">
+<h2 id="org7d05e46">What do we gain from this approach?</h2>
 <ul>
 <li><font color="navy">Continuous Optimization</font> algorithm provides a flexible space for schedules to span
 <ul>
@@ -302,13 +267,13 @@ Different categories of heuristics can be formed by
 </section>
 </section>
 <section>
-<section id="slide-orgd23d0a4">
-<h2 id="orgd23d0a4">Next Steps</h2>
-<div class="outline-text-2" id="text-orgd23d0a4">
+<section id="slide-org4d85451">
+<h2 id="org4d85451">Next Steps</h2>
+<div class="outline-text-2" id="text-org4d85451">
 </div>
 </section>
-<section id="slide-org36f607f">
-<h3 id="org36f607f">RoadMap</h3>
+<section id="slide-org94763d1">
+<h3 id="org94763d1">RoadMap</h3>
 <ul>
 <li>Construct optimization model that can <b>encode heuristics</b> as penalties <font color="green">CHECK</font></li>
 <li>Verify we can use <b>stochastic scaling</b> to span a variety of schedules <font color="green">CHECK</font></li>
@@ -319,8 +284,8 @@ Different categories of heuristics can be formed by
 </ul>
 
 </section>
-<section id="slide-orgcb31b85">
-<h3 id="orgcb31b85">Topological Analysis</h3>
+<section id="slide-org58ac725">
+<h3 id="org58ac725">Topological Analysis</h3>
 <ul>
 <li><b>Instruction Schedules</b> presents a <font color="navy">metric space</font> (slightly stronger topological space)</li>
 <li><b>TDA</b> Topological Data Analysis consists of many approach's for analysis of datasets using techniques from topology
@@ -332,8 +297,8 @@ Different categories of heuristics can be formed by
 </ul>
 
 </section>
-<section id="slide-org0bb50b4">
-<h3 id="org0bb50b4">Principle Component Analysis</h3>
+<section id="slide-orgff7ad89">
+<h3 id="orgff7ad89">Principle Component Analysis</h3>
 <ul>
 <li><font color="navy">PCA</font> is a statistical procedure commonly used to <b>judge the importance of parameters</b> involved in a predictive model</li>
 <li>Various models (say linear regressive) could be used to predict <b>scaling parameters</b> for penalties</li>
@@ -344,8 +309,11 @@ Different categories of heuristics can be formed by
 </section>
 </section>
 <section>
-<section id="slide-org0430cef">
-<h2 id="org0430cef">Questions? Constructive Criticisms Are Very Welcome</h2>
+<section id="slide-org5c3ec1d">
+<h2 id="org5c3ec1d">Test Ditaa</h2>
+<p>
+<a href="../figures/test.eps">../figures/test.eps</a>
+</p>
 </section>
 </section>
 </div>
@@ -375,13 +343,13 @@ theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
 transition: Reveal.getQueryHash().transition || 'convex', // see README of reveal.js for options
 transitionSpeed: 'default',
 
-// Optional libraries used to extend reveal.js
+// Optional libraries used to extend on reveal.js
 dependencies: [
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
  { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
  { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }]
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
 
 });
 </script>

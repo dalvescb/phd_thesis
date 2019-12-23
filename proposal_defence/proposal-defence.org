@@ -19,21 +19,29 @@
 # To load Org-reveal, type “M-x load-library”, then type “ox-reveal”.
 
 
-#+Title: {{{small(Stochastic Optimization for Instruction Scheduling and Their Potential for Architecture Analysis)}}}  
+#+Title: {{{small(Analysis of Compiler Heuristics via Stochastic Scheduling and Hyper-Heuristics)}}}  
 # Stochastic Optimization for Instruction Scheduling and Their Potential for Architecture Analysis 
-#+Date: {{{smaller(2019-11-26)}}}
+#+Date: {{{smaller(2019-12-23)}}}
 #+Email: curtis.dalves@gmail.com
-#+Author: {{{smaller(Curtis D'Alves)}}}
+#+Author: {{{smaller(A Thesis Proposal by Curtis D'Alves)}}}
 
 #+REVEAL_TITLE_SLIDE_TEMPLATE:"<h6>%t<\h6>"
 
 * Background
-** Who Am I?
-   - {{{alert(Ph.D Candidate)}}} McMaster University
-   - Did my Master's in {{{alert(Continuous Optimization Algorithms)}}}
-   - Working on {{{alert(CAS Project 1006)}}} (Stochastic Algorithms for Instructions Scheduling)
-     - Working with Robert Enenkel {{{alert(optimizing MASS libraries)}}}
-   - Emacs enthusiast
+** Instruction Scheduling
+  - {{{alert(Problem:)}}} 
+    Given a set of instructions and dependencies, designate an order 
+    (find a *schedule*) satisfying the dependencies and optimizing performance
+  - Known {{{alert(NP-Complete Problem:)}}} practically solved by
+    - *Heuristics*
+    - *Approximation Algorithms*
+
+** Example: Instruction Dependency DAG
+   #+CAPTION: IBM MASS Library COS DAG on Z14 Architecture
+   #+ATTR_HTML: :width 95% :height 95%
+   [[file:../figures/DAG.svg]]
+  
+* Previous Work
 
 ** Previous Work: Kriston Costa
    - Utilized modified version of {{{alert(Kargers Min Cut Algorithm)}}}
@@ -41,10 +49,11 @@
    - Takes successive *min-cuts* across a graph (dependency graph will {{{alert(minimize register pressure)}}})
 
 ** Karger's Minimum Cut Algorithm     
-   [[file:figures/kargermincut.png]]
+   [[file:../figures/kargermincut.png]]
    Cuts create {{{alert(groups)}}} that are candidates to {{{alert(interleave across stages)}}} in *modulo scheduling*
 
-** Previous Work: Instruction Scheduling using Constraint Programming
+
+** Instruction Scheduling using Constraint Programming
    - Abid Malik, Jim McInnes, Peter van Beek
    - Used {{{alert(Linear Optimization)}}} with {{{alert(Constraints)}}} to find optimal schedules for basic blocks
    - Optimized over a {{{alert(Dependency Graph)}}} $G = (N,E)$
@@ -108,12 +117,12 @@ between heuristics by scaling
 #+END_cmath
 
 ** Indicator Function (Sigmoid Logistic Curve)
-   [[file:figures/sigmoid.svg]]
+   [[file:../figures/sigmoid.svg]]
    $$S(x) = \frac{1}{1 + e^{-x}}$$ 
  
 ** Indicator Function (Custom Sigmoid)
    #+ATTR_HTML: :width 70% :height 70%
-   [[file:figures/sigmoid.jpg]]
+   [[file:../figures/sigmoid.jpg]]
 
     \[ S(x) = \frac{1}{(1 + e^{s(-0.5 + v)})(1 + e^{s(-0.5-v)})} \]
     
@@ -179,6 +188,6 @@ between heuristics by scaling
 #+END_SRC
 
 #+RESULTS:
-[[file:figures/test.eps]]
+[[file:../figures/test.eps]]
 
   
