@@ -13,6 +13,8 @@
 #+MACRO: small @@html:<h3><font color="navy">$1</font></h3>@@
 #+MACRO: smaller @@html:<h4>$1</h4>@@
 
+#+REVEAL_PLUGINS: (highlight)
+
 # #+REVEAL_EXTRA_CSS: ./mystyle.css
 # #+REVEAL_EXTRA_CSS: /Users/curtis/reveal.js/css/theme/night.css
 
@@ -32,7 +34,7 @@
   - {{{alert(Problem:)}}} 
     Given a set of instructions and dependencies, designate an order 
     (find a *schedule*) satisfying the dependencies and optimizing performance
-  - Known {{{alert(NP-Complete Problem:)}}} practically solved by
+  - Known {{{alert(NP-Complete Problem:)}}} practically solved by either
     - *Heuristics*
     - *Approximation Algorithms*
 
@@ -40,38 +42,179 @@
    #+CAPTION: IBM MASS Library COS DAG on Z14 Architecture
    #+ATTR_HTML: :width 95% :height 95%
    [[file:../figures/DAG.svg]]
+
+** Instruction Level Parallelism (Pipelining)  
+   Instruction execution can be broken into stages, the following pipeline uses four stages
+    - {{{alert(IF = Instruction Fetch)}}}
+    - {{{alert(ID = Instruction Decode)}}}
+    - {{{alert(EX = Execute)}}}
+    - {{{alert(MEM = Memory Access)}}}
+    - {{{alert(WB =  Write Back)}}}
+   #+CAPTION: Example Simple RISC Pipeline 
+   #+ATTR_HTML: :width 95% :height 95%
+   [[file:../figures/RISCPipeline.png]]
+
+** Instruction Level Parallelism (SuperScalar Architectures)  
+   Superscalar Architectures exploit {{{alert(Parallel Functional Units)}}} to
+   execute multiple functions at once
+   #+CAPTION: Example SuperScalar Pipeline 
+   #+ATTR_HTML: :width 95% :height 95%
+   [[file:../figures/SuperScalarPipeline.png]]
+
+** Architecture Hazards
+   - {{{alert(Data Hazards)}}} occur when a data dependency is broken. There are 3 types:
+\begin{align*}
+\textbf{RAW}                    & \qquad & \textbf{WAR}                   & \qquad & \textbf{WAW} \\
+\textbf{R2} \leftarrow R5 + R3  & \qquad & R4 \leftarrow R1 + \textbf{R5} & \qquad & \textbf{R2} \leftarrow R4 + R7 \\
+R4 \leftarrow \textbf{R2} + R3  & \qquad & \textbf{R5} \leftarrow R1 + R2 & \qquad & \textbf{R2} \leftarrow R1 + R3
+\end{align*}
+     - {{{alert(Structural Hazards)}}} occurs when an aspect of hardware is accessed at the
+       same time (such as a functional unit)
+     - {{{alert(Control Hazards)}}} occur when a bad branch
+       prediction is made
+      
+** Pipeline Stalls  
+  When a {{{alert(Hazard)}}} occurs, a {{{alert(No Operation (NOOP))}}} must be
+  inserted, effectively {{{alert(Stalling the Pipeline)}}}
   
-* Previous Work
+   #+CAPTION: Example of a bubble (NOOP) being inserted to fix an unfullfilled data dependency
+   #+ATTR_HTML: :width 95% :height 95%
+   [[file:../figures/PipelineStall.png]]
+  
+** Types Of Instruction Scheduling
+   A scheduler attempts to {{{alert(maximize throughput)}}} (by avoiding
+   pipeline stalls). The following different types of scheduling are worth
+   noting:
+   
+   - {{{alert(Basic Block:)}}} (local acyclic) break code into blocks within branches (most commonly performed scheduling)
+	 - {{{alert(Global Scheduling:)}}} (global cyclic) schedule across basic block boundaries
+	 - {{{alert(Modulo Scheduling:)}}} (local cyclic) schedules basic blocks inside of a loop, seeking to
+     optimize by interleaving iterations
+	 - {{{alert(Trace Scheduling:)}}} (global acyclic/cyclic) tries to optimize control flow by predicting routes
+     taken on branches
 
-** Previous Work: Kriston Costa
-   - Utilized modified version of {{{alert(Kargers Min Cut Algorithm)}}}
-   - {{{alert(Approximation Algorithm)}}} that can be performed {{{alert(stochastically)}}}
-   - Takes successive *min-cuts* across a graph (dependency graph will {{{alert(minimize register pressure)}}})
+** Register Allocation
+   - CPU's have a {{{alert(limited number of registers)}}} that must be
+     allocated (generally after scheduling)
+   - The problem of Register Allocation has been shown to be equivalent to that
+     of {{{alert(Graph Coloring)}}}
+     
+   #+CAPTION: Register Allocation via Graph Coloring
+   #+ATTR_HTML: :width 95% :height 95%
+   [[file:../figures/GraphColor.png]]
+  
+** Spilling 
+   When {{{alert(Register Allocation fails)}}}, a {{{alert(spill must be
+   inserted)}}}
+   - Choose a value {{{alert(v)}}} to spill to some address {{{alert(a)}}}
+   - After the operation defining {{{alert(v)}}}, insert
+     \begin{align*}
+     \operatorname{store}(\operatorname{v}, \operatorname{a})
+     \end{align*}
+   - Before each operation that uses {{{alert(v)}}}, insert
+    \begin{align*}
+    v \leftarrow \operatorname{load}(\operatorname{a})    
+    \end{align*}
+   Generally has a {{{alert(large performance deficit)}}}. A {{{alert(good
+   schedular)}}} should consider register allocation to {{{alert(avoid
+   spilling)}}}
+  
+** In-Order vs Out-Of-Order Execution
+  | {{{alert(Step)}}} | {{{alert(In-Order)}}}                    | {{{alert(Out-Of-Order)}}}                                    |
+  |                1. | Instruction fetch                        | Instruction fetch                                            |
+  |                2. | Stall until all operands are available   | Dispatch to a temporary queue known as *Reservation Station* |
+  |                3. | Dispatch to appropriate functional unit  | Wait in the reservation station until operands are available |
+  |                4. | Execute (on appropriate functional unit) | Issue once operands are available                            |
+  |                5. | Write back to register file              | Execute (on appropriate functional unit)                     |
+  |                6. |                                          | Retire results to another temporary queue                    |
+  |                7. |                                          | Write results back to register files                         |
+                                               
+** Out-Of-Order Execution 
+ Used in most modern architectures, {{{alert(increases potential for ILP)}}} but
+ further complicates scheduling considerations 
+ 
+   #+CAPTION: Out-Of-Order Execution Control Flow
+   #+ATTR_HTML: :width 80% :height 80%
+   [[file:../figures/OoODiagram.png]]
 
-** Karger's Minimum Cut Algorithm     
-   [[file:../figures/kargermincut.png]]
-   Cuts create {{{alert(groups)}}} that are candidates to {{{alert(interleave across stages)}}} in *modulo scheduling*
+* Motivation 
+** Motivation For Performance Oriented Scheduling
+   - {{{alert(Conventional Heuristics)}}} used in compilers are suitable for
+     finding near-optimal schedule for most code with moderate ILP available
+   - The {{{alert(more potential ILP the more inadequate)}}} conventional
+     compiler heuristics are
+   - These heuristics {{{alert(favor compile time efficiency)}}}
+   - {{{alert(Linked Libraries)}}} present an opportunity to schedule basic
+     blocks ahead of time
+   - Example: {{{alert(IBM MASS Libaries)}}} contain many important math
+     functions that should be scheduled for near-optimal performance 
+     
+** Motivation For Schedule Space/Heuristic Analysis
+   - Architectures are becoming {{{alert(increasing complicated)}}}
+   - Design decisions are sometimes made by fad (i.e favoring micro-benchmarks
+     for applications such as ML functions like sigmoid)
+   - Heuristic effectiveness {{{alert(need to be re-evaluated)}}} as
+     architectures are updated
+   - {{{alert(Developing Heuristics)}}} is difficult and costly (requires a lot
+     of man power)
+     
+* Current State of the Art and Notable/Relevant Works in Instruction Scheduling
 
+** List Scheduling 
+#+BEGIN_SRC fortran
+while there are instrs to be scheduled do 
+      Identify highest priority instr n
+      Choose a processor p for n
+      Schedule n on p at est(n,p)
+end
+
+est(n,p) = earliest start time of n on p
+#+END_SRC
+   - {{{alert(Most commonly performed scheduling)}}}, used in some form by
+     conventional compiler
+   - {{{alert(Greedy Algorithm)}}}, schedules by {{{alert(priorities assigned by
+     heuristics)}}}
 
 ** Instruction Scheduling using Constraint Programming
    - Abid Malik, Jim McInnes, Peter van Beek
-   - Used {{{alert(Linear Optimization)}}} with {{{alert(Constraints)}}} to find optimal schedules for basic blocks
-   - Optimized over a {{{alert(Dependency Graph)}}} $G = (N,E)$
-   - Used hard {{{alert(Latency Constraints)}}}
-     $$\forall (i,j) \in E \cdot j \geq i + l(i,j)$$ 
-     
-     
+   - Used {{{alert(Constraint Programming)}}} to optimize over a given DAG $G =
+     (N,E)$ with the following constraints:
+     - *Latency Constraints*, i.e
+       - Given a labeled dependency DAG $G = (N,E)$ 
+          - $\forall (i,j) \in E \cdot j \geq i + l(i,j)$ 
+     - *Resource Constraints* that ensured functional units were not exceeded
+     - *Distance Constraints*, i.e
+       - Given a labeled dependency *DAG*  $G = (N,E)$ 
+         - $\forall (i,j) \in E \cdot j \geq i + d(i,j)$
+    
+** Stochastic Search 
+   - Schkufza, Sharma, Aiken at Stanford
+   - Uses a {{{alert(Multi-Pass Stochastic Algorithm)}}} to {{{alert(iteratively
+     transform basic block schedules)}}} by minimizing the following cost function
+
+  \begin{equation*}
+    \operatorname{cost}(R; T) = w_e \times \operatorname{eq}(R; T) + w_p \times \operatorname{perf}(R; T)
+  \end{equation*}
+
+  | $\color{darkblue}{\boldsymbol{R}}$             | any rewrite of the program                                      |
+  | $\color{darkblue}{\boldsymbol{T}}$             | the input program sequence                                      |
+  | $\color{darkblue}{\operatorname{eq}(\cdot)}$   | the equivalence function (0 if $\color{darkblue}{R \equiv T}$ ) |
+  | $\color{darkblue}{\operatorname{perf}(\cdot)}$ | a metric for performance                                        |
+  | $\color{darkblue}{\boldsymbol{w_e}}$           | weight for the equivalence term                                 |
+  | $\color{darkblue}{\boldsymbol{w_p}}$           | weight for the performance term                                 |
+
 * Research Efforts Thus Far
 ** Focus on Finding Near-Optimal Schedules for MASS Libraries
    - scheduling inside a loop ({{{alert(modulo scheduling)}}})
    - ignoring {{{alert(global/trace)}}} scheduling techniques
    - scheduling on {{{alert(IBM Z)}}} (hopefully {{{alert(POWER)}}} coming soon) 
    - little consideration for cost of schedule generation
+   - Up to 20% speedup on core functions already achieved
 
-** Constrained Optimization Model For Modulo Scheduling
+** Continuous Optimization Model For Modulo Scheduling
 #+BEGIN_cmath
 #+HTML: <small>
-\begin{align*}
+\begin{align}
     \color{navy}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
     \color{navy}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
     \color{navy}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
@@ -79,13 +222,13 @@
     & b_i :& \text{completion time} \\
     & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
     & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
-\end{align*}
+\end{align}
 #+HTML: </small>
 #+END_cmath
 
   {{{alert(NOTE)}}}: dispatch and completion times are designed to model *OoO* (Out of Order) execution machines 
   
-** Constrained Optimization Model
+** Continuous Optimization Model
 #+BEGIN_cmath
 #+HTML: <small>
 \begin{align}
@@ -116,10 +259,6 @@ between heuristics by scaling
 #+HTML: </small>
 #+END_cmath
 
-** Indicator Function (Sigmoid Logistic Curve)
-   [[file:../figures/sigmoid.svg]]
-   $$S(x) = \frac{1}{1 + e^{-x}}$$ 
- 
 ** Indicator Function (Custom Sigmoid)
    #+ATTR_HTML: :width 70% :height 70%
    [[file:../figures/sigmoid.jpg]]
@@ -147,47 +286,37 @@ between heuristics by scaling
 * What do we gain from this approach?
   - {{{alert(Continuous Optimization)}}} algorithm provides a flexible space for schedules to span
     - Different heuristics can be encoded as penalties, scaled for priority
-  - {{{alert(Stochastic)}}} element provides a means to generate a variety of schedules
-    
-* Next Steps
+  - {{{alert(Stochastic)}}} element provides a means to generate a variety of
+    schedules (i.e generate datatsets)
 
-** RoadMap
+* Proposed research    
+
+** Hyper-Heuristics For Instruction Scheduling
+   - {{{alert(Meta-Optimization)}}} is the use of one optimization method to
+     tune another
+   - {{{alert(Hyper-heuristics)}}} are an offspring of meta-optimization, that
+     focuses on {{{alert(learning the space of heuristics)}}} 
+   - The set of {{{alert(penalty scalings)}}} from encoding heuristics as
+     penalties provides a {{{alert(heuristic space to learn)}}} 
+   - Various ML techniques should be explored, in particular:
+     - Genetic Programming
+     - Support-Vector Machines (SVM)
+       
+** Heuristic Analysis
+  - By developing hyper-heuristics {{{alert(on a variety of architectures)}}}
+    (i.e IBM Z, POWER, .... possibly ARM) and in-between versions of each
+    architecture may {{{alert(show contrast between heuristic effectiveness per
+    architecture design features)}}}
+  - {{{alert(Principal Component Analysis (PCA))}}} is a mathematical technique
+    for {{{alert(dimensionality reduction)}}} used in conjunction with ML techniques
+  - Possibly {{{alert(use PCA)}}} and other statistical correlation analysis
+    techniques to {{{alert(analyze heuristic effectiveness)}}}
+    
+* RoadMap
    - Construct optimization model that can *encode heuristics* as penalties {{{color(green,CHECK)}}}
    - Verify we can use *stochastic scaling* to span a variety of schedules {{{color(green,CHECK)}}}
    - Verify we can use model to find *near-optimal* schedules {{{color(green,CHECK)}}}
    - *Generate data sets* of varying schedules and their corresponding heuristics {{{color(red,TBA)}}}
    - Utilize *data analysis* to rate effectiveness of different heuristics on different architectures {{{color(red,TBA)}}}
 
-** Topological Analysis
-   - *Instruction Schedules* presents a {{{alert(metric space)}}} (slightly stronger topological space)
-   - *TDA* Topological Data Analysis consists of many approach's for analysis of datasets using techniques from topology
-     - {{{alert(Persistent Homology)}}} method for computing common topological features of a space at difference spatial resolutions
-
-** Principle Component Analysis
-   - {{{alert(PCA)}}} is a statistical procedure commonly used to *judge the importance of parameters* involved in a predictive model
-   - Various models (say linear regressive) could be used to predict *scaling parameters* for penalties
-   - Performing {{{alert(PCA)}}} on scaling parameters could reveal the importance of heuristics on an architecture
-     
-* Test Ditaa
-#+BEGIN_SRC ditaa :eps :file figures/test.eps
- --------------------------------->
-     time 
-
-              /-----------\        
-              |   c1FF    | 
-              | Iter 3    | 
-              \-----------/ 
-        /-----------\               
-  II    |   c1FF    |       
-<---->  | Iter 2    |       
-        \-----------/       
-/-----------\  
-|   c1FF    |   
-| Iter 1    |  
-\-----------/  
-#+END_SRC
-
-#+RESULTS:
-[[file:../figures/test.eps]]
-
-  
+* Questions?

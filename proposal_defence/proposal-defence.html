@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/sky.css" id="theme"/>
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/css/zenburn.css"/>
 
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
@@ -32,18 +32,18 @@
 </section>
 
 <section>
-<section id="slide-org4bd434b">
-<h2 id="org4bd434b">Background</h2>
-<div class="outline-text-2" id="text-org4bd434b">
+<section id="slide-org9987163">
+<h2 id="org9987163">Background</h2>
+<div class="outline-text-2" id="text-org9987163">
 </div>
 </section>
-<section id="slide-org58ec5ba">
-<h3 id="org58ec5ba">Instruction Scheduling</h3>
+<section id="slide-orgd4bf5fe">
+<h3 id="orgd4bf5fe">Instruction Scheduling</h3>
 <ul>
 <li><font color="navy">Problem:</font> 
 Given a set of instructions and dependencies, designate an order 
 (find a <b>schedule</b>) satisfying the dependencies and optimizing performance</li>
-<li>Known <font color="navy">NP-Complete Problem:</font> practically solved by
+<li>Known <font color="navy">NP-Complete Problem:</font> practically solved by either
 <ul>
 <li><b>Heuristics</b></li>
 <li><b>Approximation Algorithms</b></li>
@@ -53,8 +53,8 @@ Given a set of instructions and dependencies, designate an order
 </ul>
 
 </section>
-<section id="slide-org20f2f19">
-<h3 id="org20f2f19">Example: Instruction Dependency DAG</h3>
+<section id="slide-orgdf5e4da">
+<h3 id="orgdf5e4da">Example: Instruction Dependency DAG</h3>
 
 <div class="figure">
 <p><object type="image/svg+xml" data="../figures/DAG.svg" class="org-svg" width="95%" height="95%">
@@ -64,69 +64,406 @@ Sorry, your browser does not support SVG.</object>
 </div>
 
 </section>
-</section>
-<section>
-<section id="slide-org7bb04ac">
-<h2 id="org7bb04ac">Previous Work</h2>
-<div class="outline-text-2" id="text-org7bb04ac">
-</div>
-</section>
-<section id="slide-org3a18c14">
-<h3 id="org3a18c14">Previous Work: Kriston Costa</h3>
+<section id="slide-org80a5d87">
+<h3 id="org80a5d87">Instruction Level Parallelism (Pipelining)</h3>
+<p>
+Instruction execution can be broken into stages, the following pipeline uses four stages
+</p>
 <ul>
-<li>Utilized modified version of <font color="navy">Kargers Min Cut Algorithm</font></li>
-<li><font color="navy">Approximation Algorithm</font> that can be performed <font color="navy">stochastically</font></li>
-<li>Takes successive <b>min-cuts</b> across a graph (dependency graph will <font color="navy">minimize register pressure</font>)</li>
+<li><font color="navy">IF = Instruction Fetch</font></li>
+<li><font color="navy">ID = Instruction Decode</font></li>
+<li><font color="navy">EX = Execute</font></li>
+<li><font color="navy">MEM = Memory Access</font></li>
+<li><font color="navy">WB = Write Back</font></li>
+
+</ul>
+
+<div class="figure">
+<p><img src="../figures/RISCPipeline.png" alt="RISCPipeline.png" width="95%" height="95%" />
+</p>
+<p><span class="figure-number">Figure 2: </span>Example Simple RISC Pipeline</p>
+</div>
+
+</section>
+<section id="slide-org67919e6">
+<h3 id="org67919e6">Instruction Level Parallelism (SuperScalar Architectures)</h3>
+<p>
+Superscalar Architectures exploit <font color="navy">Parallel Functional Units</font> to
+execute multiple functions at once
+</p>
+
+<div class="figure">
+<p><img src="../figures/SuperScalarPipeline.png" alt="SuperScalarPipeline.png" width="95%" height="95%" />
+</p>
+<p><span class="figure-number">Figure 3: </span>Example SuperScalar Pipeline</p>
+</div>
+
+</section>
+<section id="slide-org5fe90e5">
+<h3 id="org5fe90e5">Architecture Hazards</h3>
+<ul>
+<li><font color="navy">Data Hazards</font> occur when a data dependency is broken. There are 3 types:</li>
+
+</ul>
+<div>
+\begin{align*}
+\textbf{RAW}                    & \qquad & \textbf{WAR}                   & \qquad & \textbf{WAW} \\
+\textbf{R2} \leftarrow R5 + R3  & \qquad & R4 \leftarrow R1 + \textbf{R5} & \qquad & \textbf{R2} \leftarrow R4 + R7 \\
+R4 \leftarrow \textbf{R2} + R3  & \qquad & \textbf{R5} \leftarrow R1 + R2 & \qquad & \textbf{R2} \leftarrow R1 + R3
+\end{align*}
+
+</div>
+<ul>
+<li><font color="navy">Structural Hazards</font> occurs when an aspect of hardware is accessed at the
+same time (such as a functional unit)</li>
+<li><font color="navy">Control Hazards</font> occur when a bad branch
+prediction is made</li>
 
 </ul>
 
 </section>
-<section id="slide-orgcab23bb">
-<h3 id="orgcab23bb">Karger's Minimum Cut Algorithm</h3>
+<section id="slide-org7b8fe88">
+<h3 id="org7b8fe88">Pipeline Stalls</h3>
 <p>
-<img src="../figures/kargermincut.png" alt="kargermincut.png" />
-Cuts create <font color="navy">groups</font> that are candidates to <font color="navy">interleave across stages</font> in <b>modulo scheduling</b>
+When a <font color="navy">Hazard</font> occurs, a <font color="navy">No Operation (NOOP)</font> must be
+inserted, effectively <font color="navy">Stalling the Pipeline</font>
 </p>
 
 
+<div class="figure">
+<p><img src="../figures/PipelineStall.png" alt="PipelineStall.png" width="95%" height="95%" />
+</p>
+<p><span class="figure-number">Figure 4: </span>Example of a bubble (NOOP) being inserted to fix an unfullfilled data dependency</p>
+</div>
+
 </section>
-<section id="slide-org5de3157">
-<h3 id="org5de3157">Instruction Scheduling using Constraint Programming</h3>
+<section id="slide-org7d4de5d">
+<h3 id="org7d4de5d">Types Of Instruction Scheduling</h3>
+<p>
+A scheduler attempts to <font color="navy">maximize throughput</font> (by avoiding
+pipeline stalls). The following different types of scheduling are worth
+noting:
+</p>
+
 <ul>
-<li>Abid Malik, Jim McInnes, Peter van Beek</li>
-<li>Used <font color="navy">Linear Optimization</font> with <font color="navy">Constraints</font> to find optimal schedules for basic blocks</li>
-<li>Optimized over a <font color="navy">Dependency Graph</font> \(G = (N,E)\)</li>
-<li>Used hard <font color="navy">Latency Constraints</font>
-\[\forall (i,j) \in E \cdot j \geq i + l(i,j)\]</li>
+<li><font color="navy">Basic Block:</font> (local acyclic) break code into blocks within branches (most commonly performed scheduling)</li>
+<li><font color="navy">Global Scheduling:</font> (global cyclic) schedule across basic block boundaries</li>
+<li><font color="navy">Modulo Scheduling:</font> (local cyclic) schedules basic blocks inside of a loop, seeking to
+optimize by interleaving iterations</li>
+<li><font color="navy">Trace Scheduling:</font> (global acyclic/cyclic) tries to optimize control flow by predicting routes
+taken on branches</li>
+
+</ul>
+
+</section>
+<section id="slide-org3537bb6">
+<h3 id="org3537bb6">Register Allocation</h3>
+<ul>
+<li>CPU's have a <font color="navy">limited number of registers</font> that must be
+allocated (generally after scheduling)</li>
+<li>The problem of Register Allocation has been shown to be equivalent to that
+of <font color="navy">Graph Coloring</font></li>
 
 </ul>
 
 
+<div class="figure">
+<p><img src="../figures/GraphColor.png" alt="GraphColor.png" width="95%" height="95%" />
+</p>
+<p><span class="figure-number">Figure 5: </span>Register Allocation via Graph Coloring</p>
+</div>
+
+</section>
+<section id="slide-org5055e27">
+<h3 id="org5055e27">Spilling</h3>
+<p>
+When <font color="navy">Register Allocation fails</font>, a <font color="navy">spill must be inserted</font>
+</p>
+<ul>
+<li>Choose a value <font color="navy">v</font> to spill to some address <font color="navy">a</font></li>
+<li><p>
+After the operation defining <font color="navy">v</font>, insert
+</p>
+<div>
+\begin{align*}
+\operatorname{store}(\operatorname{v}, \operatorname{a})
+\end{align*}
+
+</div></li>
+<li><p>
+Before each operation that uses <font color="navy">v</font>, insert
+</p>
+<div>
+\begin{align*}
+v \leftarrow \operatorname{load}(\operatorname{a})    
+\end{align*}
+
+</div></li>
+
+</ul>
+<p>
+Generally has a <font color="navy">large performance deficit</font>. A <font color="navy">good schedular</font> should consider register allocation to <font color="navy">avoid spilling</font>
+</p>
+
+</section>
+<section id="slide-orgb85e76a">
+<h3 id="orgb85e76a">In-Order vs Out-Of-Order Execution</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right"><font color="navy">Step</font></td>
+<td class="org-left"><font color="navy">In-Order</font></td>
+<td class="org-left"><font color="navy">Out-Of-Order</font></td>
+</tr>
+
+<tr>
+<td class="org-right">1.</td>
+<td class="org-left">Instruction fetch</td>
+<td class="org-left">Instruction fetch</td>
+</tr>
+
+<tr>
+<td class="org-right">2.</td>
+<td class="org-left">Stall until all operands are available</td>
+<td class="org-left">Dispatch to a temporary queue known as <b>Reservation Station</b></td>
+</tr>
+
+<tr>
+<td class="org-right">3.</td>
+<td class="org-left">Dispatch to appropriate functional unit</td>
+<td class="org-left">Wait in the reservation station until operands are available</td>
+</tr>
+
+<tr>
+<td class="org-right">4.</td>
+<td class="org-left">Execute (on appropriate functional unit)</td>
+<td class="org-left">Issue once operands are available</td>
+</tr>
+
+<tr>
+<td class="org-right">5.</td>
+<td class="org-left">Write back to register file</td>
+<td class="org-left">Execute (on appropriate functional unit)</td>
+</tr>
+
+<tr>
+<td class="org-right">6.</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Retire results to another temporary queue</td>
+</tr>
+
+<tr>
+<td class="org-right">7.</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Write results back to register files</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+<section id="slide-org34e2c95">
+<h3 id="org34e2c95">Out-Of-Order Execution</h3>
+<p>
+Used in most modern architectures, <font color="navy">increases potential for ILP</font> but
+further complicates scheduling considerations 
+</p>
+
+
+<div class="figure">
+<p><img src="../figures/OoODiagram.png" alt="OoODiagram.png" width="80%" height="80%" />
+</p>
+<p><span class="figure-number">Figure 6: </span>Out-Of-Order Execution Control Flow</p>
+</div>
+
 </section>
 </section>
 <section>
-<section id="slide-org08c46e8">
-<h2 id="org08c46e8">Research Efforts Thus Far</h2>
-<div class="outline-text-2" id="text-org08c46e8">
+<section id="slide-org09b4a06">
+<h2 id="org09b4a06">Motivation</h2>
+<div class="outline-text-2" id="text-org09b4a06">
 </div>
 </section>
-<section id="slide-org6a7bcea">
-<h3 id="org6a7bcea">Focus on Finding Near-Optimal Schedules for MASS Libraries</h3>
+<section id="slide-org5d1c2af">
+<h3 id="org5d1c2af">Motivation For Performance Oriented Scheduling</h3>
+<ul>
+<li><font color="navy">Conventional Heuristics</font> used in compilers are suitable for
+finding near-optimal schedule for most code with moderate ILP available</li>
+<li>The <font color="navy">more potential ILP the more inadequate</font> conventional
+compiler heuristics are</li>
+<li>These heuristics <font color="navy">favor compile time efficiency</font></li>
+<li><font color="navy">Linked Libraries</font> present an opportunity to schedule basic
+blocks ahead of time</li>
+<li>Example: <font color="navy">IBM MASS Libaries</font> contain many important math
+functions that should be scheduled for near-optimal performance</li>
+
+</ul>
+
+</section>
+<section id="slide-org59eb75e">
+<h3 id="org59eb75e">Motivation For Schedule Space/Heuristic Analysis</h3>
+<ul>
+<li>Architectures are becoming <font color="navy">increasing complicated</font></li>
+<li>Design decisions are sometimes made by fad (i.e favoring micro-benchmarks
+for applications such as ML functions like sigmoid)</li>
+<li>Heuristic effectiveness <font color="navy">need to be re-evaluated</font> as
+architectures are updated</li>
+<li><font color="navy">Developing Heuristics</font> is difficult and costly (requires a lot
+of man power)</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org51c985c">
+<h2 id="org51c985c">Current State of the Art and Notable/Relevant Works in Instruction Scheduling</h2>
+<div class="outline-text-2" id="text-org51c985c">
+</div>
+</section>
+<section id="slide-orgaa09c6f">
+<h3 id="orgaa09c6f">List Scheduling</h3>
+<div class="org-src-container">
+
+<pre><code class=" fortran" >while there are instrs to be scheduled do 
+      Identify highest priority instr n
+      Choose a processor p for n
+      Schedule n on p at est(n,p)
+end
+
+est(n,p) = earliest start time of n on p
+</code></pre>
+</div>
+<ul>
+<li><font color="navy">Most commonly performed scheduling</font>, used in some form by
+conventional compiler</li>
+<li><font color="navy">Greedy Algorithm</font>, schedules by <font color="navy">priorities assigned by heuristics</font></li>
+
+</ul>
+
+</section>
+<section id="slide-orgf3ef85c">
+<h3 id="orgf3ef85c">Instruction Scheduling using Constraint Programming</h3>
+<ul>
+<li>Abid Malik, Jim McInnes, Peter van Beek</li>
+<li>Used <font color="navy">Constraint Programming</font> to optimize over a given DAG \(G =
+     (N,E)\) with the following constraints:
+<ul>
+<li><b>Latency Constraints</b>, i.e
+<ul>
+<li>Given a labeled dependency DAG \(G = (N,E)\) 
+<ul>
+<li>\(\forall (i,j) \in E \cdot j \geq i + l(i,j)\)</li>
+
+</ul></li>
+
+</ul></li>
+<li><b>Resource Constraints</b> that ensured functional units were not exceeded</li>
+<li><b>Distance Constraints</b>, i.e
+<ul>
+<li>Given a labeled dependency <b>DAG</b>  \(G = (N,E)\) 
+<ul>
+<li>\(\forall (i,j) \in E \cdot j \geq i + d(i,j)\)</li>
+
+</ul></li>
+
+</ul></li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section id="slide-org986f5db">
+<h3 id="org986f5db">Stochastic Search</h3>
+<ul>
+<li>Schkufza, Sharma, Aiken at Stanford</li>
+<li>Uses a <font color="navy">Multi-Pass Stochastic Algorithm</font> to <font color="navy">iteratively transform basic block schedules</font> by minimizing the following cost function</li>
+
+</ul>
+
+<div>
+\begin{equation*}
+  \operatorname{cost}(R; T) = w_e \times \operatorname{eq}(R; T) + w_p \times \operatorname{perf}(R; T)
+\end{equation*}
+
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">\(\color{darkblue}{\boldsymbol{R}}\)</td>
+<td class="org-left">any rewrite of the program</td>
+</tr>
+
+<tr>
+<td class="org-left">\(\color{darkblue}{\boldsymbol{T}}\)</td>
+<td class="org-left">the input program sequence</td>
+</tr>
+
+<tr>
+<td class="org-left">\(\color{darkblue}{\operatorname{eq}(\cdot)}\)</td>
+<td class="org-left">the equivalence function (0 if \(\color{darkblue}{R \equiv T}\) )</td>
+</tr>
+
+<tr>
+<td class="org-left">\(\color{darkblue}{\operatorname{perf}(\cdot)}\)</td>
+<td class="org-left">a metric for performance</td>
+</tr>
+
+<tr>
+<td class="org-left">\(\color{darkblue}{\boldsymbol{w_e}}\)</td>
+<td class="org-left">weight for the equivalence term</td>
+</tr>
+
+<tr>
+<td class="org-left">\(\color{darkblue}{\boldsymbol{w_p}}\)</td>
+<td class="org-left">weight for the performance term</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+</section>
+<section>
+<section id="slide-org8ddc9a2">
+<h2 id="org8ddc9a2">Research Efforts Thus Far</h2>
+<div class="outline-text-2" id="text-org8ddc9a2">
+</div>
+</section>
+<section id="slide-orgfcec1ca">
+<h3 id="orgfcec1ca">Focus on Finding Near-Optimal Schedules for MASS Libraries</h3>
 <ul>
 <li>scheduling inside a loop (<font color="navy">modulo scheduling</font>)</li>
 <li>ignoring <font color="navy">global/trace</font> scheduling techniques</li>
 <li>scheduling on <font color="navy">IBM Z</font> (hopefully <font color="navy">POWER</font> coming soon)</li>
 <li>little consideration for cost of schedule generation</li>
+<li>Up to 20% speedup on core functions already achieved</li>
 
 </ul>
 
 </section>
-<section id="slide-orga58d769">
-<h3 id="orga58d769">Constrained Optimization Model For Modulo Scheduling</h3>
+<section id="slide-org0860436">
+<h3 id="org0860436">Continuous Optimization Model For Modulo Scheduling</h3>
 <div class="cmath">
 <small>
 <div>
-\begin{align*}
+\begin{align}
     \color{navy}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
     \color{navy}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
     \color{navy}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
@@ -134,7 +471,7 @@ Cuts create <font color="navy">groups</font> that are candidates to <font color=
     & b_i :& \text{completion time} \\
     & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
     & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
-\end{align*}
+\end{align}
 
 </div>
 </small>
@@ -146,8 +483,8 @@ Cuts create <font color="navy">groups</font> that are candidates to <font color=
 </p>
 
 </section>
-<section id="slide-org09c189a">
-<h3 id="org09c189a">Constrained Optimization Model</h3>
+<section id="slide-org92e401a">
+<h3 id="org92e401a">Continuous Optimization Model</h3>
 <div class="cmath">
 <small>
 <div>
@@ -169,8 +506,8 @@ between heuristics by scaling
 </p>
 
 </section>
-<section id="slide-orgcaccdff">
-<h3 id="orgcaccdff">IO Penalty</h3>
+<section id="slide-orgde59d62">
+<h3 id="orgde59d62">IO Penalty</h3>
 <ul>
 <li><font color="navy">IDEA</font> penalize dispatch time of instructions based on the quantity and
 latencies of it's dependencies</li>
@@ -194,17 +531,8 @@ latencies of it's dependencies</li>
 </div>
 
 </section>
-<section id="slide-org32db92e">
-<h3 id="org32db92e">Indicator Function (Sigmoid Logistic Curve)</h3>
-<p>
-<object type="image/svg+xml" data="../figures/sigmoid.svg" class="org-svg">
-Sorry, your browser does not support SVG.</object>
-\[S(x) = \frac{1}{1 + e^{-x}}\] 
-</p>
-
-</section>
-<section id="slide-org1ce2174">
-<h3 id="org1ce2174">Indicator Function (Custom Sigmoid)</h3>
+<section id="slide-orgc6ee830">
+<h3 id="orgc6ee830">Indicator Function (Custom Sigmoid)</h3>
 
 <div class="figure">
 <p><img src="../figures/sigmoid.jpg" alt="sigmoid.jpg" width="70%" height="70%" />
@@ -216,8 +544,8 @@ Sorry, your browser does not support SVG.</object>
 </p>
 
 </section>
-<section id="slide-orgddbc39f">
-<h3 id="orgddbc39f">Stochastic Scaling</h3>
+<section id="slide-orgf35b107">
+<h3 id="orgf35b107">Stochastic Scaling</h3>
 <ul>
 <li>The scaling \(\color{black}{\frac{1}{N_j}}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
 <li><font color="navy">IDEA</font> scale the <font color="navy">IO penalty</font> stochastically</li>
@@ -238,8 +566,8 @@ Sorry, your browser does not support SVG.</object>
 </div>
 
 </section>
-<section id="slide-org31182d9">
-<h3 id="org31182d9">Forming Heuristics as Penalties</h3>
+<section id="slide-org3f35a60">
+<h3 id="org3f35a60">Forming Heuristics as Penalties</h3>
 <p>
 Different categories of heuristics can be formed by 
 </p>
@@ -252,28 +580,64 @@ Different categories of heuristics can be formed by
 </section>
 </section>
 <section>
-<section id="slide-org7d05e46">
-<h2 id="org7d05e46">What do we gain from this approach?</h2>
+<section id="slide-org9d1884c">
+<h2 id="org9d1884c">What do we gain from this approach?</h2>
 <ul>
 <li><font color="navy">Continuous Optimization</font> algorithm provides a flexible space for schedules to span
 <ul>
 <li>Different heuristics can be encoded as penalties, scaled for priority</li>
 
 </ul></li>
-<li><font color="navy">Stochastic</font> element provides a means to generate a variety of schedules</li>
+<li><font color="navy">Stochastic</font> element provides a means to generate a variety of
+schedules (i.e generate datatsets)</li>
 
 </ul>
 
 </section>
 </section>
 <section>
-<section id="slide-org4d85451">
-<h2 id="org4d85451">Next Steps</h2>
-<div class="outline-text-2" id="text-org4d85451">
+<section id="slide-orgb0c1912">
+<h2 id="orgb0c1912">Proposed research</h2>
+<div class="outline-text-2" id="text-orgb0c1912">
 </div>
 </section>
-<section id="slide-org94763d1">
-<h3 id="org94763d1">RoadMap</h3>
+<section id="slide-org42bd40e">
+<h3 id="org42bd40e">Hyper-Heuristics For Instruction Scheduling</h3>
+<ul>
+<li><font color="navy">Meta-Optimization</font> is the use of one optimization method to
+tune another</li>
+<li><font color="navy">Hyper-heuristics</font> are an offspring of meta-optimization, that
+focuses on <font color="navy">learning the space of heuristics</font></li>
+<li>The set of <font color="navy">penalty scalings</font> from encoding heuristics as
+penalties provides a <font color="navy">heuristic space to learn</font></li>
+<li>Various ML techniques should be explored, in particular:
+<ul>
+<li>Genetic Programming</li>
+<li>Support-Vector Machines (SVM)</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+<section id="slide-org459d430">
+<h3 id="org459d430">Heuristic Analysis</h3>
+<ul>
+<li>By developing hyper-heuristics <font color="navy">on a variety of architectures</font>
+(i.e IBM Z, POWER, &#x2026;. possibly ARM) and in-between versions of each
+architecture may <font color="navy">show contrast between heuristic effectiveness per architecture design features</font></li>
+<li><font color="navy">Principal Component Analysis (PCA)</font> is a mathematical technique
+for <font color="navy">dimensionality reduction</font> used in conjunction with ML techniques</li>
+<li>Possibly <font color="navy">use PCA</font> and other statistical correlation analysis
+techniques to <font color="navy">analyze heuristic effectiveness</font></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orga16b75b">
+<h2 id="orga16b75b">RoadMap</h2>
 <ul>
 <li>Construct optimization model that can <b>encode heuristics</b> as penalties <font color="green">CHECK</font></li>
 <li>Verify we can use <b>stochastic scaling</b> to span a variety of schedules <font color="green">CHECK</font></li>
@@ -284,36 +648,10 @@ Different categories of heuristics can be formed by
 </ul>
 
 </section>
-<section id="slide-org58ac725">
-<h3 id="org58ac725">Topological Analysis</h3>
-<ul>
-<li><b>Instruction Schedules</b> presents a <font color="navy">metric space</font> (slightly stronger topological space)</li>
-<li><b>TDA</b> Topological Data Analysis consists of many approach's for analysis of datasets using techniques from topology
-<ul>
-<li><font color="navy">Persistent Homology</font> method for computing common topological features of a space at difference spatial resolutions</li>
-
-</ul></li>
-
-</ul>
-
-</section>
-<section id="slide-orgff7ad89">
-<h3 id="orgff7ad89">Principle Component Analysis</h3>
-<ul>
-<li><font color="navy">PCA</font> is a statistical procedure commonly used to <b>judge the importance of parameters</b> involved in a predictive model</li>
-<li>Various models (say linear regressive) could be used to predict <b>scaling parameters</b> for penalties</li>
-<li>Performing <font color="navy">PCA</font> on scaling parameters could reveal the importance of heuristics on an architecture</li>
-
-</ul>
-
-</section>
 </section>
 <section>
-<section id="slide-org5c3ec1d">
-<h2 id="org5c3ec1d">Test Ditaa</h2>
-<p>
-<a href="../figures/test.eps">../figures/test.eps</a>
-</p>
+<section id="slide-orgdada8bd">
+<h2 id="orgdada8bd">Questions?</h2>
 </section>
 </section>
 </div>
@@ -343,13 +681,9 @@ theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
 transition: Reveal.getQueryHash().transition || 'convex', // see README of reveal.js for options
 transitionSpeed: 'default',
 
-// Optional libraries used to extend on reveal.js
+// Optional libraries used to extend reveal.js
 dependencies: [
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }]
 
 });
 </script>
