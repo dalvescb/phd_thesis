@@ -1,3 +1,3 @@
 # phd_thesis
 
-[HTML](./presentation-reveal.html)
+[HTML](./proposal_defence/proposal-defence.html)
