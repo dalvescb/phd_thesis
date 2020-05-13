@@ -18,13 +18,40 @@
 # To load Org-reveal, type “M-x load-library”, then type “ox-reveal”.
 
 
-#+Title: {{{caption( CASTLE 2020 )}}}
-#+Date: 2020-05-07
+#+Title: {{{caption( CAS Project 1006 )}}}
 #+Email: curtis.dalves@gmail.com
-#+Author: Curtis D'Alves
+#+Author: Curtis D'Alves, Christopher Anand, Robert Enenkel
 
 * 
 :PROPERTIES:
 :reveal_background: ./CASTLE2020.png
 :reveal_background_trans: slide
 :END:
+
+* 
+:PROPERTIES:
+:data-background-size: 100px
+:reveal_background: ./DAG.svg
+:reveal_background_trans: slide
+:END:
+
+* {{{caption(Continuous Optimization Model for Instruction Scheduling)}}} 
+  - My name is Curtis D'Alves, I'm a Ph.D candidate from McMaster University and the focus of my research has been
+    on analyzing and developing algorithms for instruction scheduling, a crucial aspect of compiler optimization
+  - After a compiler translates high-level code to corresponding machine instructions and their dependencies, we 
+    have a representation of the program as a Directed Acyclic Graph. 
+  - Scheduling finds an ordering for this DAG that optimizes for performance, generally by maximizing pipeline throughput.
+  - The problem of instruction scheduling is known NP-Complete, so conventional compilers schedule by iteratively applying
+    heuristics (such as grouping or pushing apart certain types of instructions like loads,stores, floating point,etc)
+  - These heuristics often overlap with eachother, and their effectiveness can change drastically depending on 
+    alterations to underlying architectures
+  - My research focuses on using a continuous optimization model that encodes heuristics as penalty functions, 
+  - By relaxing the problem of scheduling to a continuous domain, we can model the space of feasible schedules, 
+  - In order to explore this space, we introduce a stochastic element to the problem by randomly generating 
+    scaling parameters
+  - By stochastically scaling penalties corresponding to heuristics, not only can we find well performing schedules,
+    but we can analyze the effectiveness of different heuristics
+  - By using this method on a variety of architectures and different heuristics, we can gain valuable insight into how
+    architecture and compiler design decisions can effect performance and create limitations
+
+
