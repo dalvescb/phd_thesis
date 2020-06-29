@@ -1,0 +1,7 @@
+digraph G {
+	UnscheduledCode -> DSL [label=" parser"];
+	DSL -> SimulatedOutput [label=" interpreter"];
+	SimulatedOutput -> UnscheduledCode [label=" debugging /\n code refactoring"];
+	DSL -> CodeGraph [label=" graph generator"];
+	CodeGraph -> ScheduledCode [label=" pipelining / register alloc"];
+}

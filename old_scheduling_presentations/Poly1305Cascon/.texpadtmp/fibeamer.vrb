@@ -1,0 +1,11 @@
+\frametitle{Relaxed Continous Optimization based Instruction Scheduling}
+    Per Instruction $i$, perform a relaxation of scheduled position to dispatch and completion times $t_i$, $b_i$
+    \begin{align*}
+    \text{\color{cyan} Objective Variables \qquad} & t_i, b_i, f_i:& \mathbb{R} \\
+    \text{\color{cyan} Constants \qquad} & \textrm{II} :& \mathbb{R} \\
+    \text{\color{cyan} Indicator Function \qquad} & \mathsf{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
+    & t_i :& \text{dispatch time} \\
+    & b_i :& \text{completion time} \\
+    & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
+    & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
+    \end{align*}

@@ -1,0 +1,13 @@
+digraph G {
+	UnscheduledCode [label = "UnscheduledCode", color = darkgreen, fontcolor = darkgreen];
+	DSL [label = "DSL", color = red, fontcolor = red];
+	SimulatedOutput [label = "SimulatedOutput", color = orange, fontcolor = orange];
+	CodeGraph [label = "CodeGraph", color = blue, fontcolor = blue];
+	ScheduledCode [label = "ScheduledCode", color = darkviolet, fontcolor = darkviolet];
+
+	UnscheduledCode -> DSL [label=" parser", color = red,fontcolor = red];
+	DSL -> SimulatedOutput [label=" interpreter", color = orange, fontcolor = orange];
+	SimulatedOutput -> UnscheduledCode [label=" debugging /\n code refactoring", color = darkgreen, fontcolor = darkgreen];
+	DSL -> CodeGraph [label=" graph generator", color = blue, fontcolor = blue];
+	CodeGraph -> ScheduledCode [label=" pipelining / register alloc", color = darkviolet, fontcolor = darkviolet];
+}
