@@ -2,5 +2,4 @@ auto
 ltximg
 _minted*
 *.bbl
-*.tex
 *.pdf
