@@ -1,0 +1,14 @@
+\frametitle{Complication: Branching}
+
+\begin{lstlisting}
+  load r1 0xFFFF
+  load r2 0xFFF1
+  load r3 0xFFF2
+  add r4 r2 r1 <---
+  add r5 r3 r1    |
+  mult r6 r4 r5   |
+  branch 0x0003 ---
+  add r2 r4 r1
+\end{lstlisting}
+  Control flow (like {\bf \color{green} loops} and {\bf \color{green}
+    conditionals}) complicate scheduling
