@@ -50,6 +50,8 @@
     \end{frame}}
 
   \begin{darkframes}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,6 +69,40 @@
 		\item Approximation Algorithms
 	\end{itemize}
 \end{frame}      
+
+\begin{frame}[fragile]
+  \frametitle{Computational Complexity}
+\begin{lstlisting}
+for i in 1..n               for i in 1..n
+   x[i] = x[i] + 1             for j in i..n
+                                    x[i] += x[j]
+
+   O(n)                          O(n^2)
+\end{lstlisting}
+  \begin{itemize}
+  \item Bounds how a algorithm {\bf \color{green} scales}
+  \item Algorithms with a polynomial bound (i.e {\bf \color{cyan} P}) are {\bf \color{green} do-able}
+  \item Algorithms with a exponential bound (i.e {\bf \color{cyan} NP}) are take too long as their input grows
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{NP-Complete}
+  \begin{figure}
+    \includegraphics[scale=0.3]{figures/npcomplete}
+    \caption{Reference https://en.wikipedia.org/wiki/NP-completeness}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Heuristics}
+
+  \begin{item}
+  \item Don't find the optimal solution, but rather a {\bf \color{green}
+      good-enough} solution
+  \item Often seeks to {\bf \color{green} solve a simpler problem} then the
+    actual task at hand
+  \item Heuristics for scheduling are often just {\bf \color{green} rules of thumb}
+  \end{item}
+\end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Example: Dependency Graph (DAG)}
@@ -306,7 +342,7 @@ Find a {\bf \color{green} k-Coloring} for the interference graph, where {\bf \co
     \includegraphics[scale=0.4]{figures/optimization.jpg}
     \caption{Ref https://www.britannica.com/topic/nonlinear-programming}
   \end{figure}
-  Find a minumum of a funciton $f(x)$
+  Find a minumum of a function $f(x)$
 
 \end{frame}
 

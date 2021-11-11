@@ -7,22 +7,11 @@
 <style type="text/css">
 .underline { text-decoration: underline; }
 </style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/sky.css" id="theme"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/sky.css" id="theme"/>
 
 <link rel="stylesheet" href="./mystyle.css"/>
-
-<!-- If the query includes 'print-pdf', include the PDF print sheet -->
-<script>
-    if( window.location.search.match( /print-pdf/gi ) ) {
-        var link = document.createElement( 'link' );
-        link.rel = 'stylesheet';
-        link.type = 'text/css';
-        link.href = 'https://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
-        document.getElementsByTagName( 'head' )[0].appendChild( link );
-    }
-</script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </head>
 <body>
@@ -33,14 +22,14 @@
 </section>
 
 <section>
-<section id="slide-org5b844a4">
-<h2 id="org5b844a4">Recap: Research Efforts</h2>
-<div class="outline-text-2" id="text-org5b844a4">
+<section id="slide-orgbff20ec">
+<h2 id="orgbff20ec">Recap: Research Efforts</h2>
+<div class="outline-text-2" id="text-orgbff20ec">
 </div>
 </section>
-<section id="slide-org6af0df4">
-<h3 id="org6af0df4">Constrained Optimization Model For Modulo Scheduling</h3>
-<div class="cmath">
+<section id="slide-org1b1027d">
+<h3 id="org1b1027d">Constrained Optimization Model For Modulo Scheduling</h3>
+<div class="cmath" id="org33e3a87">
 <small>
 <div>
 \begin{align*}
@@ -59,9 +48,9 @@
 </div>
 
 </section>
-<section id="slide-org197da71">
-<h3 id="org197da71">Constrained Optimization Model</h3>
-<div class="cmath">
+<section id="slide-org55318dd">
+<h3 id="org55318dd">Constrained Optimization Model</h3>
+<div class="cmath" id="orgf741e28">
 <small>
 <div>
 \begin{align}
@@ -82,8 +71,8 @@ between heuristics by scaling
 </p>
 
 </section>
-<section id="slide-org103586f">
-<h3 id="org103586f">IO Penalty</h3>
+<section id="slide-org982a883">
+<h3 id="org982a883">IO Penalty</h3>
 <ul>
 <li><font color="navy">IDEA</font> penalize dispatch time of instructions based on the quantity and
 latencies of it's dependencies</li>
@@ -91,7 +80,7 @@ latencies of it's dependencies</li>
 
 </ul>
 
-<div class="cmath">
+<div class="cmath" id="orgc167702">
 <small>
 <div>
 \begin{align*}
@@ -107,15 +96,15 @@ latencies of it's dependencies</li>
 </div>
 
 </section>
-<section id="slide-org72064c2">
-<h3 id="org72064c2">Stochastic Scaling</h3>
+<section id="slide-orgcb4f9d4">
+<h3 id="orgcb4f9d4">Stochastic Scaling</h3>
 <ul>
 <li>The scaling \(\color{black}{\frac{1}{N_j}}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
 <li><font color="navy">IDEA</font> scale the <font color="navy">IO penalty</font> stochastically</li>
 <li></li>
 
 </ul>
-<div class="cmath">
+<div class="cmath" id="org1f11de1">
 <small>
 <div>
 \begin{align*}
@@ -130,8 +119,8 @@ latencies of it's dependencies</li>
 </div>
 
 </section>
-<section id="slide-orgb9f4929">
-<h3 id="orgb9f4929">COCONUT Frameworks</h3>
+<section id="slide-org341f4c2">
+<h3 id="org341f4c2">COCONUT Frameworks</h3>
 <ul>
 <li>Provides <font color="navy">Domain Specific Languages</font> for <b>functional assembly</b>
 <ul>
@@ -148,13 +137,13 @@ latencies of it's dependencies</li>
 </section>
 </section>
 <section>
-<section id="slide-org9015516">
-<h2 id="org9015516">Efforts Since Last Committee Meeting</h2>
-<div class="outline-text-2" id="text-org9015516">
+<section id="slide-orge6d4c84">
+<h2 id="orge6d4c84">Efforts Since Last Committee Meeting</h2>
+<div class="outline-text-2" id="text-orge6d4c84">
 </div>
 </section>
-<section id="slide-orgcba9162">
-<h3 id="orgcba9162">Improvements to Coconut</h3>
+<section id="slide-org78fc485">
+<h3 id="org78fc485">Improvements to Coconut</h3>
 <ul>
 <li>Integrated <font color="navy">IPOPT</font> (non-linear constrained optimization solver) into Coconut</li>
 <li><font color="navy">Automated</font> Schedule Generation</li>
@@ -164,8 +153,8 @@ latencies of it's dependencies</li>
 </ul>
 
 </section>
-<section id="slide-orgdf90e95">
-<h3 id="orgdf90e95">Acquired Interim Results</h3>
+<section id="slide-org6277345">
+<h3 id="org6277345">Acquired Interim Results</h3>
 <ul>
 <li>Generated schedules for <font color="navy">ECC</font> (elliptic curve cryptography) kernels on IBM's
 <font color="navy">Z14</font> architecture (was successfully productized)</li>
@@ -175,8 +164,8 @@ up to 20% speedup (also on <font color="navy">Z14</font> and product pending)</l
 </ul>
 
 </section>
-<section id="slide-org6d36a8e">
-<h3 id="org6d36a8e">Co-Author Contributions to the Following Works</h3>
+<section id="slide-org6d6b44f">
+<h3 id="org6d6b44f">Co-Author Contributions to the Following Works</h3>
 <ul>
 <li><font color="navy">Using z14 Fused-Multiply-Add Instructions to Accelerate Elliptic Curve Cryptography</font>
 <ul>
@@ -188,8 +177,8 @@ up to 20% speedup (also on <font color="navy">Z14</font> and product pending)</l
 </ul>
 
 </section>
-<section id="slide-org3970621">
-<h3 id="org3970621">Presentations</h3>
+<section id="slide-org0ef7533">
+<h3 id="org0ef7533">Presentations</h3>
 <ul>
 <li><font color="navy">Poster Presentation</font> at IBM TechConnect 2019</li>
 <li><font color="navy">Poster Presentation</font> at IBM CASCON 2019</li>
@@ -199,8 +188,8 @@ Price of One)</li>
 </ul>
 
 </section>
-<section id="slide-org08e61b7">
-<h3 id="org08e61b7">Awards</h3>
+<section id="slide-orgc3fc335">
+<h3 id="orgc3fc335">Awards</h3>
 <p>
 <font color="navy">Won IBM CAS Student of the Year</font> 
 </p>
@@ -208,8 +197,11 @@ Price of One)</li>
 </section>
 </div>
 </div>
-<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
-<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/search/search.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/zoom/zoom.js"></script>
 <script>
 // Full list of configuration options available here:
 // https://github.com/hakimel/reveal.js#configuration
@@ -226,20 +218,17 @@ mouseWheel: false,
 fragmentInURL: false,
 hashOneBasedIndex: false,
 pdfSeparateFragments: true,
-
 overview: true,
 
-theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-transition: Reveal.getQueryHash().transition || 'convex', // see README of reveal.js for options
+transition: 'convex',
 transitionSpeed: 'default',
 
-// Optional libraries used to extend on reveal.js
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
 dependencies: [
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+]
 
 });
 </script>

@@ -1,0 +1,12 @@
+\BOOKMARK [2][]{Outline0.1}{Introduction}{}% 1
+\BOOKMARK [3][]{Outline0.1.1.5}{Types\040of\040Scheduling}{Outline0.1}% 2
+\BOOKMARK [2][]{Outline0.2}{Pipelining}{}% 3
+\BOOKMARK [3][]{Outline0.2.1.12}{Hazards}{Outline0.2}% 4
+\BOOKMARK [3][]{Outline0.2.2.15}{Pipeline\040Stalls\040/\040Bubbles}{Outline0.2}% 5
+\BOOKMARK [3][]{Outline0.2.3.16}{Out-of-order\040Execution}{Outline0.2}% 6
+\BOOKMARK [2][]{Outline0.3}{Register\040Allocation}{}% 7
+\BOOKMARK [3][]{Outline0.3.1.19}{Graph\040Coloring}{Outline0.3}% 8
+\BOOKMARK [3][]{Outline0.3.2.20}{Spilling}{Outline0.3}% 9
+\BOOKMARK [2][]{Outline0.4}{List\040Scheduling}{}% 10
+\BOOKMARK [2][]{Outline0.5}{My\040Research}{}% 11
+\BOOKMARK [2][]{Outline0.6}{Questions?}{}% 12

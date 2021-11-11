@@ -1,31 +1,12 @@
-* Header :ignore:
-# -*- mode: org; -*-
-
-#+REVEAL_ROOT: https://cdn.jsdelivr.net/reveal.js/3.0.0/
-# #+REVEAL_THEME: league
-#+REVEAL_THEME: sky
-
-#+OPTIONS: reveal_title_slide:auto num:nil toc:nil timestamp:nil
-
-#+MACRO: color @@html:<font color="$1">$2</font>@@
-#+MACRO: alert @@html:<font color="navy">$1</font>@@
-
-#+REVEAL_EXTRA_CSS: ./mystyle.css
-# #+REVEAL_EXTRA_CSS: /Users/curtis/reveal.js/css/theme/night.css
-
-# To load Org-reveal, type “M-x load-library”, then type “ox-reveal”.
-
-
-#+Title: Ph.D Commmittee Meeting 
-#+Date: 2019-11-22
+#+Title: Ph.D Committee Meeting 
+#+Date: 2020-11-11
 #+Email: curtis.dalves@gmail.com
 #+Author: Curtis D'Alves
 
-* Recap: Research Efforts 
+* Overview of My Research Efforts Thus Far
+* Recap Research Efforts: Instruction Scheduling
 ** Constrained Optimization Model For Modulo Scheduling
 
-#+BEGIN_cmath
-#+HTML: <small>
 \begin{align*}
     \color{navy}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
     \color{navy}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
@@ -35,87 +16,134 @@
     & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
     & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
 \end{align*}
-#+HTML: </small>
-#+END_cmath
-
-** Constrained Optimization Model
-#+BEGIN_cmath
-#+HTML: <small>
 \begin{align}
     \color{navy}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
 								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  \\
 								 & b_i + \epsilon \leq t_i + \textrm{II} \\
     \color{navy}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
 \end{align}
-#+HTML: </small>    
-#+END_cmath
 
-{{{alert(Key Idea:)}}} Encode choice heuristics as penalties, adjust preference
+*Key Idea* Encode choice heuristics as penalties, adjust preference
 between heuristics by scaling
 
 ** IO Penalty
-   - {{{alert(IDEA)}}} penalize dispatch time of instructions based on the quantity and
-    latencies of it's dependencies
-   - {{{alert(Note)}}} This is a *penalty* not a *hard* constraint on latencies
-
-#+BEGIN_cmath
-#+HTML: <small>
+   Penalize dispatch time of instructions based on the quantity and
+   latencies of it's dependencies
+   
    \begin{align*}
             \color{navy}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
             \color{navy}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
             \qquad & \qquad & \qquad \\
             \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
     \end{align*}
-#+HTML: </small>
-#+END_cmath
 
 ** Stochastic Scaling
-   - The scaling $\color{black}{\frac{1}{N_j}}$ may be a good *guess*, but not necessarily effective in practice
-   - {{{alert(IDEA)}}} scale the {{{alert(IO penalty)}}} stochastically
-   - 
-#+BEGIN_cmath
-#+HTML: <small>
+   - The scaling $\frac{1}{N_j}$ may be a good *guess*, but not necessarily effective in practice
+   - *IDEA* scale the IO penalty stochastically
+     
       \begin{align*}
           \color{navy}{\text{Define a Grouping}} \qquad & \mathbb{C} = \text{Group}(\forall i \mid i \rightarrow j) \\
           \color{navy}{\text{For each Group i}} \qquad & c_i \in \mathbb{RAND(R)} \\
           \color{navy}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
         \end{align*}
-#+HTML: </small>
-#+END_cmath
+        
+** Current Results
+  + Scheduling of IBM MASS Library Functions
+  + 20% speedup on select functions
+    #+ATTR_ORG: :width 800
+   [[file:imgs/results.jpg]]
+   
+* Current Research Efforts: COCONUT Framework for Rapid Prototyping
+  #+ATTR_ORG: :width 800
+  [[file:imgs/CoconutBetter2.png]]
+   + Developed in Haskell
+   + Provides embedded domain specific languages for *typed functional assembly*
+    #+BEGIN_SRC haskell :results value
+    testDSL r0 r1 r2 =
+      let
+        r3 = add r1 r0
+        r4 = add r2 r0
+        r5 = mult r3 r4
+      in (r4,r5)
+    #+END_SRC 
+   + Supports code generation (to IBM Z and Power assembly), interpretation and
+     hardware simulation
 
-** COCONUT Frameworks
-   - Provides {{{alert(Domain Specific Languages)}}} for *functional assembly*
-     - In only Z and Power currently
-   - Provides {{{alert(Code Graph Library)}}} for modeling dependency *DAG* 
-   - Provides {{{alert(Register Allocator)}}} (needs upgrading)
-   - Provides {{{alert(Hardware Simulator)}}} (needs upgrading)
-   - Provides {{{alert(Code Generation)}}}
+** Refactoring COCONUT for Extensibility
+   In order to improve COCONUT's capabilities as a rapid prototyping environment
+   *across a variety of architectures*, we want it to be easily extensible in a
+   number of dimensions:
+   + DSL Instructions
+   + Register Types
+   + Printing
+   + Scheduling Heuristics
+   + Hardware Simulation
+     
+** Transitioning to Finally Tagless Form
+   + Old
+   #+BEGIN_SRC haskell :results value
+   class (Show (VR n),Show (GPR n) => ZType n where
+      data  VR n           -- vector register
+      data  GPR n          -- general purpose register
+      add    :: GPR n -> GPR n -> GPR n
+      mult   :: GPR n -> GPR n -> GPR n
+      addV   :: VR n -> VR n -> VR n
+      ...
+   #+END_SRC
+   + New
+   #+BEGIN_SRC haskell :results value
+   data GPR
+   data VR
+   
+   class CoreISA repr where
+     add   :: repr GPR -> repr GPR -> repr GPR
+     mult  :: repr GPR -> repr GPR -> repr GPR
+     addV  :: repr VR -> repr VR -> repr VR
+     ...
+   
+   class ExtendedISA repr where
+     ...
+   #+END_SRC
 
-* Efforts Since Last Committee Meeting
-** Improvements to Coconut
-  - Integrated {{{alert(IPOPT )}}} (non-linear constrained optimization solver) into Coconut 
-  - {{{alert(Automated)}}} Schedule Generation
-  - Added support for {{{alert(Stochastic Parameters)}}}
-  - Updated {{{alert(Hashed Expression)}}} library to use as front-end to {{{alert(IPOPT)}}}
+** Parameterizing Code Graph By Hardware
+  + Code Graphs (Directed Acyclic HyperGraphs encoding basic blocks) are
+    parameterized by a Hardware instance
+    #+BEGIN_SRC haskell :results value
+    newtype Graph h r = Graph { ... } 
 
-** Acquired Interim Results
-  - Generated schedules for {{{alert(ECC)}}} (elliptic curve cryptography) kernels on IBM's
-    {{{alert(Z14)}}} architecture (was successfully productized) 
-  - Generated schedules for core math functions on {{{alert(IBM's MASS Library)}}} achieving
-    up to 20% speedup (also on {{{alert(Z14)}}} and product pending)
-
-** Co-Author Contributions to the Following Works
-   - {{{alert(Using z14 Fused-Multiply-Add Instructions to Accelerate Elliptic Curve
-     Cryptography)}}}
-     - published conference paper CASCON 2019 and won best Paper
-   - {{{alert(A Framework for Preadolescent Programmers to Create Cooperative Multiplayer
-     Reading Games)}}}
-
-** Presentations 
-   - {{{alert(Poster Presentation)}}} at IBM TechConnect 2019
-   - {{{alert(Poster Presentation)}}} at IBM CASCON 2019
-   - {{{alert(Workshop)}}} at CASCON 2019 (published proceeding Two Functional MDD's for the
-     Price of One)
-
-** Awards
-  {{{alert(Won IBM CAS Student of the Year)}}} 
+    instance Hardware h => CoreISA (Graph h) where
+      ...
+    #+END_SRC
+   + The Hardware type class uses associated type families to provide specific
+     hardware architecture details for simulation / printing
+    #+BEGIN_SRC haskell :results value
+    class Hardware h where
+      data RegType h 
+      data HardwareST h
+      simInstruction :: Schedule h -> RegMap h -> Instruction -> SimState h Instuction
+      ... 
+    #+END_SRC
+   
+** Control Flow Arrangements
+   + Basic Blocks are encoded as Code Graphs (i.e. data flow graphs)
+     #+BEGIN_SRC haskell :results value
+     type CodeGraph h = HyperGraph NodeType (ResType h) (EdgeType h)
+     #+END_SRC
+     #+ATTR_ORG: :width 100
+     [[file:./imgs/dataflow.gif]]  
+   + Control Flow Arrangements use Code Graphs as edges, describe control flow
+     #+BEGIN_SRC haskell :results value
+     type ControlFlow h = HyperGraph NodeType (ResType h) (CodeGraph h)
+     #+END_SRC 
+     #+ATTR_ORG: :width 150
+     [[file:./imgs/controlflow.jpg]]
+     
+* Current Short Term Goals
+  + Finish getting COCONUT into working shape
+  + Generate schedules for new Z architecture
+  + Finish writing COCONUT paper
+    
+#+EXCLUDE_TAGS: noexport
+* LocalWords                                                       :noexport:
+#  LocalWords:  Recap Co COCONUT's DSL LocalWords HyperGraphs Recap CodeGraphs
+#  LocalWords:  hypergraphs

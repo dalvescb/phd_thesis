@@ -1,35 +1,38 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2016.5.22)  1 MAY 2017 04:26
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021/NixOS.org) (preloaded format=pdflatex 2021.8.15)  30 AUG 2021 18:40
 entering extended mode
- restricted \write18 enabled.
+ \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
 **techconnect_poster.tex
 (./techconnect_poster.tex
-LaTeX2e <2016/03/31>
-Babel <3.9r> and hyphenation patterns for 83 language(s) loaded.
-(./a0poster.cls
+LaTeX2e <2020-10-01> patch level 4
+L3 programming layer <2021-02-18> (./a0poster.cls
 Document Class: a0poster 1997/05/07 v1.21b a0poster class (GK, MW)
-(/usr/local/texlive/2016/texmf-dist/tex/latex/base/article.cls
-Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
-(/usr/local/texlive/2016/texmf-dist/tex/latex/base/size10.clo
-File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/base/article.cls
+Document Class: article 2020/04/10 v1.4m Standard LaTeX document class
+
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/base/size10.clo
+File: size10.clo 2020/04/10 v1.4m Standard LaTeX file (size option)
 )
-\c@part=\count79
-\c@section=\count80
-\c@subsection=\count81
-\c@subsubsection=\count82
-\c@paragraph=\count83
-\c@subparagraph=\count84
-\c@figure=\count85
-\c@table=\count86
-\abovecaptionskip=\skip41
-\belowcaptionskip=\skip42
-\bibindent=\dimen102
+\c@part=\count179
+\c@section=\count180
+\c@subsection=\count181
+\c@subsubsection=\count182
+\c@paragraph=\count183
+\c@subparagraph=\count184
+\c@figure=\count185
+\c@table=\count186
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen138
 )
-\xkoord=\count87
-\ykoord=\count88
-\xscale=\count89
-\yscale=\count90
+\xkoord=\count187
+\ykoord=\count188
+\xscale=\count189
+\yscale=\count190
 
 
 Package a0poster Warning: Unknown Option 24pt on input line 85.
@@ -41,75 +44,92 @@ LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
 (Font)                  OMX/cmex/m/n --> OMX/cmex/m/n on input line 218.
 LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
 (Font)                  OMX/cmex/m/n --> OMX/cmex/m/n on input line 218.
-\big@size=\dimen103
+\big@size=\dimen139
 ))
-(/usr/local/texlive/2016/texmf-dist/tex/latex/tools/multicol.sty
-Package: multicol 2016/04/07 v1.8p multicolumn formatting (FMi)
-\c@tracingmulticols=\count91
-\mult@box=\box26
-\multicol@leftmargin=\dimen104
-\c@unbalance=\count92
-\c@collectmore=\count93
-\doublecol@number=\count94
-\multicoltolerance=\count95
-\multicolpretolerance=\count96
-\full@width=\dimen105
-\page@free=\dimen106
-\premulticols=\dimen107
-\postmulticols=\dimen108
-\multicolsep=\skip43
-\multicolbaselineskip=\skip44
-\partial@page=\box27
-\last@line=\box28
-\maxbalancingoverflow=\dimen109
-\mult@rightbox=\box29
-\mult@grightbox=\box30
-\mult@gfirstbox=\box31
-\mult@firstbox=\box32
-\@tempa=\box33
-\@tempa=\box34
-\@tempa=\box35
-\@tempa=\box36
-\@tempa=\box37
-\@tempa=\box38
-\@tempa=\box39
-\@tempa=\box40
-\@tempa=\box41
-\@tempa=\box42
-\@tempa=\box43
-\@tempa=\box44
-\@tempa=\box45
-\@tempa=\box46
-\@tempa=\box47
-\@tempa=\box48
-\@tempa=\box49
-\c@columnbadness=\count97
-\c@finalcolumnbadness=\count98
-\last@try=\dimen110
-\multicolovershoot=\dimen111
-\multicolundershoot=\dimen112
-\mult@nat@firstbox=\box50
-\colbreak@box=\box51
-\mc@col@check@num=\count99
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/tools/multicol.sty
+Package: multicol 2019/12/09 v1.8y multicolumn formatting (FMi)
+\c@tracingmulticols=\count191
+\mult@box=\box47
+\multicol@leftmargin=\dimen140
+\c@unbalance=\count192
+\c@collectmore=\count193
+\doublecol@number=\count194
+\multicoltolerance=\count195
+\multicolpretolerance=\count196
+\full@width=\dimen141
+\page@free=\dimen142
+\premulticols=\dimen143
+\postmulticols=\dimen144
+\multicolsep=\skip49
+\multicolbaselineskip=\skip50
+\partial@page=\box48
+\last@line=\box49
+\maxbalancingoverflow=\dimen145
+\mult@rightbox=\box50
+\mult@grightbox=\box51
+\mult@gfirstbox=\box52
+\mult@firstbox=\box53
+\@tempa=\box54
+\@tempa=\box55
+\@tempa=\box56
+\@tempa=\box57
+\@tempa=\box58
+\@tempa=\box59
+\@tempa=\box60
+\@tempa=\box61
+\@tempa=\box62
+\@tempa=\box63
+\@tempa=\box64
+\@tempa=\box65
+\@tempa=\box66
+\@tempa=\box67
+\@tempa=\box68
+\@tempa=\box69
+\@tempa=\box70
+\@tempa=\box71
+\@tempa=\box72
+\@tempa=\box73
+\@tempa=\box74
+\@tempa=\box75
+\@tempa=\box76
+\@tempa=\box77
+\@tempa=\box78
+\@tempa=\box79
+\@tempa=\box80
+\@tempa=\box81
+\@tempa=\box82
+\@tempa=\box83
+\@tempa=\box84
+\@tempa=\box85
+\@tempa=\box86
+\@tempa=\box87
+\@tempa=\box88
+\@tempa=\box89
+\@tempa=\box90
+\c@minrows=\count197
+\c@columnbadness=\count198
+\c@finalcolumnbadness=\count199
+\last@try=\dimen146
+\multicolovershoot=\dimen147
+\multicolundershoot=\dimen148
+\mult@nat@firstbox=\box91
+\colbreak@box=\box92
+\mc@col@check@num=\count266
 )
-(/usr/local/texlive/2016/texmf-dist/tex/latex/xcolor/xcolor.sty
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/xcolor/xcolor.sty
 Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
 
-(/usr/local/texlive/2016/texmf-dist/tex/latex/graphics-cfg/color.cfg
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/graphics-cfg/color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package xcolor Info: Driver file: pdftex.def on input line 225.
 
-(/usr/local/texlive/2016/texmf-dist/tex/latex/pdftex-def/pdftex.def
-File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
-
-(/usr/local/texlive/2016/texmf-dist/tex/generic/oberdiek/infwarerr.sty
-Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
-)
-(/usr/local/texlive/2016/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
-Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
-)
-\Gread@gobject=\count100
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2020/10/05 v1.2a Graphics/color driver for pdftex
 )
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
 Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
@@ -121,248 +141,245 @@ Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
 
-(/usr/local/texlive/2016/texmf-dist/tex/latex/xcolor/svgnam.def
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/xcolor/svgnam.def
 File: svgnam.def 2016/05/11 v2.12 Predefined colors according to SVG 1.1 (UK)
 ))
-(/usr/local/texlive/2016/texmf-dist/tex/latex/psnfss/times.sty
-Package: times 2005/04/12 PSNFSS-v9.2a (SPQR) 
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/psnfss/times.sty
+Package: times 2020/03/25 PSNFSS-v9.3 (SPQR) 
 )
-(/usr/local/texlive/2016/texmf-dist/tex/latex/graphics/graphicx.sty
-Package: graphicx 2014/10/28 v1.0g Enhanced LaTeX Graphics (DPC,SPQR)
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/graphics/graphicx.sty
+Package: graphicx 2020/09/09 v1.2b Enhanced LaTeX Graphics (DPC,SPQR)
 
-(/usr/local/texlive/2016/texmf-dist/tex/latex/graphics/keyval.sty
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/graphics/keyval.sty
 Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
-\KV@toks@=\toks14
+\KV@toks@=\toks15
 )
-(/usr/local/texlive/2016/texmf-dist/tex/latex/graphics/graphics.sty
-Package: graphics 2016/05/09 v1.0r Standard LaTeX Graphics (DPC,SPQR)
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/graphics/graphics.sty
+Package: graphics 2020/08/30 v1.4c Standard LaTeX Graphics (DPC,SPQR)
 
-(/usr/local/texlive/2016/texmf-dist/tex/latex/graphics/trig.sty
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/graphics/trig.sty
 Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
 )
-(/usr/local/texlive/2016/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
-File: graphics.cfg 2016/01/02 v1.10 sample graphics configuration
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-Package graphics Info: Driver file: pdftex.def on input line 96.
+Package graphics Info: Driver file: pdftex.def on input line 105.
 )
-\Gin@req@height=\dimen113
-\Gin@req@width=\dimen114
+\Gin@req@height=\dimen149
+\Gin@req@width=\dimen150
 )
-(/usr/local/texlive/2016/texmf-dist/tex/latex/booktabs/booktabs.sty
-Package: booktabs 2016/04/27 v1.618033 publication quality tables
-\heavyrulewidth=\dimen115
-\lightrulewidth=\dimen116
-\cmidrulewidth=\dimen117
-\belowrulesep=\dimen118
-\belowbottomsep=\dimen119
-\aboverulesep=\dimen120
-\abovetopsep=\dimen121
-\cmidrulesep=\dimen122
-\cmidrulekern=\dimen123
-\defaultaddspace=\dimen124
-\@cmidla=\count101
-\@cmidlb=\count102
-\@aboverulesep=\dimen125
-\@belowrulesep=\dimen126
-\@thisruleclass=\count103
-\@lastruleclass=\count104
-\@thisrulewidth=\dimen127
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/booktabs/booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen151
+\lightrulewidth=\dimen152
+\cmidrulewidth=\dimen153
+\belowrulesep=\dimen154
+\belowbottomsep=\dimen155
+\aboverulesep=\dimen156
+\abovetopsep=\dimen157
+\cmidrulesep=\dimen158
+\cmidrulekern=\dimen159
+\defaultaddspace=\dimen160
+\@cmidla=\count267
+\@cmidlb=\count268
+\@aboverulesep=\dimen161
+\@belowrulesep=\dimen162
+\@thisruleclass=\count269
+\@lastruleclass=\count270
+\@thisrulewidth=\dimen163
 )
-(/usr/local/texlive/2016/texmf-dist/tex/latex/caption/caption.sty
-Package: caption 2016/02/21 v3.3-144 Customizing captions (AR)
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/caption/caption.sty
+Package: caption 2020/10/26 v3.5g Customizing captions (AR)
 
-(/usr/local/texlive/2016/texmf-dist/tex/latex/caption/caption3.sty
-Package: caption3 2016/02/04 v1.7-139 caption3 kernel (AR)
-Package caption3 Info: TeX engine: e-TeX on input line 67.
-\captionmargin=\dimen128
-\captionmargin@=\dimen129
-\captionwidth=\dimen130
-\caption@tempdima=\dimen131
-\caption@indent=\dimen132
-\caption@parindent=\dimen133
-\caption@hangindent=\dimen134
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/caption/caption3.sty
+Package: caption3 2020/10/21 v2.2e caption3 kernel (AR)
+\captionmargin=\dimen164
+\captionmargin@=\dimen165
+\captionwidth=\dimen166
+\caption@tempdima=\dimen167
+\caption@indent=\dimen168
+\caption@parindent=\dimen169
+\caption@hangindent=\dimen170
+Package caption Info: Standard document class detected.
 )
-\c@ContinuedFloat=\count105
+\c@caption@flags=\count271
+\c@continuedfloat=\count272
 )
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/amsfonts/amsfonts.sty
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
-\@emptytoks=\toks15
+\@emptytoks=\toks16
 \symAMSa=\mathgroup4
 \symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
 )
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsmath.sty
-Package: amsmath 2016/03/10 v2.15b AMS math features
-\@mathmargin=\skip45
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2020/09/23 v2.17i AMS math features
+\@mathmargin=\skip51
 
 For additional information on amsmath, use the `?' option.
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amstext.sty
+
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/amsmath/amstext.sty
 Package: amstext 2000/06/29 v2.01 AMS text
 
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsgen.sty
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
-\@emptytoks=\toks16
-\ex@=\dimen135
+\@emptytoks=\toks17
+\ex@=\dimen171
 ))
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsbsy.sty
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
-\pmbraise@=\dimen136
+\pmbraise@=\dimen172
 )
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsopn.sty
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2016/03/08 v2.02 operator names
 )
-\inf@bad=\count106
-LaTeX Info: Redefining \frac on input line 199.
-\uproot@=\count107
-\leftroot@=\count108
-LaTeX Info: Redefining \overline on input line 297.
-\classnum@=\count109
-\DOTSCASE@=\count110
-LaTeX Info: Redefining \ldots on input line 394.
-LaTeX Info: Redefining \dots on input line 397.
-LaTeX Info: Redefining \cdots on input line 518.
-\Mathstrutbox@=\box52
-\strutbox@=\box53
-\big@size=\dimen137
-LaTeX Font Info:    Redeclaring font encoding OML on input line 634.
-LaTeX Font Info:    Redeclaring font encoding OMS on input line 635.
-\macc@depth=\count111
-\c@MaxMatrixCols=\count112
-\dotsspace@=\muskip10
-\c@parentequation=\count113
-\dspbrk@lvl=\count114
-\tag@help=\toks17
-\row@=\count115
-\column@=\count116
-\maxfields@=\count117
-\andhelp@=\toks18
-\eqnshift@=\dimen138
-\alignsep@=\dimen139
-\tagshift@=\dimen140
-\tagwidth@=\dimen141
-\totwidth@=\dimen142
-\lineht@=\dimen143
-\@envbody=\toks19
-\multlinegap=\skip46
-\multlinetaggap=\skip47
-\mathdisplay@stack=\toks20
-LaTeX Info: Redefining \[ on input line 2739.
-LaTeX Info: Redefining \] on input line 2740.
+\inf@bad=\count273
+LaTeX Info: Redefining \frac on input line 234.
+\uproot@=\count274
+\leftroot@=\count275
+LaTeX Info: Redefining \overline on input line 399.
+\classnum@=\count276
+\DOTSCASE@=\count277
+LaTeX Info: Redefining \ldots on input line 496.
+LaTeX Info: Redefining \dots on input line 499.
+LaTeX Info: Redefining \cdots on input line 620.
+\Mathstrutbox@=\box93
+\strutbox@=\box94
+\big@size=\dimen173
+LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
+\macc@depth=\count278
+\c@MaxMatrixCols=\count279
+\dotsspace@=\muskip16
+\c@parentequation=\count280
+\dspbrk@lvl=\count281
+\tag@help=\toks18
+\row@=\count282
+\column@=\count283
+\maxfields@=\count284
+\andhelp@=\toks19
+\eqnshift@=\dimen174
+\alignsep@=\dimen175
+\tagshift@=\dimen176
+\tagwidth@=\dimen177
+\totwidth@=\dimen178
+\lineht@=\dimen179
+\@envbody=\toks20
+\multlinegap=\skip52
+\multlinetaggap=\skip53
+\mathdisplay@stack=\toks21
+LaTeX Info: Redefining \[ on input line 2923.
+LaTeX Info: Redefining \] on input line 2924.
 )
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amscls/amsthm.sty
-Package: amsthm 2015/03/04 v2.20.2
-\thm@style=\toks21
-\thm@bodyfont=\toks22
-\thm@headfont=\toks23
-\thm@notefont=\toks24
-\thm@headpunct=\toks25
-\thm@preskip=\skip48
-\thm@postskip=\skip49
-\thm@headsep=\skip50
-\dth@everypar=\toks26
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/amscls/amsthm.sty
+Package: amsthm 2020/05/29 v2.20.6
+\thm@style=\toks22
+\thm@bodyfont=\toks23
+\thm@headfont=\toks24
+\thm@notefont=\toks25
+\thm@headpunct=\toks26
+\thm@preskip=\skip54
+\thm@postskip=\skip55
+\thm@headsep=\skip56
+\dth@everypar=\toks27
 )
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
 )
-(/usr/local/texlive/2016/texmf-dist/tex/latex/wrapfig/wrapfig.sty
-\wrapoverhang=\dimen144
-\WF@size=\dimen145
-\c@WF@wrappedlines=\count118
-\WF@box=\box54
-\WF@everypar=\toks27
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/wrapfig/wrapfig.sty
+\wrapoverhang=\dimen180
+\WF@size=\dimen181
+\c@WF@wrappedlines=\count285
+\WF@box=\box95
+\WF@everypar=\toks28
 Package: wrapfig 2003/01/31  v 3.6
+)
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 3
+9.
+
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/psnfss/ot1ptm.fd
+File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
+)
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/l3backend/l3backend-pdftex.def
+File: l3backend-pdftex.def 2021-03-18 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count286
+\l__pdf_internal_box=\box96
 )
 (./techconnect_poster.aux)
 \openout1 = `techconnect_poster.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 39.
 LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 39.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 39.
 LaTeX Font Info:    ... okay on input line 39.
 LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 39.
 LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 39.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 39.
 LaTeX Font Info:    ... okay on input line 39.
 LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 39.
 LaTeX Font Info:    ... okay on input line 39.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 39.
 LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 39.
 
-(/usr/local/texlive/2016/texmf-dist/tex/latex/psnfss/ot1ptm.fd
-File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
-)
-(/usr/local/texlive/2016/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count119
-\scratchdimen=\dimen146
-\scratchbox=\box55
-\nofMPsegments=\count120
-\nofMParguments=\count121
-\everyMPshowfont=\toks28
-\MPscratchCnt=\count122
-\MPscratchDim=\dimen147
-\MPnumerator=\count123
-\makeMPintoPDFobject=\count124
-\everyMPtoPDFconversion=\toks29
-) (/usr/local/texlive/2016/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
-Package: pdftexcmds 2016/05/10 v0.21 Utility functions of pdfTeX for LuaTeX (HO
+\scratchcounter=\count287
+\scratchdimen=\dimen182
+\scratchbox=\box97
+\nofMPsegments=\count288
+\nofMParguments=\count289
+\everyMPshowfont=\toks29
+\MPscratchCnt=\count290
+\MPscratchDim=\dimen183
+\MPnumerator=\count291
+\makeMPintoPDFobject=\count292
+\everyMPtoPDFconversion=\toks30
 )
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/epstopdf-pkg/epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
 
-(/usr/local/texlive/2016/texmf-dist/tex/generic/oberdiek/ifluatex.sty
-Package: ifluatex 2016/05/16 v1.4 Provides the ifluatex switch (HO)
-Package ifluatex Info: LuaTeX not detected.
-)
-(/usr/local/texlive/2016/texmf-dist/tex/generic/oberdiek/ifpdf.sty
-Package: ifpdf 2016/05/14 v3.1 Provides the ifpdf switch
-)
-Package pdftexcmds Info: LuaTeX not detected.
-Package pdftexcmds Info: \pdf@primitive is available.
-Package pdftexcmds Info: \pdf@ifprimitive is available.
-Package pdftexcmds Info: \pdfdraftmode found.
-)
-(/usr/local/texlive/2016/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
-Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
-
-(/usr/local/texlive/2016/texmf-dist/tex/latex/oberdiek/grfext.sty
-Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
-
-(/usr/local/texlive/2016/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
-Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
-))
-(/usr/local/texlive/2016/texmf-dist/tex/latex/oberdiek/kvoptions.sty
-Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
-
-(/usr/local/texlive/2016/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
-Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
-
-(/usr/local/texlive/2016/texmf-dist/tex/generic/oberdiek/etexcmds.sty
-Package: etexcmds 2016/05/16 v1.6 Avoid name clashes with e-TeX commands (HO)
-Package etexcmds Info: Could not find \expanded.
-(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
-(etexcmds)             that some package has redefined \expanded.
-(etexcmds)             In the latter case, load this package earlier.
-)))
-Package grfext Info: Graphics extension search list:
-(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
-G,.JBIG2,.JB2,.eps]
-(grfext)             \AppendGraphicsExtensions on input line 456.
-
-(/usr/local/texlive/2016/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: wrapfig package is loaded.
 Package caption Info: End \AtBeginDocument code.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <74.3> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 52.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <51.6> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 54.
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 57.
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 5
+7.
 
-(/usr/local/texlive/2016/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 Underfull \hbox (badness 10000) in paragraph at lines 52--59
@@ -371,14 +388,13 @@ Underfull \hbox (badness 10000) in paragraph at lines 52--59
 
 <maclogo.jpg, id=1, 237.0456pt x 131.0496pt>
 File: maclogo.jpg Graphic file (type jpg)
- <use maclogo.jpg>
-Package pdftex.def Info: maclogo.jpg used on input line 63.
+<use maclogo.jpg>
+Package pdftex.def Info: maclogo.jpg  used on input line 63.
 (pdftex.def)             Requested size: 284.52756pt x 157.30872pt.
-
 <logo.png, id=2, 938.50626pt x 312.16624pt>
 File: logo.png Graphic file (type png)
- <use logo.png>
-Package pdftex.def Info: logo.png used on input line 64.
+<use logo.png>
+Package pdftex.def Info: logo.png  used on input line 64.
 (pdftex.def)             Requested size: 569.05511pt x 189.27794pt.
 
 Underfull \hbox (badness 10000) in paragraph at lines 63--65
@@ -390,74 +406,81 @@ Overfull \hbox (19.72723pt too wide) in paragraph at lines 51--66
 [][] [] 
  []
 
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <20.74> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 79.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <35.83> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 92.
 <graph.pdf, id=4, 3075.49pt x 2861.69125pt>
 File: graph.pdf Graphic file (type pdf)
- <use graph.pdf>
-Package pdftex.def Info: graph.pdf used on input line 95.
+<use graph.pdf>
+Package pdftex.def Info: graph.pdf  used on input line 95.
 (pdftex.def)             Requested size: 965.40567pt x 772.31766pt.
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 100.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 1
+00.
 
-
-(/usr/local/texlive/2016/texmf-dist/tex/latex/psnfss/omsptm.fd
-File: omsptm.fd 
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/psnfss/ts1ptm.fd
+File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <24.88> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 100.
-LaTeX Font Info:    Try loading font information for U+msa on input line 111.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 111
+.
 
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/umsa.fd
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 111.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 111
+.
 
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/umsb.fd
+(/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <24.88> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 132.
-
 <sigmoid.jpg, id=5, 1099.10625pt x 688.5725pt>
 File: sigmoid.jpg Graphic file (type jpg)
- <use sigmoid.jpg>
-Package pdftex.def Info: sigmoid.jpg used on input line 139.
+<use sigmoid.jpg>
+Package pdftex.def Info: sigmoid.jpg  used on input line 139.
 (pdftex.def)             Requested size: 675.78383pt x 423.38025pt.
-
 <results.pdf, id=6, 794.97pt x 614.295pt>
 File: results.pdf Graphic file (type pdf)
- <use results.pdf>
-Package pdftex.def Info: results.pdf used on input line 156.
+<use results.pdf>
+Package pdftex.def Info: results.pdf  used on input line 156.
 (pdftex.def)             Requested size: 675.78383pt x 522.20944pt.
+ (./techconnect_poster.bbl
 
-No file techconnect_poster.bbl.
-[1
+LaTeX Warning: Empty `thebibliography' environment on input line 3.
+
+) [1
 
 
-Non-PDF special ignored!{/usr/local/texlive/2016/texmf-var/fonts/map/pdftex/upd
-map/pdftex.map} <./maclogo.jpg> <./logo.png> <./graph.pdf> <./sigmoid.jpg> <./r
-esults.pdf>] (./techconnect_poster.aux) ) 
+Non-PDF special ignored!
+<special> papersize=118.82cm,83.96cm
+{/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./maclogo.jpg> <./logo.p
+ng> <./graph.pdf> <./sigmoid.jpg> <./results.pdf>] (./techconnect_poster.aux) )
+ 
 Here is how much of TeX's memory you used:
- 4569 strings out of 493014
- 68461 string characters out of 6133351
- 166892 words of memory out of 5000000
- 8025 multiletter control sequences out of 15000+600000
- 28618 words of font info for 64 fonts, out of 8000000 for 9000
+ 4754 strings out of 478994
+ 78135 string characters out of 5829509
+ 394146 words of memory out of 5000000
+ 22180 multiletter control sequences out of 15000+600000
+ 428722 words of font info for 78 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 38i,10n,39p,822b,415s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2016/texmf-dist/fo
-nts/enc/dvips/base/8r.enc}</usr/local/texlive/2016/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmex10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/
-amsfonts/cm/cmr17.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/am
-sfonts/cm/cmsy10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/ams
-fonts/symbols/msbm10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/urw/co
-urier/ucrr8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/urw/times/utmb
-8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></u
-sr/local/texlive/2016/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on techconnect_poster.pdf (1 page, 701639 bytes).
+ 68i,10n,74p,822b,435s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.2021040
+8/share/texmf/fonts/enc/dvips/base/8r.enc}</nix/store/xym6hj82qja3j0k2wmglinim3
+lgx0ccg-texlive-combined-full-2021.20210408/share/texmf/fonts/type1/public/amsf
+onts/cm/cmex10.pfb></nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combine
+d-full-2021.20210408/share/texmf/fonts/type1/public/amsfonts/cm/cmmi12.pfb></ni
+x/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.20210408/sh
+are/texmf/fonts/type1/public/amsfonts/cm/cmr17.pfb></nix/store/xym6hj82qja3j0k2
+wmglinim3lgx0ccg-texlive-combined-full-2021.20210408/share/texmf/fonts/type1/pu
+blic/amsfonts/cm/cmsy10.pfb></nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texliv
+e-combined-full-2021.20210408/share/texmf/fonts/type1/public/amsfonts/symbols/m
+sbm10.pfb></nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-20
+21.20210408/share/texmf/fonts/type1/urw/courier/ucrr8a.pfb></nix/store/xym6hj82
+qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.20210408/share/texmf/fonts/
+type1/urw/times/utmb8a.pfb></nix/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive
+-combined-full-2021.20210408/share/texmf/fonts/type1/urw/times/utmr8a.pfb></nix
+/store/xym6hj82qja3j0k2wmglinim3lgx0ccg-texlive-combined-full-2021.20210408/sha
+re/texmf/fonts/type1/urw/times/utmri8a.pfb>
+Output written on techconnect_poster.pdf (1 page, 702235 bytes).
 PDF statistics:
  82 PDF objects out of 1000 (max. 8388607)
  57 compressed objects within 1 object stream

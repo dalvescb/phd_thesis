@@ -1,13 +1,12 @@
-\beamer@endinputifotherversion {3.36pt}
-\select@language {english}
-\beamer@sectionintoc {1}{Introduction}{2}{0}{1}
-\beamer@subsectionintoc {1}{1}{Instruction Scheduling}{3}{0}{1}
-\beamer@subsectionintoc {1}{2}{Graph Coloring}{6}{0}{1}
-\beamer@subsectionintoc {1}{3}{Spilling}{7}{0}{1}
-\beamer@sectionintoc {2}{Rapid Prototyping With Coconut}{8}{0}{2}
-\beamer@subsectionintoc {2}{1}{What Is COCONUT?}{9}{0}{2}
-\beamer@subsectionintoc {2}{2}{Why COCONUT?}{12}{0}{2}
-\beamer@sectionintoc {3}{Stochastic Scheduling Algorithm}{13}{0}{3}
-\beamer@subsectionintoc {3}{1}{Continouous Optimization Model}{14}{0}{3}
-\beamer@subsectionintoc {3}{2}{Stochastic Parameterization}{18}{0}{3}
-\beamer@sectionintoc {4}{Analysis}{20}{0}{4}
+\babel@toc {english}{}
+\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
+\beamer@subsectionintoc {1}{1}{Instruction Scheduling}{4}{0}{1}
+\beamer@subsectionintoc {1}{2}{Graph Coloring}{7}{0}{1}
+\beamer@subsectionintoc {1}{3}{Spilling}{8}{0}{1}
+\beamer@sectionintoc {2}{Rapid Prototyping With Coconut}{9}{0}{2}
+\beamer@subsectionintoc {2}{1}{What Is COCONUT?}{10}{0}{2}
+\beamer@subsectionintoc {2}{2}{Why COCONUT?}{13}{0}{2}
+\beamer@sectionintoc {3}{Stochastic Scheduling Algorithm}{14}{0}{3}
+\beamer@subsectionintoc {3}{1}{Continouous Optimization Model}{15}{0}{3}
+\beamer@subsectionintoc {3}{2}{Stochastic Parameterization}{19}{0}{3}
+\beamer@sectionintoc {4}{Analysis}{21}{0}{4}

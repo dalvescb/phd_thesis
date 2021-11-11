@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Ph.D Commmittee Meeting</title>
+<meta name="author" content="Curtis D'Alves"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/sky.css" id="theme"/>
+
+<link rel="stylesheet" href="./mystyle.css"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Ph.D Commmittee Meeting</h1><h2 class="author">Curtis D'Alves</h2><h2 class="date">2019-11-22</h2>
+</section>
+
+<section>
+<section id="slide-orgbff20ec">
+<h2 id="orgbff20ec">Recap: Research Efforts</h2>
+<div class="outline-text-2" id="text-orgbff20ec">
+</div>
+</section>
+<section id="slide-org1b1027d">
+<h3 id="org1b1027d">Constrained Optimization Model For Modulo Scheduling</h3>
+<div class="cmath" id="org33e3a87">
+<small>
+<div>
+\begin{align*}
+    \color{navy}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
+    \color{navy}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
+    \color{navy}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
+    & t_i :& \text{dispatch time} \\
+    & b_i :& \text{completion time} \\
+    & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
+    & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
+\end{align*}
+
+</div>
+</small>
+
+</div>
+
+</section>
+<section id="slide-org55318dd">
+<h3 id="org55318dd">Constrained Optimization Model</h3>
+<div class="cmath" id="orgf741e28">
+<small>
+<div>
+\begin{align}
+    \color{navy}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
+								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  \\
+								 & b_i + \epsilon \leq t_i + \textrm{II} \\
+    \color{navy}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
+\end{align}
+
+</div>
+</small>
+
+</div>
+
+<p>
+<font color="navy">Key Idea:</font> Encode choice heuristics as penalties, adjust preference
+between heuristics by scaling
+</p>
+
+</section>
+<section id="slide-org982a883">
+<h3 id="org982a883">IO Penalty</h3>
+<ul>
+<li><font color="navy">IDEA</font> penalize dispatch time of instructions based on the quantity and
+latencies of it's dependencies</li>
+<li><font color="navy">Note</font> This is a <b>penalty</b> not a <b>hard</b> constraint on latencies</li>
+
+</ul>
+
+<div class="cmath" id="orgc167702">
+<small>
+<div>
+\begin{align*}
+         \color{navy}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
+         \color{navy}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
+         \qquad & \qquad & \qquad \\
+         \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
+ \end{align*}
+
+</div>
+</small>
+
+</div>
+
+</section>
+<section id="slide-orgcb4f9d4">
+<h3 id="orgcb4f9d4">Stochastic Scaling</h3>
+<ul>
+<li>The scaling \(\color{black}{\frac{1}{N_j}}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
+<li><font color="navy">IDEA</font> scale the <font color="navy">IO penalty</font> stochastically</li>
+<li></li>
+
+</ul>
+<div class="cmath" id="org1f11de1">
+<small>
+<div>
+\begin{align*}
+    \color{navy}{\text{Define a Grouping}} \qquad & \mathbb{C} = \text{Group}(\forall i \mid i \rightarrow j) \\
+    \color{navy}{\text{For each Group i}} \qquad & c_i \in \mathbb{RAND(R)} \\
+    \color{navy}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
+  \end{align*}
+
+</div>
+</small>
+
+</div>
+
+</section>
+<section id="slide-org341f4c2">
+<h3 id="org341f4c2">COCONUT Frameworks</h3>
+<ul>
+<li>Provides <font color="navy">Domain Specific Languages</font> for <b>functional assembly</b>
+<ul>
+<li>In only Z and Power currently</li>
+
+</ul></li>
+<li>Provides <font color="navy">Code Graph Library</font> for modeling dependency <b>DAG</b></li>
+<li>Provides <font color="navy">Register Allocator</font> (needs upgrading)</li>
+<li>Provides <font color="navy">Hardware Simulator</font> (needs upgrading)</li>
+<li>Provides <font color="navy">Code Generation</font></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orge6d4c84">
+<h2 id="orge6d4c84">Efforts Since Last Committee Meeting</h2>
+<div class="outline-text-2" id="text-orge6d4c84">
+</div>
+</section>
+<section id="slide-org78fc485">
+<h3 id="org78fc485">Improvements to Coconut</h3>
+<ul>
+<li>Integrated <font color="navy">IPOPT</font> (non-linear constrained optimization solver) into Coconut</li>
+<li><font color="navy">Automated</font> Schedule Generation</li>
+<li>Added support for <font color="navy">Stochastic Parameters</font></li>
+<li>Updated <font color="navy">Hashed Expression</font> library to use as front-end to <font color="navy">IPOPT</font></li>
+
+</ul>
+
+</section>
+<section id="slide-org6277345">
+<h3 id="org6277345">Acquired Interim Results</h3>
+<ul>
+<li>Generated schedules for <font color="navy">ECC</font> (elliptic curve cryptography) kernels on IBM's
+<font color="navy">Z14</font> architecture (was successfully productized)</li>
+<li>Generated schedules for core math functions on <font color="navy">IBM's MASS Library</font> achieving
+up to 20% speedup (also on <font color="navy">Z14</font> and product pending)</li>
+
+</ul>
+
+</section>
+<section id="slide-org6d6b44f">
+<h3 id="org6d6b44f">Co-Author Contributions to the Following Works</h3>
+<ul>
+<li><font color="navy">Using z14 Fused-Multiply-Add Instructions to Accelerate Elliptic Curve Cryptography</font>
+<ul>
+<li>published conference paper CASCON 2019 and won best Paper</li>
+
+</ul></li>
+<li><font color="navy">A Framework for Preadolescent Programmers to Create Cooperative Multiplayer Reading Games</font></li>
+
+</ul>
+
+</section>
+<section id="slide-org0ef7533">
+<h3 id="org0ef7533">Presentations</h3>
+<ul>
+<li><font color="navy">Poster Presentation</font> at IBM TechConnect 2019</li>
+<li><font color="navy">Poster Presentation</font> at IBM CASCON 2019</li>
+<li><font color="navy">Workshop</font> at CASCON 2019 (published proceeding Two Functional MDD's for the
+Price of One)</li>
+
+</ul>
+
+</section>
+<section id="slide-orgc3fc335">
+<h3 id="orgc3fc335">Awards</h3>
+<p>
+<font color="navy">Won IBM CAS Student of the Year</font> 
+</p>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/search/search.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>

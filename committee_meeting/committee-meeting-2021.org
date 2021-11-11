@@ -1,0 +1,70 @@
+#+Title: Ph.D Committee Meeting
+#+DATE: 2019-11-22
+#+EMAIL: curtis.dalves@gmail.com
+#+AUTHOR: Curtis D'Alves
+
+* Completed Degrees 
+  Honours B.Sc Computer Science (2014), M.Sc. Computer Science (2016)
+ In progress: Ph.D Engineering (Computer Science)
+
+* Courses taken during Ph.D Engineering (Started Fall 2017) 
+  Comprehensive Part1 Completed 2017/05/26
+  Comprehensive Part 2 Completed 2020/01/06
+  CAS 781 (Adv Top CAS) A+
+  CAS 705 (Computability and Complexity) B+
+  STATS 780 (Data Science) A
+  CAS 750 Pending 
+  
+* Thesis Related Work Experience 
+  IBM CAS Project 1006 - Exploring Stochastic Algorithms for Instruction Scheduling  (2017-present)
+ 
+* Progress Since Last Meeting (2020/11/26) 
+
+ * Work on COCONUT (development environment needed for thesis research)
+   - Broke code base up into hyper-graph library (back-end) and code generation
+     library (front-end)
+   - Integrated Hashed Expression with code gen library
+   - Refactored entire DSL interface to be extensible (using Finally-Tagless Form)
+   - Added control flow graph backend on top of the existing codegraph backend.
+   - Work-in progress paper on Coconut
+ * Presentations
+   - Presented work on stochastic scheduling and new hardware instructions at
+     IBM Tech Connect '21
+   - Presented Coconut "Paying Down Technical Debt With Rapid Prototyping" at
+     CASCON '21
+
+* Planned Thesis contributions
+  My thesis will explore the use of stochastic algorithms for instruction
+  scheduling (notable work done in this area by Eric Schkufza, Rahul Sharma, and
+  Alex Aiken. “Stochastic Program Optimization”) and using generated schedules
+  to develop hyper-heuristics for scheduling (some work on using
+  hyper-heuristics in instruction scheduling done by Mark Stephenson et al.
+  “Genetic programming applied to compiler heuristic optimization” and Ricardo
+  Nabinger Sanchez et al. “Using machines to learn method-specific compilation
+  strategies”). If successful my research will provide not only a novel method
+  for training these hyper-heuristics via stochastic-ally generated schedules,
+  but also a means to perform analysis on the effectiveness of different
+  compiler heuristics. 
+
+** Benchmarking
+  I am using IBM's MASS libraries as a testing bed, and will benchmark newly
+  generated schedules against previous iterations of the libraries release
+  (which have been scheduling both by hand and using a different stochastic
+  scheduling algorithm). So far I've achieved up to a 20% speedup on core MASS
+  library functions. To help generate these schedules, I've been actively
+  developing and maintaining a code generation library (known as COCONUT) and
+  optimization library (known as Hashed Expression).
+
+* New Timeline
+  - Generate new schedules for MASS (Nov 2021)
+  - Finish writing paper on Coconut for rapid prototyping and submit (Dec 2021)
+  - Experiment with training hyper-heuristics (Jan-Apr 2022)
+  - Write paper on Hyper Heuristics to submit to one of the big ML conferences:
+    ICML,IJCAL,etc (May 2022)
+  - Attempt to apply Hyper-Heuristic methods to reschedule MASS (June 2021)
+  - Defend Thesis (Summer 2022)
+  
+  
+  
+
+#  LocalWords:  DSL Tagless codegraph Timeline Nov Apr
