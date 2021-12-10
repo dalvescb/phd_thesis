@@ -5,6 +5,11 @@
 
 * Overview of My Research Efforts Thus Far
 * Recap Research Efforts: Instruction Scheduling
+ + Developing stochastic algorithms for instruction scheduling in compilers
+ + Focusing on performance critical code
+ + Focusing on advanced Out-Of-Order execution architectures
+ + Using IBM MASS functions as testing bed, modulo scheduling for loops of
+   particular importance
 ** Constrained Optimization Model For Modulo Scheduling
 
 \begin{align*}
@@ -133,10 +138,12 @@ between heuristics by scaling
      [[file:./imgs/dataflow.gif]]  
    + Control Flow Arrangements use Code Graphs as edges, describe control flow
      #+BEGIN_SRC haskell :results value
-     type ControlFlow h = HyperGraph NodeType (ResType h) (CodeGraph h)
+     type ControlFlow h = HyperGraph NodeType (ResType0 h) (CodeGraph h)
      #+END_SRC 
      #+ATTR_ORG: :width 150
      [[file:./imgs/controlflow.jpg]]
+    + The underlying Hyper Graph structure needs to be configured to be correct
+      by construction and provide easy means to pattern match
      
 * Current Short Term Goals
   + Finish getting COCONUT into working shape
