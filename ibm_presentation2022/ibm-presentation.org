@@ -91,6 +91,8 @@ between heuristics by scaling
    - {{{alert(IDEA)}}} penalize the overall lifetime of an instruction
    - {{{alert(Note)}}} This is a *penalty* not a *hard* constraint on latencies
 
+     #TODO change IO penalty to lifetime penalty  (also consider labeling
+     variables)
 #+BEGIN_cmath
 #+HTML: <small>
    \begin{align*}
@@ -98,7 +100,7 @@ between heuristics by scaling
             \color{navy}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
             \qquad & \qquad & \qquad \\
             \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
-    \end{align*}
+    \end{align*
 #+HTML: </small>
 #+END_cmath
     
@@ -216,8 +218,116 @@ testCFG dfA dfB dfC =
      - Provides {{{alert(Register Allocator)}}} 
      - Provides {{{alert(Hardware Simulator)}}} 
      - Provides {{{alert(Code Generation)}}}
+
+* Functional Graph Composition
+  #+BEGIN_SRC haskell :results value
+  data DataFlowGraph h =
+    DataFlowGraph { -- the underlying functional graph structure
+                    dataFlowGraph :: Gr (DFNode h) DFEdge
+                    -- inputs nodes with tags
+                  , dataFlowInputs :: [(String,Node)]
+                    -- output nodes with tags
+                  , dataFlowOutputs :: [(String,Node)]
+                    -- the stage used for modulo scheduling
+                  , dataFlowStage :: Int
+                  ...
+                  }
   
-* Questions? Constructive Criticisms Are Very Welcome
+  #+END_SRC
+  Basic blocks are encoded as Data Flow Graphs with tagged inputs/outputs
+
+** Data Flow Graph Operations
+  #+BEGIN_SRC haskell :results value
+  --  partition a graph by a given predicate
+  partGraphByInstr :: forall h . Hardware h =>
+   (DataFlowGraph h) -> (Node -> Bool) -> (DataFlowGraph h,DataFlowGraph h)
+  
+  -- unpartition a graph (by tying togeether input/output node tags) 
+  unPartDFGraph :: forall h . Hardware h =>
+    DataFlowGraph h -> DataFlowGraph h -> DataFlowGraph h
+    
+  -- merge graphs in parallel
+  parallelMergeDFGraph :: forall h . Hardware h =>
+    (DataFlowGraph h,DataFlowGraph h) -> DataFlowGraph h
+  #+END_SRC 
+  Coconut provides useful combinators for deconstructing and reconstructing data
+  flow graphs
+
+** Software Pipelining Case Study
+  #+REVEAL_HTML: <div class="column" style="float:left; width: 50%">
+  #+BEGIN_SRC python
+  for i in range(0,n):
+      S0[i]
+      S1[i]
+      S2[i]
+  #+END_SRC
+  {{{alert(Sample loop body)}}}
+  #+REVEAL_HTML: </div>
+  
+  #+REVEAL_HTML: <div class="column" style="float:right; width: 50%">
+  #+BEGIN_SRC python
+  for i in range(0,n-2):
+       -- Kernel
+      S0[i+2] ; S1[i+1] ; S2[i]
+  #+END_SRC
+  {{{alert(Modulo Scheduled loop body)}}}
+  #+REVEAL_HTML: </div>  
+
+** Software Pipelining Case Study
+   - Partition the dataflow graph by stage using *partNGraphByInstr*
+     #+BEGIN_SRC haskell :results value
+     numStages   :: Int
+     withinStage :: Int -> Node -> Bool
+     ...
+     partDFGraphs :: [DataFlowGraph h]
+     partDFGraphs = partNGraphByInstr dfGraph withinStage numStages
+     #+END_SRC
+   - Apply transformations to each partition and then pipeline using *parallelMergeGraphs*
+    #+BEGIN_SRC haskell :results value
+    kerenelParts :: [DataFlowGraph h]
+    kernelParts = map applyIncrement (zip [0..] partDFGraphs )
+
+    kernel :: DataFlowGraph
+    kernel = parallelMergeDFGraphs kernelParts
+    #+END_SRC
+
+** Control Flow Graph Composition   
+    Given a dataflow graphs with tagged inputs/outputs
+   #+REVEAL_HTML: <div class="column" style="float:left; width: 50%">
+     #+BEGIN_SRC haskell :results value
+    dfGraph0 = DataFlowGraph {
+      fglGraph = ....
+      ,dataFlowInputs =
+        [("x:0",0)("y:0",1)]
+      ,dataFlowOutputs =
+        [("x:0",2)("z:0",3)]
+      ,dataFlowStage = 0
+      }
+     #+END_SRC
+   #+REVEAL_HTML: </div>
+   
+   #+REVEAL_HTML: <div class="column" style="float:right; width: 50%">
+     #+BEGIN_SRC haskell :results value
+    dfGraph1 = DataFlowGraph {
+        fglGraph = ....
+        ,dataFlowInputs =
+          [("x:1",4)("z:1",5)]
+        ,dataFlowOutputs =
+          [("x:1",5)]
+        ,dataFlowStage = 1
+        }
+     #+END_SRC
+   #+REVEAL_HTML: </div>  
+   Compose Graph in Control Flow
+   #+BEGIN_SRC haskell :results value
+   compose dfGraph0 dfGraph1 =
+     do blockA <- genBlock $ dfGraph0
+        blockB <- genBlock $ dfGraph1
+        jumpCompose (\i -> i+1 `mod` numStages)
+                    (cfOut blockA)
+                    (cfIn blockB)
+   #+END_SRC
+* Questions? 
   
   
 
