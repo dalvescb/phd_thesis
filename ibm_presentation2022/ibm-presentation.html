@@ -31,13 +31,13 @@
 </section>
 
 <section>
-<section id="slide-org62c43a2">
-<h2 id="org62c43a2">Background</h2>
-<div class="outline-text-2" id="text-org62c43a2">
+<section id="slide-org4891378">
+<h2 id="org4891378">Background</h2>
+<div class="outline-text-2" id="text-org4891378">
 </div>
 </section>
-<section id="slide-org79e0e23">
-<h3 id="org79e0e23">Who Am I?</h3>
+<section id="slide-org8540b16">
+<h3 id="org8540b16">Who Am I?</h3>
 <ul>
 <li><font color="navy">Ph.D Candidate</font> McMaster University</li>
 <li>Did my Master's in <font color="navy">Continuous Optimization Algorithms</font></li>
@@ -47,8 +47,8 @@
 </ul>
 
 </section>
-<section id="slide-org8c6592f">
-<h3 id="org8c6592f">CAS Project 1006</h3>
+<section id="slide-org7a36fe9">
+<h3 id="org7a36fe9">CAS Project 1006</h3>
 <p>
 <font color="navy">Stochastic Algorithms for Instructions Scheduling</font>
 Emphasis on:
@@ -62,8 +62,8 @@ Emphasis on:
 </ul>
 
 </section>
-<section id="slide-org25dad54">
-<h3 id="org25dad54">Previous Work: Kriston Costa</h3>
+<section id="slide-org1750436">
+<h3 id="org1750436">Previous Work: Kriston Costa</h3>
 <ul>
 <li>Utilized modified version of <font color="navy">Kargers Min Cut Algorithm</font></li>
 <li><font color="navy">Approximation Algorithm</font> that can be performed <font color="navy">stochastically</font></li>
@@ -72,20 +72,20 @@ Emphasis on:
 </ul>
 
 </section>
-<section id="slide-orgd5de7c5">
-<h3 id="orgd5de7c5">Karger's Minimum Cut Algorithm</h3>
+<section id="slide-org6bcba18">
+<h3 id="org6bcba18">Karger's Minimum Cut Algorithm</h3>
 <p>
 <img src="kargermincut.png" alt="kargermincut.png" />
 Cuts create <font color="navy">groups</font> that are candidates to <font color="navy">interleave across stages</font> in <b>modulo scheduling</b>
 </p>
 
 </section>
-<section id="slide-orgc02e7c8">
-<h3 id="orgc02e7c8">My Work</h3>
+<section id="slide-org6e84cc3">
+<h3 id="org6e84cc3">My Work</h3>
 <p>
 <font color="navy">Continuous Optimization Model For Modulo Scheduling</font>
 </p>
-<div class="cmath" id="orgf84ab99">
+<div class="cmath" id="org57a100d">
 <small>
 <div>
 \begin{align*}
@@ -108,9 +108,9 @@ Cuts create <font color="navy">groups</font> that are candidates to <font color=
 </p>
 
 </section>
-<section id="slide-org92b8718">
-<h3 id="org92b8718">Constrained Optimization Model</h3>
-<div class="cmath" id="org3a087f2">
+<section id="slide-orgc4508f9">
+<h3 id="orgc4508f9">Constrained Optimization Model</h3>
+<div class="cmath" id="org00ee395">
 <small>
 <div>
 \begin{align}
@@ -131,22 +131,22 @@ between heuristics by scaling
 </p>
 
 </section>
-<section id="slide-org5e08152">
-<h3 id="org5e08152">Lifetime Penalty</h3>
+<section id="slide-org2acb882">
+<h3 id="org2acb882">Lifetime Penalty</h3>
 <ul>
 <li><font color="navy">IDEA</font> penalize the overall lifetime of an instruction</li>
 <li><font color="navy">Note</font> This is a <b>penalty</b> not a <b>hard</b> constraint on latencies</li>
 
 </ul>
 
-<div class="cmath" id="orgfc96583">
+<div class="cmath" id="org895ca10">
 <small>
 <div>
 \begin{align*}
-         \color{navy}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
-         \color{navy}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
+         \color{navy}{\text{Given }} \qquad  & t_i,c_i \qquad & \forall i \in {\text Instruction } \\
+         \color{navy}{\text{For a choosen scaling }} \qquad & S_i  & \\
          \qquad & \qquad & \qquad \\
-         \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
+         \qquad & \mathbb{L}(t,c) = \sum_{i} S_i (c_i - t_i) & \qquad 
  \end{align*}
 
 </div>
@@ -155,12 +155,12 @@ between heuristics by scaling
 </div>
 
 </section>
-<section id="slide-org41d28f2">
-<h3 id="org41d28f2">Stochastic Scaling</h3>
+<section id="slide-org2159594">
+<h3 id="org2159594">Stochastic Scaling</h3>
 <p>
 <font color="navy">IDEA</font> use random variables to scale penalties
 </p>
-<div class="cmath" id="org8c928da">
+<div class="cmath" id="orgf804b98">
 <small>
 <div>
 \begin{align*}
@@ -177,13 +177,13 @@ between heuristics by scaling
 </section>
 </section>
 <section>
-<section id="slide-orgfd05560">
-<h2 id="orgfd05560">Rapid Prototyping With COCONUT</h2>
-<div class="outline-text-2" id="text-orgfd05560">
+<section id="slide-org73c7df0">
+<h2 id="org73c7df0">Rapid Prototyping With COCONUT</h2>
+<div class="outline-text-2" id="text-org73c7df0">
 </div>
 </section>
-<section id="slide-org8d6596a">
-<h3 id="org8d6596a">Rapid Prototyping With COCONUT</h3>
+<section id="slide-org5705bb2">
+<h3 id="org5705bb2">Rapid Prototyping With COCONUT</h3>
 <p>
 <font color="navy">COCONUT</font>:( <font color="navy">CO</font>ode <font color="navy">CON</font>structing <font color="navy">U</font>ser <font color="navy">T</font>ool )
 </p>
@@ -193,7 +193,7 @@ between heuristics by scaling
 An <font color="navy">Interactive Development ToolSet</font> for performance critical assembly code,
 </p>
 
-<div id="orgffea3bb" class="figure">
+<div id="orgca7f00f" class="figure">
 <p><img src="coconut.png" alt="coconut.png" width="70%" height="50%" />
 </p>
 </div></li>
@@ -201,13 +201,8 @@ An <font color="navy">Interactive Development ToolSet</font> for performance cri
 </ul>
 
 </section>
-<section id="slide-orgaa2ec6d">
-<h3 id="orgaa2ec6d">Coconut Domain Specific Language (DSL)</h3>
-<ul>
-<li>Performance critical assembly code can be encoded in the Coconut <font color="navy">eDSL</font></li>
-<li><font color="navy">Example COCONUT CODE</font></li>
-
-</ul>
+<section id="slide-org972c4f4">
+<h3 id="org972c4f4">Coconut Domain Specific Language (DSL)</h3>
 <div class="org-src-container">
 
 <pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">CoreISA</span> r <span style="color: #3a81c3; font-weight: bold;">where</span>
@@ -219,10 +214,15 @@ An <font color="navy">Interactive Development ToolSet</font> for performance cri
     <span style="color: #715ab1;">...</span>
 </pre>
 </div>
+<ul>
+<li>Performance critical assembly code can be encoded in the Coconut <font color="navy">DSL</font></li>
+<li><font color="navy">Example COCONUT DSL</font></li>
+
+</ul>
 
 </section>
-<section id="slide-org9c41806">
-<h3 id="org9c41806">Coconut Example Basic Block</h3>
+<section id="slide-orgbd8113a">
+<h3 id="orgbd8113a">Coconut Example Basic Block</h3>
 <div class="org-src-container">
 
 <pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">testDSL</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">CoreISA</span> r <span style="color: #715ab1;">=&gt;</span>
@@ -240,8 +240,8 @@ We can encode basic blocks in the Coconut DSL
 </p>
 
 </section>
-<section id="slide-orgca41ce9">
-<h3 id="orgca41ce9">One Piece of Code, alot of Functionality</h3>
+<section id="slide-org93bc4a0">
+<h3 id="org93bc4a0">One Piece of Code, alot of Functionality</h3>
 <ul>
 <li>Type Safety</li>
 <li>Single Static Assignment</li>
@@ -252,8 +252,8 @@ We can encode basic blocks in the Coconut DSL
 </ul>
 
 </section>
-<section id="slide-org192c9ea">
-<h3 id="org192c9ea">Hashed Expression Optimization DSL</h3>
+<section id="slide-org97950a0">
+<h3 id="org97950a0">Hashed Expression Optimization DSL</h3>
 <div class="org-src-container">
 
 <pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">topBottomPenalty</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Hardware</span> h
@@ -273,11 +273,11 @@ We can easily encode our Lifetime Penalty from before
 </p>
 
 </section>
-<section id="slide-org65e48d9">
-<h3 id="org65e48d9">Control Flow DSL</h3>
+<section id="slide-org8bf6c26">
+<h3 id="org8bf6c26">Control Flow DSL</h3>
 <div class="column" style="float:left; width: 50%">
 
-<div id="org9a88e3f" class="figure">
+<div id="org47d6b83" class="figure">
 <p><img src="controlflow.png" alt="controlflow.png" />
 </p>
 </div>
@@ -287,9 +287,9 @@ We can easily encode our Lifetime Penalty from before
 <div class="org-src-container">
 
 <pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">testCFG</span> dfA dfB dfC <span style="color: #715ab1;">=</span>
- <span style="color: #3a81c3; font-weight: bold;">do</span> blockA <span style="color: #715ab1;">&lt;-</span> genBlock <span style="color: #715ab1;">$</span> dfA
-    blockB <span style="color: #715ab1;">&lt;-</span> genBlock <span style="color: #715ab1;">$</span> dfB
-    blockC <span style="color: #715ab1;">&lt;-</span> genBlock <span style="color: #715ab1;">$</span> dfC
+ <span style="color: #3a81c3; font-weight: bold;">do</span> blockA <span style="color: #715ab1;">&lt;-</span> genBlock dfA
+    blockB <span style="color: #715ab1;">&lt;-</span> genBlock dfB
+    blockC <span style="color: #715ab1;">&lt;-</span> genBlock dfC
     branchCFN <span style="color: #3a81c3;">(</span>cfOut blockA<span style="color: #3a81c3;">)</span>
               <span style="color: #3a81c3;">(</span>cfIn blockB<span style="color: #3a81c3;">)</span>
               <span style="color: #3a81c3;">(</span>cfIn blockC<span style="color: #3a81c3;">)</span>
@@ -300,8 +300,8 @@ We can easily encode our Lifetime Penalty from before
 </div>
 
 </section>
-<section id="slide-org4c02ba5">
-<h3 id="org4c02ba5">COCONUT Features</h3>
+<section id="slide-orgf8ba61d">
+<h3 id="orgf8ba61d">COCONUT Features</h3>
 <ul>
 <li>Provides <font color="navy">Code Graph Library</font> for modeling dependency <b>DAG</b></li>
 <li>Provides <font color="navy">Register Allocator</font></li>
@@ -313,8 +313,8 @@ We can easily encode our Lifetime Penalty from before
 </section>
 </section>
 <section>
-<section id="slide-org270ff9d">
-<h2 id="org270ff9d">Questions? Constructive Criticisms Are Very Welcome</h2>
+<section id="slide-orgebeacda">
+<h2 id="orgebeacda">Questions? Constructive Criticisms Are Very Welcome</h2>
 </section>
 </section>
 </div>
