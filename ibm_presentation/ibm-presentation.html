@@ -7,10 +7,9 @@
 <style type="text/css">
 .underline { text-decoration: underline; }
 </style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/css/reveal.css"/>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/sky.css" id="theme"/>
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/css/theme/sky.css" id="theme"/>
 
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
@@ -18,7 +17,7 @@
         var link = document.createElement( 'link' );
         link.rel = 'stylesheet';
         link.type = 'text/css';
-        link.href = 'https://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        link.href = 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/css/print/pdf.css';
         document.getElementsByTagName( 'head' )[0].appendChild( link );
     }
 </script>
@@ -32,13 +31,13 @@
 </section>
 
 <section>
-<section id="slide-orgfc98d8b">
-<h2 id="orgfc98d8b">Background</h2>
-<div class="outline-text-2" id="text-orgfc98d8b">
+<section id="slide-org1751836">
+<h2 id="org1751836">Background</h2>
+<div class="outline-text-2" id="text-org1751836">
 </div>
 </section>
-<section id="slide-org64878d3">
-<h3 id="org64878d3">Who Am I?</h3>
+<section id="slide-org0c9fd3e">
+<h3 id="org0c9fd3e">Who Am I?</h3>
 <ul>
 <li><font color="navy">Ph.D Candidate</font> McMaster University</li>
 <li>Did my Master's in <font color="navy">Continuous Optimization Algorithms</font></li>
@@ -52,8 +51,8 @@
 </ul>
 
 </section>
-<section id="slide-org6b15031">
-<h3 id="org6b15031">Previous Work: Kriston Costa</h3>
+<section id="slide-orga216a10">
+<h3 id="orga216a10">Previous Work: Kriston Costa</h3>
 <ul>
 <li>Utilized modified version of <font color="navy">Kargers Min Cut Algorithm</font></li>
 <li><font color="navy">Approximation Algorithm</font> that can be performed <font color="navy">stochastically</font></li>
@@ -62,16 +61,16 @@
 </ul>
 
 </section>
-<section id="slide-org8fe6f9c">
-<h3 id="org8fe6f9c">Karger's Minimum Cut Algorithm</h3>
+<section id="slide-orgb43acb6">
+<h3 id="orgb43acb6">Karger's Minimum Cut Algorithm</h3>
 <p>
 <img src="kargermincut.png" alt="kargermincut.png" />
 Cuts create <font color="navy">groups</font> that are candidates to <font color="navy">interleave across stages</font> in <b>modulo scheduling</b>
 </p>
 
 </section>
-<section id="slide-orge6b0fc9">
-<h3 id="orge6b0fc9">Previous Work: Instruction Scheduling using Constraint Programming</h3>
+<section id="slide-orgf35dd8f">
+<h3 id="orgf35dd8f">Previous Work: Instruction Scheduling using Constraint Programming</h3>
 <ul>
 <li>Abid Malik, Jim McInnes, Peter van Beek</li>
 <li>Used <font color="navy">Linear Optimization</font> with <font color="navy">Constraints</font> to find optimal schedules for basic blocks</li>
@@ -84,13 +83,13 @@ Cuts create <font color="navy">groups</font> that are candidates to <font color=
 </section>
 </section>
 <section>
-<section id="slide-org6941cc1">
-<h2 id="org6941cc1">Rapid Prototyping With COCONUT</h2>
-<div class="outline-text-2" id="text-org6941cc1">
+<section id="slide-org0f433a8">
+<h2 id="org0f433a8">Rapid Prototyping With COCONUT</h2>
+<div class="outline-text-2" id="text-org0f433a8">
 </div>
 </section>
-<section id="slide-org82253f3">
-<h3 id="org82253f3">Rapid Prototyping With COCONUT</h3>
+<section id="slide-org6d0163d">
+<h3 id="org6d0163d">Rapid Prototyping With COCONUT</h3>
 <p>
 <font color="navy">COCONUT</font>:( <font color="navy">CO</font>ode <font color="navy">CON</font>structing <font color="navy">U</font>ser <font color="navy">T</font>ool )
 </p>
@@ -101,7 +100,7 @@ COCONUT is an <font color="navy">Interactive Development ToolSet</font> for perf
 with existing implementations for <font color="navy">PowerPC and Z</font>
 </p>
 
-<div class="figure">
+<div id="orga7413da" class="figure">
 <p><img src="prototyping.jpg" alt="prototyping.jpg" width="70%" height="50%" />  
 </p>
 </div></li>
@@ -109,8 +108,8 @@ with existing implementations for <font color="navy">PowerPC and Z</font>
 </ul>
 
 </section>
-<section id="slide-org35b0e38">
-<h3 id="org35b0e38">Rapid Prototyping With COCONUT</h3>
+<section id="slide-orgd0ac38f">
+<h3 id="orgd0ac38f">Rapid Prototyping With COCONUT</h3>
 <ul>
 <li>Performance critical assembly code can be encoded in the Coconut <font color="navy">eDSL</font></li>
 <li><font color="navy">Example COCONUT CODE</font></li>
@@ -118,18 +117,18 @@ with existing implementations for <font color="navy">PowerPC and Z</font>
 </ul>
 <div class="org-src-container">
 
-<pre  class="src src-elm"><span style="color: #50fa7b;">some_func</span> <span style="color: #ffb86c;">::</span> <span style="color: #61bfff;">(</span><span style="color: #61bfff;">VR</span> n<span style="color: #ffb86c;">,</span><span style="color: #61bfff;">GPR</span> n<span style="color: #ffb86c;">,</span><span style="color: #61bfff;">VR</span> n <span style="color: #ffb86c;">,...</span><span style="color: #61bfff;">)</span> &#8722;<span style="color: #ffb86c;">&gt;</span> <span style="color: #61bfff;">(</span><span style="color: #61bfff;">MR</span> n<span style="color: #ffb86c;">,</span> <span style="color: #61bfff;">VR</span> n <span style="color: #ffb86c;">,...</span><span style="color: #61bfff;">)</span>
-<span style="color: #50fa7b;">some_func</span> <span style="color: #61bfff;">(</span>a0<span style="color: #ffb86c;">,</span>b0<span style="color: #ffb86c;">,</span>c0 <span style="color: #ffb86c;">,...</span><span style="color: #61bfff;">)</span> <span style="color: #ffb86c;">=</span> <span style="color: #ff79c6;">let</span>
-    a0_0 <span style="color: #ffb86c;">=</span> vadd b0 a0
-    a0_1 <span style="color: #ffb86c;">=</span> vsub c0 a0_0
-    <span style="color: #ffb86c;">...</span>
-  <span style="color: #ff79c6;">in</span> <span style="color: #61bfff;">(</span>a0_0<span style="color: #ffb86c;">,</span>a0_1 <span style="color: #ffb86c;">,...</span><span style="color: #61bfff;">)</span>
+<pre class="src src-elm"><span style="color: #33CED8;">some_func</span> <span style="color: #5EC4FF;">::</span> <span style="color: #5EC4FF;">(</span><span style="color: #EBBF83;">VR</span> n<span style="color: #5EC4FF;">,</span><span style="color: #EBBF83;">GPR</span> n<span style="color: #5EC4FF;">,</span><span style="color: #EBBF83;">VR</span> n <span style="color: #5EC4FF;">,...</span><span style="color: #5EC4FF;">)</span> &#8722;<span style="color: #5EC4FF;">&gt;</span> <span style="color: #5EC4FF;">(</span><span style="color: #EBBF83;">MR</span> n<span style="color: #5EC4FF;">,</span> <span style="color: #EBBF83;">VR</span> n <span style="color: #5EC4FF;">,...</span><span style="color: #5EC4FF;">)</span>
+<span style="color: #33CED8;">some_func</span> <span style="color: #5EC4FF;">(</span>a0<span style="color: #5EC4FF;">,</span>b0<span style="color: #5EC4FF;">,</span>c0 <span style="color: #5EC4FF;">,...</span><span style="color: #5EC4FF;">)</span> <span style="color: #5EC4FF;">=</span> <span style="color: #5EC4FF;">let</span>
+    a0_0 <span style="color: #5EC4FF;">=</span> vadd b0 a0
+    a0_1 <span style="color: #5EC4FF;">=</span> vsub c0 a0_0
+    <span style="color: #5EC4FF;">...</span>
+  <span style="color: #5EC4FF;">in</span> <span style="color: #5EC4FF;">(</span>a0_0<span style="color: #5EC4FF;">,</span>a0_1 <span style="color: #5EC4FF;">,...</span><span style="color: #5EC4FF;">)</span>
 </pre>
 </div>
 
 </section>
-<section id="slide-org3954de9">
-<h3 id="org3954de9">COCONUT Features</h3>
+<section id="slide-org2629cff">
+<h3 id="org2629cff">COCONUT Features</h3>
 <ul>
 <li>Provides <font color="navy">Code Graph Library</font> for modeling dependency <b>DAG</b></li>
 <li>Provides <font color="navy">Register Allocator</font></li>
@@ -141,13 +140,13 @@ with existing implementations for <font color="navy">PowerPC and Z</font>
 </section>
 </section>
 <section>
-<section id="slide-org0c6775a">
-<h2 id="org0c6775a">Research Efforts Thus Far</h2>
-<div class="outline-text-2" id="text-org0c6775a">
+<section id="slide-orgc6b26d3">
+<h2 id="orgc6b26d3">Research Efforts Thus Far</h2>
+<div class="outline-text-2" id="text-orgc6b26d3">
 </div>
 </section>
-<section id="slide-orgf8b17dc">
-<h3 id="orgf8b17dc">Focus on Finding Near-Optimal Schedules for MASS Libraries</h3>
+<section id="slide-org52f5363">
+<h3 id="org52f5363">Focus on Finding Near-Optimal Schedules for MASS Libraries</h3>
 <ul>
 <li>scheduling inside a loop (<font color="navy">modulo scheduling</font>)</li>
 <li>ignoring <font color="navy">global/trace</font> scheduling techniques</li>
@@ -157,9 +156,9 @@ with existing implementations for <font color="navy">PowerPC and Z</font>
 </ul>
 
 </section>
-<section id="slide-orgec68b6a">
-<h3 id="orgec68b6a">Constrained Optimization Model For Modulo Scheduling</h3>
-<div class="cmath">
+<section id="slide-org6fdd7e4">
+<h3 id="org6fdd7e4">Constrained Optimization Model For Modulo Scheduling</h3>
+<div class="cmath" id="org0524a6a">
 <small>
 <div>
 \begin{align*}
@@ -182,9 +181,9 @@ with existing implementations for <font color="navy">PowerPC and Z</font>
 </p>
 
 </section>
-<section id="slide-orgd28a9d1">
-<h3 id="orgd28a9d1">Constrained Optimization Model</h3>
-<div class="cmath">
+<section id="slide-orgcaa0e69">
+<h3 id="orgcaa0e69">Constrained Optimization Model</h3>
+<div class="cmath" id="org91f7fae">
 <small>
 <div>
 \begin{align}
@@ -205,8 +204,8 @@ between heuristics by scaling
 </p>
 
 </section>
-<section id="slide-org0f55646">
-<h3 id="org0f55646">IO Penalty</h3>
+<section id="slide-org73b2935">
+<h3 id="org73b2935">IO Penalty</h3>
 <ul>
 <li><font color="navy">IDEA</font> penalize dispatch time of instructions based on the quantity and
 latencies of it's dependencies</li>
@@ -214,7 +213,7 @@ latencies of it's dependencies</li>
 
 </ul>
 
-<div class="cmath">
+<div class="cmath" id="orgc8315de">
 <small>
 <div>
 \begin{align*}
@@ -230,8 +229,8 @@ latencies of it's dependencies</li>
 </div>
 
 </section>
-<section id="slide-org51fdebc">
-<h3 id="org51fdebc">Indicator Function (Sigmoid Logistic Curve)</h3>
+<section id="slide-orgd699c89">
+<h3 id="orgd699c89">Indicator Function (Sigmoid Logistic Curve)</h3>
 <p>
 <object type="image/svg+xml" data="sigmoid.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
@@ -239,10 +238,10 @@ Sorry, your browser does not support SVG.</object>
 </p>
 
 </section>
-<section id="slide-org4e962d7">
-<h3 id="org4e962d7">Indicator Function (Custom Sigmoid)</h3>
+<section id="slide-org166db26">
+<h3 id="org166db26">Indicator Function (Custom Sigmoid)</h3>
 
-<div class="figure">
+<div id="org540ca2e" class="figure">
 <p><img src="sigmoid.jpg" alt="sigmoid.jpg" width="70%" height="70%" />
 </p>
 </div>
@@ -252,14 +251,14 @@ Sorry, your browser does not support SVG.</object>
 </p>
 
 </section>
-<section id="slide-org93e4f38">
-<h3 id="org93e4f38">Stochastic Scaling</h3>
+<section id="slide-org28917d1">
+<h3 id="org28917d1">Stochastic Scaling</h3>
 <ul>
 <li>The scaling \(\color{black}{\frac{1}{N_j}}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
 <li><font color="navy">IDEA</font> scale the <font color="navy">IO penalty</font> stochastically</li>
 
 </ul>
-<div class="cmath">
+<div class="cmath" id="orgaafdf5b">
 <small>
 <div>
 \begin{align*}
@@ -274,8 +273,8 @@ Sorry, your browser does not support SVG.</object>
 </div>
 
 </section>
-<section id="slide-org32217c8">
-<h3 id="org32217c8">Forming Heuristics as Penalties</h3>
+<section id="slide-org596210c">
+<h3 id="org596210c">Forming Heuristics as Penalties</h3>
 <p>
 Different categories of heuristics can be formed by 
 </p>
@@ -288,8 +287,8 @@ Different categories of heuristics can be formed by
 </section>
 </section>
 <section>
-<section id="slide-org60ab83b">
-<h2 id="org60ab83b">What do we gain from this approach?</h2>
+<section id="slide-org592687b">
+<h2 id="org592687b">What do we gain from this approach?</h2>
 <ul>
 <li><font color="navy">Continuous Optimization</font> algorithm provides a flexible space for schedules to span
 <ul>
@@ -303,13 +302,13 @@ Different categories of heuristics can be formed by
 </section>
 </section>
 <section>
-<section id="slide-org0a88e0b">
-<h2 id="org0a88e0b">Next Steps</h2>
-<div class="outline-text-2" id="text-org0a88e0b">
+<section id="slide-org06b6f34">
+<h2 id="org06b6f34">Next Steps</h2>
+<div class="outline-text-2" id="text-org06b6f34">
 </div>
 </section>
-<section id="slide-org38c0d77">
-<h3 id="org38c0d77">RoadMap</h3>
+<section id="slide-org6e51070">
+<h3 id="org6e51070">RoadMap</h3>
 <ul>
 <li>Construct optimization model that can <b>encode heuristics</b> as penalties <font color="green">CHECK</font></li>
 <li>Verify we can use <b>stochastic scaling</b> to span a variety of schedules <font color="green">CHECK</font></li>
@@ -320,8 +319,8 @@ Different categories of heuristics can be formed by
 </ul>
 
 </section>
-<section id="slide-org22b4af4">
-<h3 id="org22b4af4">Topological Analysis</h3>
+<section id="slide-org2132ba2">
+<h3 id="org2132ba2">Topological Analysis</h3>
 <ul>
 <li><b>Instruction Schedules</b> presents a <font color="navy">metric space</font> (slightly stronger topological space)</li>
 <li><b>TDA</b> Topological Data Analysis consists of many approach's for analysis of datasets using techniques from topology
@@ -333,8 +332,8 @@ Different categories of heuristics can be formed by
 </ul>
 
 </section>
-<section id="slide-org16ed269">
-<h3 id="org16ed269">Principle Component Analysis</h3>
+<section id="slide-org8e5c6f8">
+<h3 id="org8e5c6f8">Principle Component Analysis</h3>
 <ul>
 <li><font color="navy">PCA</font> is a statistical procedure commonly used to <b>judge the importance of parameters</b> involved in a predictive model</li>
 <li>Various models (say linear regressive) could be used to predict <b>scaling parameters</b> for penalties</li>
@@ -345,14 +344,14 @@ Different categories of heuristics can be formed by
 </section>
 </section>
 <section>
-<section id="slide-org8ee3277">
-<h2 id="org8ee3277">Questions? Constructive Criticisms Are Very Welcome</h2>
+<section id="slide-org1807019">
+<h2 id="org1807019">Questions? Constructive Criticisms Are Very Welcome</h2>
 </section>
 </section>
 </div>
 </div>
-<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
-<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/lib/js/head.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/js/reveal.js"></script>
 <script>
 // Full list of configuration options available here:
 // https://github.com/hakimel/reveal.js#configuration
@@ -369,20 +368,19 @@ mouseWheel: false,
 fragmentInURL: false,
 hashOneBasedIndex: false,
 pdfSeparateFragments: true,
-
 overview: true,
 
 theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
 transition: Reveal.getQueryHash().transition || 'convex', // see README of reveal.js for options
 transitionSpeed: 'default',
 
-// Optional libraries used to extend on reveal.js
+// Optional libraries used to extend reveal.js
 dependencies: [
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
- { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }]
 
 });
 </script>

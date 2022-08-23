@@ -1,0 +1,32 @@
+#+TITLE: Coconut: A Rapid Prototyping Environment for Compiler Optimization
+#+AUTHOR: Curtis D'Alves
+#+EMAIL: dalvescb@mcmaster.ca
+
+* Abstract
+
+CAS Project 1006 has been experimenting with stochastic instruction scheduling
+algorithms for performance critical code. We have developed a continuous
+optimization algorithm (first non-linear and now linear) that uses penalties to
+express heuristics for prioritizing instruction order and constraints to enforce
+a valid schedule. Furthermore, by adding a stochastically scaled penalty we can
+utilize extra computation to "discover" schedules that would not be captured by
+a simple heuristic. Our primary goal has been to use this algorithm to squeeze
+as much performance as possible out of the standard math functions in the IBM
+MASS library for z/OS, and we have had considerable success gaining up to 20%
+speedup compared to the previously scheduled code on certain functions, and
+continue to find better schedules to this date.
+
+A large part of our effort has not been contained to refining our stochastic
+scheduling algorithm however, but on the development of a rapid prototyping
+environment that makes designing and testing these algorithms possible. We've
+nicknamed this environment CoConUT (Code Constructing User Tool) and it provides
+a DSL (domain specific language) that allows the user to write performance
+critical code in a type-safe high-level assembly language (similar in nature to
+an IR like llvm but more user friendly to code in directly), another DSL to
+express scheduling heuristics as linear programming penalties, and a simulator
+for easy and effective testing.
+
+Over the last year we have made considerable improvements to Coconut, extending
+its capabilities to allow for control flow beyond what we have previously
+hard-coded to suit our needs for the MASS libraries, and are excited to show off
+its potential.

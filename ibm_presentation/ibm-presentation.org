@@ -2,8 +2,11 @@
 # -*- mode: org; -*-
 
 #+REVEAL_ROOT: https://cdn.jsdelivr.net/reveal.js/3.0.0/
-# #+REVEAL_ROOT: /home/dalvescb/reveal.js/
-# #+REVEAL_THEME: league
+
+
+
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js@3.9.0
+#+REVEAL_VERSION: 3.9.0
 #+REVEAL_THEME: sky
 
 #+OPTIONS: reveal_title_slide:auto num:nil toc:nil timestamp:nil

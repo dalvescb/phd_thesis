@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title><h3><font color="navy">Coconut: A Rapid Prototyping Environment for Compiler Optimization</font></h3></title>
+<meta name="author" content="@@html:<h4>Curtis D'Alves</h4>@@"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/css/theme/sky.css" id="theme"/>
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title"><h3><font color="navy">Coconut: A Rapid Prototyping Environment for Compiler Optimization</font></h3></h1><h2 class="author"><h4>Curtis D'Alves</h4></h2><h2 class="date"><h4>2022-08-24</h4></h2>
+</section>
+
+<section>
+<section id="slide-org62c43a2">
+<h2 id="org62c43a2">Background</h2>
+<div class="outline-text-2" id="text-org62c43a2">
+</div>
+</section>
+<section id="slide-org79e0e23">
+<h3 id="org79e0e23">Who Am I?</h3>
+<ul>
+<li><font color="navy">Ph.D Candidate</font> McMaster University</li>
+<li>Did my Master's in <font color="navy">Continuous Optimization Algorithms</font></li>
+<li>Working on <font color="navy">CAS Project 1006</font></li>
+<li>Functional Programming / NixOS / Emacs enthusiast</li>
+
+</ul>
+
+</section>
+<section id="slide-org8c6592f">
+<h3 id="org8c6592f">CAS Project 1006</h3>
+<p>
+<font color="navy">Stochastic Algorithms for Instructions Scheduling</font>
+Emphasis on:
+</p>
+<ul>
+<li>finding near-optimal schedules for performance critical code</li>
+<li>modulo scheduling for loop bodies</li>
+<li>Out-of-order architectures</li>
+<li>The Z/OS IBM MASS libraries</li>
+
+</ul>
+
+</section>
+<section id="slide-org25dad54">
+<h3 id="org25dad54">Previous Work: Kriston Costa</h3>
+<ul>
+<li>Utilized modified version of <font color="navy">Kargers Min Cut Algorithm</font></li>
+<li><font color="navy">Approximation Algorithm</font> that can be performed <font color="navy">stochastically</font></li>
+<li>Takes successive <b>min-cuts</b> across a graph (dependency graph will <font color="navy">minimize register pressure</font>)</li>
+
+</ul>
+
+</section>
+<section id="slide-orgd5de7c5">
+<h3 id="orgd5de7c5">Karger's Minimum Cut Algorithm</h3>
+<p>
+<img src="kargermincut.png" alt="kargermincut.png" />
+Cuts create <font color="navy">groups</font> that are candidates to <font color="navy">interleave across stages</font> in <b>modulo scheduling</b>
+</p>
+
+</section>
+<section id="slide-orgc02e7c8">
+<h3 id="orgc02e7c8">My Work</h3>
+<p>
+<font color="navy">Continuous Optimization Model For Modulo Scheduling</font>
+</p>
+<div class="cmath" id="orgf84ab99">
+<small>
+<div>
+\begin{align*}
+    \color{navy}{\text{Objective Variables }} & t_i, c_i, s_i:& \mathbb{R} \\
+    \color{navy}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
+    \color{navy}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
+    & t_i :& \text{dispatch time} \\
+    & c_i :& \text{completion time} \\
+    & s_i :& \text{SPILL candidacy } 0 \leq s_i \leq 1 \\
+    & \textrm{II} :& \text{initiation interval} \frac{\# instructions}{dispatches/cycle} \\
+\end{align*}
+
+</div>
+</small>
+
+</div>
+
+<p>
+<font color="navy">NOTE</font>: dispatch and completion times are designed to model <b>OoO</b> (Out of Order) execution machines 
+</p>
+
+</section>
+<section id="slide-org92b8718">
+<h3 id="org92b8718">Constrained Optimization Model</h3>
+<div class="cmath" id="org3a087f2">
+<small>
+<div>
+\begin{align}
+    \color{navy}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
+								 & 0 \leq t_i \leq c_i \leq \#\text{stages} \cdot \textrm{II}  \\
+								 & c_i + \epsilon \leq t_i + \textrm{II} \\
+    \color{navy}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (c_i - t_i) + \text{Penalties}
+\end{align}
+
+</div>
+</small>
+
+</div>
+
+<p>
+<font color="navy">Key Idea:</font> Encode choice heuristics as penalties, adjust preference
+between heuristics by scaling
+</p>
+
+</section>
+<section id="slide-org5e08152">
+<h3 id="org5e08152">Lifetime Penalty</h3>
+<ul>
+<li><font color="navy">IDEA</font> penalize the overall lifetime of an instruction</li>
+<li><font color="navy">Note</font> This is a <b>penalty</b> not a <b>hard</b> constraint on latencies</li>
+
+</ul>
+
+<div class="cmath" id="orgfc96583">
+<small>
+<div>
+\begin{align*}
+         \color{navy}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
+         \color{navy}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
+         \qquad & \qquad & \qquad \\
+         \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
+ \end{align*}
+
+</div>
+</small>
+
+</div>
+
+</section>
+<section id="slide-org41d28f2">
+<h3 id="org41d28f2">Stochastic Scaling</h3>
+<p>
+<font color="navy">IDEA</font> use random variables to scale penalties
+</p>
+<div class="cmath" id="org8c928da">
+<small>
+<div>
+\begin{align*}
+    \color{navy}{\text{Define a Grouping}} \qquad & \mathbb{C} = \text{Group}(\forall i \mid i \rightarrow j) \\
+    \color{navy}{\text{For each Group i}} \qquad & X_i \in \mathbb{RAND(R)} \\
+    \color{navy}{\text{Stochastic Penalty}} \qquad & \sum X_i \cdot \mathbb{P}(i)
+  \end{align*}
+
+</div>
+</small>
+
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgfd05560">
+<h2 id="orgfd05560">Rapid Prototyping With COCONUT</h2>
+<div class="outline-text-2" id="text-orgfd05560">
+</div>
+</section>
+<section id="slide-org8d6596a">
+<h3 id="org8d6596a">Rapid Prototyping With COCONUT</h3>
+<p>
+<font color="navy">COCONUT</font>:( <font color="navy">CO</font>ode <font color="navy">CON</font>structing <font color="navy">U</font>ser <font color="navy">T</font>ool )
+</p>
+
+<ul>
+<li><p>
+An <font color="navy">Interactive Development ToolSet</font> for performance critical assembly code,
+</p>
+
+<div id="orgffea3bb" class="figure">
+<p><img src="coconut.png" alt="coconut.png" width="70%" height="50%" />
+</p>
+</div></li>
+
+</ul>
+
+</section>
+<section id="slide-orgaa2ec6d">
+<h3 id="orgaa2ec6d">Coconut Domain Specific Language (DSL)</h3>
+<ul>
+<li>Performance critical assembly code can be encoded in the Coconut <font color="navy">eDSL</font></li>
+<li><font color="navy">Example COCONUT CODE</font></li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">CoreISA</span> r <span style="color: #3a81c3; font-weight: bold;">where</span>
+    unintegerG <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Integer</span> <span style="color: #715ab1;">-&gt;</span> r <span style="color: #ba2f59; font-weight: bold;">GPR</span>
+    unintegerV <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Integer</span> <span style="color: #715ab1;">-&gt;</span> r <span style="color: #ba2f59; font-weight: bold;">VR</span>
+    add <span style="color: #715ab1;">::</span> r <span style="color: #ba2f59; font-weight: bold;">GPR</span> <span style="color: #715ab1;">-&gt;</span> r <span style="color: #ba2f59; font-weight: bold;">GPR</span> <span style="color: #715ab1;">-&gt;</span> r <span style="color: #ba2f59; font-weight: bold;">GPR</span>
+    mult <span style="color: #715ab1;">::</span> r <span style="color: #ba2f59; font-weight: bold;">GPR</span> <span style="color: #715ab1;">-&gt;</span> r <span style="color: #ba2f59; font-weight: bold;">GPR</span> <span style="color: #715ab1;">-&gt;</span> r <span style="color: #ba2f59; font-weight: bold;">GPR</span>
+    vadd <span style="color: #715ab1;">::</span> r <span style="color: #ba2f59; font-weight: bold;">VR</span> <span style="color: #715ab1;">-&gt;</span> v <span style="color: #ba2f59; font-weight: bold;">VR</span> <span style="color: #715ab1;">-&gt;</span> v <span style="color: #ba2f59; font-weight: bold;">VR</span>
+    <span style="color: #715ab1;">...</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-org9c41806">
+<h3 id="org9c41806">Coconut Example Basic Block</h3>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">testDSL</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">CoreISA</span> r <span style="color: #715ab1;">=&gt;</span>
+           r <span style="color: #ba2f59; font-weight: bold;">GPR</span> <span style="color: #715ab1;">-&gt;</span> r <span style="color: #ba2f59; font-weight: bold;">GPR</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #3a81c3;">(</span>r <span style="color: #ba2f59; font-weight: bold;">GPR</span>,r <span style="color: #ba2f59; font-weight: bold;">GPR</span><span style="color: #3a81c3;">)</span>
+<span style="color: #6c3163; font-weight: bold;">testDSL</span> r1 r2 r3 <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">let</span>
+    r4 <span style="color: #715ab1;">=</span> add r2 r1
+    r5 <span style="color: #715ab1;">=</span> add r3 r1
+    r6 <span style="color: #715ab1;">=</span> add r4 r5
+  <span style="color: #3a81c3; font-weight: bold;">in</span> <span style="color: #3a81c3;">(</span>r5,r6<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+<p>
+We can encode basic blocks in the Coconut DSL
+</p>
+
+</section>
+<section id="slide-orgca41ce9">
+<h3 id="orgca41ce9">One Piece of Code, alot of Functionality</h3>
+<ul>
+<li>Type Safety</li>
+<li>Single Static Assignment</li>
+<li>Code generation</li>
+<li>Interpretation</li>
+<li>Simulation</li>
+
+</ul>
+
+</section>
+<section id="slide-org192c9ea">
+<h3 id="org192c9ea">Hashed Expression Optimization DSL</h3>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">topBottomPenalty</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Hardware</span> h
+  <span style="color: #715ab1;">=&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Double</span>
+  <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">HashedData</span> h
+  <span style="color: #715ab1;">-&gt;</span> <span style="color: #3a81c3;">[</span><span style="color: #ba2f59; font-weight: bold;">TypedExpr</span> <span style="color: #ba2f59; font-weight: bold;">Scalar</span> <span style="color: #ba2f59; font-weight: bold;">R</span><span style="color: #3a81c3;">]</span>
+<span style="color: #6c3163; font-weight: bold;">topBottomPenalty</span> scale hashedData <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">let</span>
+    instructions <span style="color: #715ab1;">=</span> hdAllInstructions hashedData
+    tVars <span style="color: #715ab1;">=</span> tVarMap hashedData
+    cVars <span style="color: #715ab1;">=</span> cVarMap hashedData
+  <span style="color: #3a81c3; font-weight: bold;">in</span> map <span style="color: #3a81c3;">(</span><span style="color: #715ab1;">\</span>n <span style="color: #715ab1;">-&gt;</span> scale <span style="color: #715ab1;">*</span> <span style="color: #6c3163;">(</span>cVars <span style="color: #715ab1;">!</span> n <span style="color: #715ab1;">-</span> tVars <span style="color: #715ab1;">!</span> n<span style="color: #6c3163;">)</span><span style="color: #3a81c3;">)</span> instructions
+</pre>
+</div>
+<p>
+We can easily encode our Lifetime Penalty from before
+</p>
+
+</section>
+<section id="slide-org65e48d9">
+<h3 id="org65e48d9">Control Flow DSL</h3>
+<div class="column" style="float:left; width: 50%">
+
+<div id="org9a88e3f" class="figure">
+<p><img src="controlflow.png" alt="controlflow.png" />
+</p>
+</div>
+</div>
+
+<div class="column" style="float:right; width: 50%">
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">testCFG</span> dfA dfB dfC <span style="color: #715ab1;">=</span>
+ <span style="color: #3a81c3; font-weight: bold;">do</span> blockA <span style="color: #715ab1;">&lt;-</span> genBlock <span style="color: #715ab1;">$</span> dfA
+    blockB <span style="color: #715ab1;">&lt;-</span> genBlock <span style="color: #715ab1;">$</span> dfB
+    blockC <span style="color: #715ab1;">&lt;-</span> genBlock <span style="color: #715ab1;">$</span> dfC
+    branchCFN <span style="color: #3a81c3;">(</span>cfOut blockA<span style="color: #3a81c3;">)</span>
+              <span style="color: #3a81c3;">(</span>cfIn blockB<span style="color: #3a81c3;">)</span>
+              <span style="color: #3a81c3;">(</span>cfIn blockC<span style="color: #3a81c3;">)</span>
+    jumpCFN <span style="color: #3a81c3;">(</span>cfOut blockC<span style="color: #3a81c3;">)</span>
+            <span style="color: #3a81c3;">(</span>cfIn blockA<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+</div>
+
+</section>
+<section id="slide-org4c02ba5">
+<h3 id="org4c02ba5">COCONUT Features</h3>
+<ul>
+<li>Provides <font color="navy">Code Graph Library</font> for modeling dependency <b>DAG</b></li>
+<li>Provides <font color="navy">Register Allocator</font></li>
+<li>Provides <font color="navy">Hardware Simulator</font></li>
+<li>Provides <font color="navy">Code Generation</font></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org270ff9d">
+<h2 id="org270ff9d">Questions? Constructive Criticisms Are Very Welcome</h2>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/lib/js/head.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/js/reveal.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'convex', // see README of reveal.js for options
+transitionSpeed: 'default',
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }]
+
+});
+</script>
+</body>
+</html>
