@@ -96,11 +96,11 @@ between heuristics by scaling
 #+BEGIN_cmath
 #+HTML: <small>
    \begin{align*}
-            \color{navy}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
-            \color{navy}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
+            \color{navy}{\text{Given }} \qquad  & t_i,c_i \qquad & \forall i \in {\text Instruction } \\
+            \color{navy}{\text{For a choosen scaling }} \qquad & S_i  & \\
             \qquad & \qquad & \qquad \\
-            \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
-    \end{align*
+            \qquad & \mathbb{L}(t,c) = \sum_{i} S_i (c_i - t_i) & \qquad 
+    \end{align*}
 #+HTML: </small>
 #+END_cmath
     
@@ -136,8 +136,6 @@ between heuristics by scaling
      [[file:coconut.png]]
 
 **  Coconut Domain Specific Language (DSL)
-   - Performance critical assembly code can be encoded in the Coconut {{{alert(eDSL)}}} 
-   - {{{alert(Example COCONUT CODE)}}}
    #+BEGIN_SRC haskell
    class CoreISA r where
        unintegerG :: Integer -> r GPR
@@ -147,6 +145,8 @@ between heuristics by scaling
        vadd :: r VR -> v VR -> v VR
        ...
    #+END_SRC
+   - Performance critical assembly code can be encoded in the Coconut {{{alert(DSL)}}} 
+   - {{{alert(Example COCONUT DSL)}}}
 
 ** Coconut Example Basic Block
    #+BEGIN_SRC haskell
@@ -202,9 +202,9 @@ between heuristics by scaling
 #+REVEAL_HTML: <div class="column" style="float:right; width: 50%">
 #+BEGIN_SRC haskell :results value
 testCFG dfA dfB dfC =
- do blockA <- genBlock $ dfA
-    blockB <- genBlock $ dfB
-    blockC <- genBlock $ dfC
+ do blockA <- genBlock dfA
+    blockB <- genBlock dfB
+    blockC <- genBlock dfC
     branchCFN (cfOut blockA)
               (cfIn blockB)
               (cfIn blockC)
