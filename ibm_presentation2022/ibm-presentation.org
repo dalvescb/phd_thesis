@@ -43,9 +43,18 @@
      - finding near-optimal schedules for performance critical code
      - modulo scheduling for loop bodies
      - Out-of-order architectures
-     - The Z/OS IBM MASS libraries
+     - The z/OS IBM MASS math libraries
+
+    with
+      - PI Christopher Anand, McMaster
+      - RCL Robert Enenkel, IBM
+    
+** Current Benchmarks
+   [[file:preliminary_results.jpg]]
+   * And a 13% increase on exp recently
    
 ** Previous Work: Kriston Costa
+   - Previous CAS student and IBMer
    - Utilized modified version of {{{alert(Kargers Min Cut Algorithm)}}}
    - {{{alert(Approximation Algorithm)}}} that can be performed {{{alert(stochastically)}}}
    - Takes successive *min-cuts* across a graph (dependency graph will {{{alert(minimize register pressure)}}})
@@ -61,7 +70,6 @@
 \begin{align*}
     \color{navy}{\text{Objective Variables }} & t_i, c_i, s_i:& \mathbb{R} \\
     \color{navy}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
-    \color{navy}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
     & t_i :& \text{dispatch time} \\
     & c_i :& \text{completion time} \\
     & s_i :& \text{SPILL candidacy } 0 \leq s_i \leq 1 \\
@@ -79,7 +87,7 @@
     \color{navy}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
 								 & 0 \leq t_i \leq c_i \leq \#\text{stages} \cdot \textrm{II}  \\
 								 & c_i + \epsilon \leq t_i + \textrm{II} \\
-    \color{navy}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (c_i - t_i) + \text{Penalties}
+    \color{navy}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (c_i - t_i) + \text{Penalties}(t,c)
 \end{align}
 #+HTML: </small>    
 #+END_cmath
@@ -91,12 +99,10 @@ between heuristics by scaling
    - {{{alert(IDEA)}}} penalize the overall lifetime of an instruction
    - {{{alert(Note)}}} This is a *penalty* not a *hard* constraint on latencies
 
-     #TODO change IO penalty to lifetime penalty  (also consider labeling
-     variables)
 #+BEGIN_cmath
 #+HTML: <small>
    \begin{align*}
-            \color{navy}{\text{Given }} \qquad  & t_i,c_i \qquad & \forall i \in {\text Instruction } \\
+            \color{navy}{\text{Given }} \qquad  & t_i {\text : Dispatch Time, }c_i {\text : Completion Time }\qquad & \forall i \\
             \color{navy}{\text{For a choosen scaling }} \qquad & S_i  & \\
             \qquad & \qquad & \qquad \\
             \qquad & \mathbb{L}(t,c) = \sum_{i} S_i (c_i - t_i) & \qquad 
@@ -111,16 +117,14 @@ between heuristics by scaling
       \begin{align*}
           \color{navy}{\text{Define a Grouping}} \qquad & \mathbb{C} = \text{Group}(\forall i \mid i \rightarrow j) \\
           \color{navy}{\text{For each Group i}} \qquad & X_i \in \mathbb{RAND(R)} \\
-          \color{navy}{\text{Stochastic Penalty}} \qquad & \sum X_i \cdot \mathbb{P}(i)
+          \color{navy}{\text{Stochastic Penalty}} \qquad & \sum X_i \cdot \mathbb{C}(i)
         \end{align*}
 #+HTML: </small>
 #+END_cmath
 
 * Rapid Prototyping With COCONUT   
-** Rapid Prototyping With COCONUT 
    {{{alert(COCONUT)}}}:( {{{alert(CO)}}}ode {{{alert(CON)}}}structing {{{alert(U)}}}ser {{{alert(T)}}}ool )
 
-   - An {{{alert(Interactive Development ToolSet)}}} for performance critical assembly code,
      #+BEGIN_SRC mermaid :file coconut.png
       graph TD
         A[DSL] -->|Language Instance| B[Interpreter]
@@ -150,14 +154,14 @@ between heuristics by scaling
 
 ** Coconut Example Basic Block
    #+BEGIN_SRC haskell
-   testDSL :: CoreISA r =>
+   sampleDSL :: CoreISA r =>
               r GPR -> r GPR -> (r GPR,r GPR)
-   testDSL r1 r2 r3 =
+   sampleDSL r1 r2 =
      let
-       r4 = add r2 r1
-       r5 = add r3 r1
-       r6 = add r4 r5
-     in (r5,r6)
+       r3 = add r2 r1
+       r4 = add r3 r1
+       r5 = add r4 r2
+     in (r5,r4)
    #+END_SRC
    We can encode basic blocks in the Coconut DSL
 
@@ -170,11 +174,11 @@ between heuristics by scaling
      
 ** Hashed Expression Optimization DSL
   #+BEGIN_SRC haskell :results value
-  topBottomPenalty :: Hardware h
+  lifeTimePenalty :: Hardware h
     => Double
     -> HashedData h
     -> [TypedExpr Scalar R]
-  topBottomPenalty scale hashedData =
+  lifeTimePenalty scale hashedData =
     let
       instructions = hdAllInstructions hashedData
       tVars = tVarMap hashedData
@@ -213,13 +217,7 @@ testCFG dfA dfB dfC =
 #+END_SRC
 #+REVEAL_HTML: </div> 
 
-** COCONUT Features
-     - Provides {{{alert(Code Graph Library)}}} for modeling dependency *DAG* 
-     - Provides {{{alert(Register Allocator)}}} 
-     - Provides {{{alert(Hardware Simulator)}}} 
-     - Provides {{{alert(Code Generation)}}}
-
-* Functional Graph Composition
+* Functional Data Flow Graphs
   #+BEGIN_SRC haskell :results value
   data DataFlowGraph h =
     DataFlowGraph { -- the underlying functional graph structure
@@ -228,107 +226,198 @@ testCFG dfA dfB dfC =
                   , dataFlowInputs :: [(String,Node)]
                     -- output nodes with tags
                   , dataFlowOutputs :: [(String,Node)]
-                    -- the stage used for modulo scheduling
-                  , dataFlowStage :: Int
                   ...
                   }
-  
   #+END_SRC
   Basic blocks are encoded as Data Flow Graphs with tagged inputs/outputs
 
-** Data Flow Graph Operations
-  #+BEGIN_SRC haskell :results value
-  --  partition a graph by a given predicate
-  partGraphByInstr :: forall h . Hardware h =>
-   (DataFlowGraph h) -> (Node -> Bool) -> (DataFlowGraph h,DataFlowGraph h)
+** Tagged Data Flow Graphs
+  #+REVEAL_HTML: <div class="column" style="float:left; width: 50%">
+   #+BEGIN_SRC haskell
+   f :: CoreISA r =>
+     r GPR -> r GPR -> (r GPR,r GPR)
+   f x y =
+     let
+       z = add x y
+       n = mult z x
+     in (z,n)
+   #+END_SRC
+  #+REVEAL_HTML: </div>
   
-  -- unpartition a graph (by tying togeether input/output node tags) 
-  unPartDFGraph :: forall h . Hardware h =>
-    DataFlowGraph h -> DataFlowGraph h -> DataFlowGraph h
-    
-  -- merge graphs in parallel
-  parallelMergeDFGraph :: forall h . Hardware h =>
-    (DataFlowGraph h,DataFlowGraph h) -> DataFlowGraph h
-  #+END_SRC 
-  Coconut provides useful combinators for deconstructing and reconstructing data
-  flow graphs
+  #+REVEAL_HTML: <div class="column" style="float:right; width: 50%">
+  #+BEGIN_SRC haskell :results value
+  dfGraph :: DataFlowGraph h
+  dfGraph = {
+    dataFlowGraph = ...
+    ,dataFlowInputs =
+        [("x",0),("y",1)]
+    ,dataFlowOutputs =
+        [("z",2),("n",3)]
+    ...
+  }
+  #+END_SRC
+  #+REVEAL_HTML: </div>  
+  
+** Data Flow Graph Combinators
+    #+BEGIN_SRC haskell :results value
+    --  partition a graph by a given predicate
+    partitionDFGraph :: forall h . Hardware h
+      => DataFlowGraph h
+      -> (Node -> Bool)
+      -> (DataFlowGraph h,DataFlowGraph h)
+      
+    -- iteratively apply partitionDFGraph into n stages 
+    multiPartDFGraph :: forall h . Hardware h
+      => DataFlowGraph h
+      -> (Int -> Node -> Bool)
+      -> Int
+      -> [DataFlowGraph h]
+    #+END_SRC 
+   {{{alert(Decomposition)}}}
+
+** Data Flow Graph Combinators
+    #+BEGIN_SRC haskell :results value
+    -- unpartition a graph (by tying together input/output node tags) 
+    unPartDFGraph :: forall h . Hardware h
+      => DataFlowGraph h
+      -> DataFlowGraph h
+      -> DataFlowGraph h
+      
+    -- merge graphs in parallel (for software pipelining)
+    parallelMergeDFGraph :: forall h . Hardware h
+      => (DataFlowGraph h,DataFlowGraph h)
+      -> DataFlowGraph h
+    #+END_SRC 
+  {{{alert(Recomposition)}}}
 
 ** Software Pipelining Case Study
   #+REVEAL_HTML: <div class="column" style="float:left; width: 50%">
-  #+BEGIN_SRC python
-  for i in range(0,n):
-      S0[i]
-      S1[i]
-      S2[i]
-  #+END_SRC
+  
+  [[file:unpiplinedloop.png]]
   {{{alert(Sample loop body)}}}
   #+REVEAL_HTML: </div>
   
   #+REVEAL_HTML: <div class="column" style="float:right; width: 50%">
-  #+BEGIN_SRC python
-  for i in range(0,n-2):
-       -- Kernel
-      S0[i+2] ; S1[i+1] ; S2[i]
-  #+END_SRC
-  {{{alert(Modulo Scheduled loop body)}}}
+
+  [[file:softwarepipelining.png]]
+  {{{alert(Pipelined loop body)}}}
   #+REVEAL_HTML: </div>  
 
 ** Software Pipelining Case Study
-   - Partition the dataflow graph by stage using *partNGraphByInstr*
      #+BEGIN_SRC haskell :results value
      numStages   :: Int
      withinStage :: Int -> Node -> Bool
      ...
      partDFGraphs :: [DataFlowGraph h]
-     partDFGraphs = partNGraphByInstr dfGraph withinStage numStages
+     partDFGraphs = multiPartDFGraph dfGraph withinStage numStages
      #+END_SRC
-   - Apply transformations to each partition and then pipeline using *parallelMergeGraphs*
-    #+BEGIN_SRC haskell :results value
-    kerenelParts :: [DataFlowGraph h]
-    kernelParts = map applyIncrement (zip [0..] partDFGraphs )
-
-    kernel :: DataFlowGraph
-    kernel = parallelMergeDFGraphs kernelParts
-    #+END_SRC
-
-** Control Flow Graph Composition   
-    Given a dataflow graphs with tagged inputs/outputs
-   #+REVEAL_HTML: <div class="column" style="float:left; width: 50%">
-     #+BEGIN_SRC haskell :results value
-    dfGraph0 = DataFlowGraph {
-      fglGraph = ....
-      ,dataFlowInputs =
-        [("x:0",0)("y:0",1)]
-      ,dataFlowOutputs =
-        [("x:0",2)("z:0",3)]
-      ,dataFlowStage = 0
-      }
-     #+END_SRC
-   #+REVEAL_HTML: </div>
+   Partition the data flow graph by stage
    
-   #+REVEAL_HTML: <div class="column" style="float:right; width: 50%">
-     #+BEGIN_SRC haskell :results value
-    dfGraph1 = DataFlowGraph {
-        fglGraph = ....
-        ,dataFlowInputs =
-          [("x:1",4)("z:1",5)]
-        ,dataFlowOutputs =
-          [("x:1",5)]
-        ,dataFlowStage = 1
-        }
-     #+END_SRC
-   #+REVEAL_HTML: </div>  
-   Compose Graph in Control Flow
+** Software Pipelining Case Study
+   {{{alert(partitionDFGraph)}}} 
+  #+REVEAL_HTML: <div class="column" style="float:left; width: 50%">
+   #+BEGIN_SRC haskell
+   dfGraph = {
+     dataFlowGraph = ...
+     ,dataFlowInputs =
+         [("x",0)("y",1)]
+     ,dataFlowOutputs =
+         [("x",2)("y",3)]
+     ...
+   }
+   #+END_SRC
+  #+REVEAL_HTML: </div>
+  
+  #+REVEAL_HTML: <div class="column" style="float:right; width: 50%">
+   #+BEGIN_SRC haskell
+   dfGraph0 = {
+     dataFlowGraph = ...
+     ,dataFlowInputs =
+         [("x:0",0)("y:0",1)]
+     ,dataFlowOutputs =
+         [("i0:0",2)("i1:0",3)]
+     ...
+   }
+     
+   dfGraph1 = {
+     dataFlowGraph = ...
+     ,dataFlowInputs =
+         [("i0:1",4)("i1:1",5)]
+     ,dataFlowOutputs =
+         [("x:1",6)("y:1",7)]
+     ...
+   }
+   #+END_SRC
+  #+REVEAL_HTML: </div>  
+  
+** Software Pipelining Case Study   
+    #+BEGIN_SRC haskell :results value
+    kernel :: DataFlowGraph
+    kernel = parallelMergeDFGraphs
+               (map applyIncrement partDFGraphs)
+    #+END_SRC
+   Apply transformations to each partition and then pipeline using *parallelMergeGraphs*
+
+** Software Pipelining Case Study
+   {{{alert(parallelMergeGraphs)}}} 
+  #+REVEAL_HTML: <div class="column" style="float:left; width: 50%">
+   #+BEGIN_SRC haskell
+   dfGraph0 = {
+     dataFlowGraph = ...
+     ,dataFlowInputs =
+         [("x:0",0),("y:0",1)]
+     ,dataFlowOutputs =
+         [("i0:0",2),("i1:0",3)]
+     ...
+   }
+     
+   dfGraph1 = {
+     dataFlowGraph = ...
+     ,dataFlowInputs =
+         [("i0:1",4),("i1:1",5)]
+     ,dataFlowOutputs =
+         [("x:1",6),("y:1",7)]
+     ...
+   }
+   #+END_SRC
+  #+REVEAL_HTML: </div>
+  
+  #+REVEAL_HTML: <div class="column" style="float:right; width: 50%">
+   #+BEGIN_SRC haskell
+    dfGraph = {
+      dataFlowGraph = ...
+      ,dataFlowInputs =
+          [("x:0",0),("y:0",1)
+          ,("i0:1",4),("i1:1",5)]
+      ,dataFlowOutputs =
+          [("i0:0",2),("i1:0",3)
+          ,("x:1",6),("y:1",7)]
+      ...
+    }
+   #+END_SRC
+  #+REVEAL_HTML: </div>  
+  
+** Control Flow Graph Composition   
    #+BEGIN_SRC haskell :results value
-   compose dfGraph0 dfGraph1 =
+   controlFlowGraph dfGraph0 dfGraph1 =
      do blockA <- genBlock $ dfGraph0
         blockB <- genBlock $ dfGraph1
-        jumpCompose (\i -> i+1 `mod` numStages)
-                    (cfOut blockA)
-                    (cfIn blockB)
+        jumpCFS (\tag0 tag1 -> increment tag0 == tag1)
+                (cfOut blockA)
+                (cfIn blockB)
    #+END_SRC
-* Questions? 
-  
-  
+   Generate a control flow graph that ties performs a jump, tying together tags
+   that satisfy a given predicate
+
+* Future Work  
+  - Analysis of schedule space
+  - Use statistical inference to estimate optimal schedule
+  - New heuristics
+  - New performance critical code sections to benchmark against?
+    
+** Questions? 
+   
+   - curtisda@ca.ibm.com
+   - enenkel@ca.ibm.com
 
 #  LocalWords:  CAS

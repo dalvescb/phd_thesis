@@ -31,13 +31,13 @@
 </section>
 
 <section>
-<section id="slide-org7ad1a4e">
-<h2 id="org7ad1a4e">Background</h2>
-<div class="outline-text-2" id="text-org7ad1a4e">
+<section id="slide-org4ec88fa">
+<h2 id="org4ec88fa">Background</h2>
+<div class="outline-text-2" id="text-org4ec88fa">
 </div>
 </section>
-<section id="slide-org74a06cf">
-<h3 id="org74a06cf">Who Am I?</h3>
+<section id="slide-orgcc5d9b3">
+<h3 id="orgcc5d9b3">Who Am I?</h3>
 <ul>
 <li><font color="navy">Ph.D Candidate</font> McMaster University</li>
 <li>Did my Master's in <font color="navy">Continuous Optimization Algorithms</font></li>
@@ -47,8 +47,8 @@
 </ul>
 
 </section>
-<section id="slide-orgb9bdb64">
-<h3 id="orgb9bdb64">CAS Project 1006</h3>
+<section id="slide-org223e5eb">
+<h3 id="org223e5eb">CAS Project 1006</h3>
 <p>
 <font color="navy">Stochastic Algorithms for Instructions Scheduling</font>
 Emphasis on:
@@ -57,14 +57,37 @@ Emphasis on:
 <li>finding near-optimal schedules for performance critical code</li>
 <li>modulo scheduling for loop bodies</li>
 <li>Out-of-order architectures</li>
-<li>The Z/OS IBM MASS libraries</li>
+<li>The z/OS IBM MASS math libraries</li>
+
+</ul>
+
+<p>
+with
+</p>
+<ul>
+<li>PI Christopher Anand, McMaster</li>
+<li>RCL Robert Enenkel, IBM</li>
 
 </ul>
 
 </section>
-<section id="slide-orga3c29af">
-<h3 id="orga3c29af">Previous Work: Kriston Costa</h3>
+<section id="slide-org0dfffe7">
+<h3 id="org0dfffe7">Current Benchmarks</h3>
+
+<div id="org26e1e71" class="figure">
+<p><img src="preliminary_results.jpg" alt="preliminary_results.jpg" />
+</p>
+</div>
 <ul>
+<li>And a 13% increase on exp recently</li>
+
+</ul>
+
+</section>
+<section id="slide-org72ce55e">
+<h3 id="org72ce55e">Previous Work: Kriston Costa</h3>
+<ul>
+<li>Previous CAS student and IBMer</li>
 <li>Utilized modified version of <font color="navy">Kargers Min Cut Algorithm</font></li>
 <li><font color="navy">Approximation Algorithm</font> that can be performed <font color="navy">stochastically</font></li>
 <li>Takes successive <b>min-cuts</b> across a graph (dependency graph will <font color="navy">minimize register pressure</font>)</li>
@@ -72,26 +95,25 @@ Emphasis on:
 </ul>
 
 </section>
-<section id="slide-orga7cb925">
-<h3 id="orga7cb925">Karger's Minimum Cut Algorithm</h3>
+<section id="slide-org736cd9b">
+<h3 id="org736cd9b">Karger's Minimum Cut Algorithm</h3>
 <p>
 <img src="kargermincut.png" alt="kargermincut.png" />
 Cuts create <font color="navy">groups</font> that are candidates to <font color="navy">interleave across stages</font> in <b>modulo scheduling</b>
 </p>
 
 </section>
-<section id="slide-org911527b">
-<h3 id="org911527b">My Work</h3>
+<section id="slide-org5eb0819">
+<h3 id="org5eb0819">My Work</h3>
 <p>
 <font color="navy">Continuous Optimization Model For Modulo Scheduling</font>
 </p>
-<div class="cmath" id="orgb38f6b5">
+<div class="cmath" id="orgc052483">
 <small>
 <div>
 \begin{align*}
     \color{navy}{\text{Objective Variables }} & t_i, c_i, s_i:& \mathbb{R} \\
     \color{navy}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
-    \color{navy}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
     & t_i :& \text{dispatch time} \\
     & c_i :& \text{completion time} \\
     & s_i :& \text{SPILL candidacy } 0 \leq s_i \leq 1 \\
@@ -108,16 +130,16 @@ Cuts create <font color="navy">groups</font> that are candidates to <font color=
 </p>
 
 </section>
-<section id="slide-orgabaccbe">
-<h3 id="orgabaccbe">Constrained Optimization Model</h3>
-<div class="cmath" id="org598ccac">
+<section id="slide-org231a095">
+<h3 id="org231a095">Constrained Optimization Model</h3>
+<div class="cmath" id="org7a37eea">
 <small>
 <div>
 \begin{align}
     \color{navy}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
 								 & 0 \leq t_i \leq c_i \leq \#\text{stages} \cdot \textrm{II}  \\
 								 & c_i + \epsilon \leq t_i + \textrm{II} \\
-    \color{navy}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (c_i - t_i) + \text{Penalties}
+    \color{navy}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (c_i - t_i) + \text{Penalties}(t,c)
 \end{align}
 
 </div>
@@ -131,25 +153,19 @@ between heuristics by scaling
 </p>
 
 </section>
-<section id="slide-org418e881">
-<h3 id="org418e881">Lifetime Penalty</h3>
+<section id="slide-org726ea42">
+<h3 id="org726ea42">Lifetime Penalty</h3>
 <ul>
 <li><font color="navy">IDEA</font> penalize the overall lifetime of an instruction</li>
-<li><p>
-<font color="navy">Note</font> This is a <b>penalty</b> not a <b>hard</b> constraint on latencies
-</p>
-
-<p>
-#TODO change IO penalty to lifetime penalty  (also consider labeling
-variables)
-</p></li>
+<li><font color="navy">Note</font> This is a <b>penalty</b> not a <b>hard</b> constraint on latencies</li>
 
 </ul>
-<div class="cmath" id="org3cc396b">
+
+<div class="cmath" id="org061886a">
 <small>
 <div>
 \begin{align*}
-         \color{navy}{\text{Given }} \qquad  & t_i,c_i \qquad & \forall i \in {\text Instruction } \\
+         \color{navy}{\text{Given }} \qquad  & t_i {\text : Dispatch Time, }c_i {\text : Completion Time }\qquad & \forall i \\
          \color{navy}{\text{For a choosen scaling }} \qquad & S_i  & \\
          \qquad & \qquad & \qquad \\
          \qquad & \mathbb{L}(t,c) = \sum_{i} S_i (c_i - t_i) & \qquad 
@@ -161,18 +177,18 @@ variables)
 </div>
 
 </section>
-<section id="slide-org512d2e4">
-<h3 id="org512d2e4">Stochastic Scaling</h3>
+<section id="slide-org7ed570c">
+<h3 id="org7ed570c">Stochastic Scaling</h3>
 <p>
 <font color="navy">IDEA</font> use random variables to scale penalties
 </p>
-<div class="cmath" id="orgea59c0c">
+<div class="cmath" id="org888bc38">
 <small>
 <div>
 \begin{align*}
     \color{navy}{\text{Define a Grouping}} \qquad & \mathbb{C} = \text{Group}(\forall i \mid i \rightarrow j) \\
     \color{navy}{\text{For each Group i}} \qquad & X_i \in \mathbb{RAND(R)} \\
-    \color{navy}{\text{Stochastic Penalty}} \qquad & \sum X_i \cdot \mathbb{P}(i)
+    \color{navy}{\text{Stochastic Penalty}} \qquad & \sum X_i \cdot \mathbb{C}(i)
   \end{align*}
 
 </div>
@@ -183,32 +199,21 @@ variables)
 </section>
 </section>
 <section>
-<section id="slide-orgeea9e21">
-<h2 id="orgeea9e21">Rapid Prototyping With COCONUT</h2>
-<div class="outline-text-2" id="text-orgeea9e21">
-</div>
-</section>
-<section id="slide-org5205b7f">
-<h3 id="org5205b7f">Rapid Prototyping With COCONUT</h3>
+<section id="slide-org5a088d7">
+<h2 id="org5a088d7">Rapid Prototyping With COCONUT</h2>
 <p>
 <font color="navy">COCONUT</font>:( <font color="navy">CO</font>ode <font color="navy">CON</font>structing <font color="navy">U</font>ser <font color="navy">T</font>ool )
 </p>
 
-<ul>
-<li><p>
-An <font color="navy">Interactive Development ToolSet</font> for performance critical assembly code,
-</p>
 
-<div id="org491c265" class="figure">
+<div id="orgee3ff5d" class="figure">
 <p><img src="coconut.png" alt="coconut.png" width="70%" height="50%" />
 </p>
-</div></li>
-
-</ul>
+</div>
 
 </section>
-<section id="slide-org0e9ed9f">
-<h3 id="org0e9ed9f">Coconut Domain Specific Language (DSL)</h3>
+<section id="slide-org2224d50">
+<h3 id="org2224d50">Coconut Domain Specific Language (DSL)</h3>
 <div class="org-src-container">
 
 <pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">CoreISA</span> r <span style="color: #3a81c3; font-weight: bold;">where</span>
@@ -227,18 +232,18 @@ An <font color="navy">Interactive Development ToolSet</font> for performance cri
 </ul>
 
 </section>
-<section id="slide-orgffab81a">
-<h3 id="orgffab81a">Coconut Example Basic Block</h3>
+<section id="slide-orga3cab81">
+<h3 id="orga3cab81">Coconut Example Basic Block</h3>
 <div class="org-src-container">
 
-<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">testDSL</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">CoreISA</span> r <span style="color: #715ab1;">=&gt;</span>
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">sampleDSL</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">CoreISA</span> r <span style="color: #715ab1;">=&gt;</span>
            r <span style="color: #ba2f59; font-weight: bold;">GPR</span> <span style="color: #715ab1;">-&gt;</span> r <span style="color: #ba2f59; font-weight: bold;">GPR</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #3a81c3;">(</span>r <span style="color: #ba2f59; font-weight: bold;">GPR</span>,r <span style="color: #ba2f59; font-weight: bold;">GPR</span><span style="color: #3a81c3;">)</span>
-<span style="color: #6c3163; font-weight: bold;">testDSL</span> r1 r2 r3 <span style="color: #715ab1;">=</span>
+<span style="color: #6c3163; font-weight: bold;">sampleDSL</span> r1 r2 <span style="color: #715ab1;">=</span>
   <span style="color: #3a81c3; font-weight: bold;">let</span>
-    r4 <span style="color: #715ab1;">=</span> add r2 r1
-    r5 <span style="color: #715ab1;">=</span> add r3 r1
-    r6 <span style="color: #715ab1;">=</span> add r4 r5
-  <span style="color: #3a81c3; font-weight: bold;">in</span> <span style="color: #3a81c3;">(</span>r5,r6<span style="color: #3a81c3;">)</span>
+    r3 <span style="color: #715ab1;">=</span> add r2 r1
+    r4 <span style="color: #715ab1;">=</span> add r3 r1
+    r5 <span style="color: #715ab1;">=</span> add r4 r2
+  <span style="color: #3a81c3; font-weight: bold;">in</span> <span style="color: #3a81c3;">(</span>r5,r4<span style="color: #3a81c3;">)</span>
 </pre>
 </div>
 <p>
@@ -246,8 +251,8 @@ We can encode basic blocks in the Coconut DSL
 </p>
 
 </section>
-<section id="slide-org3afa3ae">
-<h3 id="org3afa3ae">One Piece of Code, alot of Functionality</h3>
+<section id="slide-org9cc09de">
+<h3 id="org9cc09de">One Piece of Code, alot of Functionality</h3>
 <ul>
 <li>Type Safety</li>
 <li>Single Static Assignment</li>
@@ -258,15 +263,15 @@ We can encode basic blocks in the Coconut DSL
 </ul>
 
 </section>
-<section id="slide-orgdee3daf">
-<h3 id="orgdee3daf">Hashed Expression Optimization DSL</h3>
+<section id="slide-org9e6a57e">
+<h3 id="org9e6a57e">Hashed Expression Optimization DSL</h3>
 <div class="org-src-container">
 
-<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">topBottomPenalty</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Hardware</span> h
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">lifeTimePenalty</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Hardware</span> h
   <span style="color: #715ab1;">=&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Double</span>
   <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">HashedData</span> h
   <span style="color: #715ab1;">-&gt;</span> <span style="color: #3a81c3;">[</span><span style="color: #ba2f59; font-weight: bold;">TypedExpr</span> <span style="color: #ba2f59; font-weight: bold;">Scalar</span> <span style="color: #ba2f59; font-weight: bold;">R</span><span style="color: #3a81c3;">]</span>
-<span style="color: #6c3163; font-weight: bold;">topBottomPenalty</span> scale hashedData <span style="color: #715ab1;">=</span>
+<span style="color: #6c3163; font-weight: bold;">lifeTimePenalty</span> scale hashedData <span style="color: #715ab1;">=</span>
   <span style="color: #3a81c3; font-weight: bold;">let</span>
     instructions <span style="color: #715ab1;">=</span> hdAllInstructions hashedData
     tVars <span style="color: #715ab1;">=</span> tVarMap hashedData
@@ -279,11 +284,11 @@ We can easily encode our Lifetime Penalty from before
 </p>
 
 </section>
-<section id="slide-org72aa536">
-<h3 id="org72aa536">Control Flow DSL</h3>
+<section id="slide-orgf7e9a99">
+<h3 id="orgf7e9a99">Control Flow DSL</h3>
 <div class="column" style="float:left; width: 50%">
 
-<div id="orgfd20677" class="figure">
+<div id="org28dc2e5" class="figure">
 <p><img src="controlflow.png" alt="controlflow.png" />
 </p>
 </div>
@@ -306,21 +311,10 @@ We can easily encode our Lifetime Penalty from before
 </div>
 
 </section>
-<section id="slide-org2624fdf">
-<h3 id="org2624fdf">COCONUT Features</h3>
-<ul>
-<li>Provides <font color="navy">Code Graph Library</font> for modeling dependency <b>DAG</b></li>
-<li>Provides <font color="navy">Register Allocator</font></li>
-<li>Provides <font color="navy">Hardware Simulator</font></li>
-<li>Provides <font color="navy">Code Generation</font></li>
-
-</ul>
-
-</section>
 </section>
 <section>
-<section id="slide-org3270dd9">
-<h2 id="org3270dd9">Functional Graph Composition</h2>
+<section id="slide-orgd0faa6d">
+<h2 id="orgd0faa6d">Functional Data Flow Graphs</h2>
 <div class="org-src-container">
 
 <pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">data</span> <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h <span style="color: #715ab1;">=</span>
@@ -330,11 +324,8 @@ We can easily encode our Lifetime Penalty from before
                 , dataFlowInputs <span style="color: #715ab1;">::</span> <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #ba2f59; font-weight: bold;">String</span>,<span style="color: #ba2f59; font-weight: bold;">Node</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
                   <span style="color: #2aa1ae; background-color: #ecf3ec;">-- </span><span style="color: #2aa1ae; background-color: #ecf3ec;">output nodes with tags</span>
                 , dataFlowOutputs <span style="color: #715ab1;">::</span> <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #ba2f59; font-weight: bold;">String</span>,<span style="color: #ba2f59; font-weight: bold;">Node</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
-                  <span style="color: #2aa1ae; background-color: #ecf3ec;">-- </span><span style="color: #2aa1ae; background-color: #ecf3ec;">the stage used for modulo scheduling</span>
-                , dataFlowStage <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Int</span>
                 <span style="color: #715ab1;">...</span>
                 <span style="color: #3a81c3;">}</span>
-
 </pre>
 </div>
 <p>
@@ -342,106 +333,134 @@ Basic blocks are encoded as Data Flow Graphs with tagged inputs/outputs
 </p>
 
 </section>
-<section id="slide-org4d9fa90">
-<h3 id="org4d9fa90">Data Flow Graph Operations</h3>
-<div class="org-src-container">
-
-<pre class="src src-haskell"><span style="color: #2aa1ae; background-color: #ecf3ec;">--  </span><span style="color: #2aa1ae; background-color: #ecf3ec;">partition a graph by a given predicate</span>
-<span style="color: #6c3163; font-weight: bold;">partGraphByInstr</span> <span style="color: #715ab1;">::</span> <span style="color: #3a81c3; font-weight: bold;">forall</span> h <span style="color: #715ab1;">.</span> <span style="color: #ba2f59; font-weight: bold;">Hardware</span> h <span style="color: #715ab1;">=&gt;</span>
- <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Node</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Bool</span><span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h,<span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h<span style="color: #3a81c3;">)</span>
-
-<span style="color: #2aa1ae; background-color: #ecf3ec;">-- </span><span style="color: #2aa1ae; background-color: #ecf3ec;">unpartition a graph (by tying togeether input/output node tags) </span>
-<span style="color: #6c3163; font-weight: bold;">unPartDFGraph</span> <span style="color: #715ab1;">::</span> <span style="color: #3a81c3; font-weight: bold;">forall</span> h <span style="color: #715ab1;">.</span> <span style="color: #ba2f59; font-weight: bold;">Hardware</span> h <span style="color: #715ab1;">=&gt;</span>
-  <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h
-
-<span style="color: #2aa1ae; background-color: #ecf3ec;">-- </span><span style="color: #2aa1ae; background-color: #ecf3ec;">merge graphs in parallel</span>
-<span style="color: #6c3163; font-weight: bold;">parallelMergeDFGraph</span> <span style="color: #715ab1;">::</span> <span style="color: #3a81c3; font-weight: bold;">forall</span> h <span style="color: #715ab1;">.</span> <span style="color: #ba2f59; font-weight: bold;">Hardware</span> h <span style="color: #715ab1;">=&gt;</span>
-  <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h,<span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h
-</pre>
-</div>
-<p>
-Coconut provides useful combinators for deconstructing and reconstructing data
-flow graphs
-</p>
-
-</section>
-<section id="slide-orgf7371ea">
-<h3 id="orgf7371ea">Software Pipelining Case Study</h3>
+<section id="slide-org9078e6d">
+<h3 id="org9078e6d">Tagged Data Flow Graphs</h3>
 <div class="column" style="float:left; width: 50%">
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #3a81c3; font-weight: bold;">for</span> i <span style="color: #3a81c3; font-weight: bold;">in</span> <span style="color: #3a81c3;">range</span><span style="color: #3a81c3;">(</span><span style="color: #4e3163;">0</span>,n<span style="color: #3a81c3;">)</span>:
-    S0<span style="color: #3a81c3;">[</span>i<span style="color: #3a81c3;">]</span>
-    S1<span style="color: #3a81c3;">[</span>i<span style="color: #3a81c3;">]</span>
-    S2<span style="color: #3a81c3;">[</span>i<span style="color: #3a81c3;">]</span>
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">f</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">CoreISA</span> r <span style="color: #715ab1;">=&gt;</span>
+  r <span style="color: #ba2f59; font-weight: bold;">GPR</span> <span style="color: #715ab1;">-&gt;</span> r <span style="color: #ba2f59; font-weight: bold;">GPR</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #3a81c3;">(</span>r <span style="color: #ba2f59; font-weight: bold;">GPR</span>,r <span style="color: #ba2f59; font-weight: bold;">GPR</span><span style="color: #3a81c3;">)</span>
+<span style="color: #6c3163; font-weight: bold;">f</span> x y <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">let</span>
+    z <span style="color: #715ab1;">=</span> add x y
+    n <span style="color: #715ab1;">=</span> mult z x
+  <span style="color: #3a81c3; font-weight: bold;">in</span> <span style="color: #3a81c3;">(</span>z,n<span style="color: #3a81c3;">)</span>
 </pre>
 </div>
-<p>
-<font color="navy">Sample loop body</font>
-</p>
 </div>
 
 <div class="column" style="float:right; width: 50%">
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #3a81c3; font-weight: bold;">for</span> i <span style="color: #3a81c3; font-weight: bold;">in</span> <span style="color: #3a81c3;">range</span><span style="color: #3a81c3;">(</span><span style="color: #4e3163;">0</span>,n-<span style="color: #4e3163;">2</span><span style="color: #3a81c3;">)</span>:
-     -- Kernel
-    S0<span style="color: #3a81c3;">[</span>i+<span style="color: #4e3163;">2</span><span style="color: #3a81c3;">]</span> ; S1<span style="color: #3a81c3;">[</span>i+<span style="color: #4e3163;">1</span><span style="color: #3a81c3;">]</span> ; S2<span style="color: #3a81c3;">[</span>i<span style="color: #3a81c3;">]</span>
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">dfGraph</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h
+<span style="color: #6c3163; font-weight: bold;">dfGraph</span> <span style="color: #715ab1;">=</span> <span style="color: #3a81c3;">{</span>
+  dataFlowGraph <span style="color: #715ab1;">=</span> <span style="color: #715ab1;">...</span>
+  ,dataFlowInputs <span style="color: #715ab1;">=</span>
+      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"x"</span>,<span style="color: #4e3163;">0</span><span style="color: #2d9574;">)</span>,<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"y"</span>,<span style="color: #4e3163;">1</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
+  ,dataFlowOutputs <span style="color: #715ab1;">=</span>
+      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"z"</span>,<span style="color: #4e3163;">2</span><span style="color: #2d9574;">)</span>,<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"n"</span>,<span style="color: #4e3163;">3</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
+  <span style="color: #715ab1;">...</span>
+<span style="color: #3a81c3;">}</span>
+</pre>
+</div>
+</div>
+
+</section>
+<section id="slide-org005b143">
+<h3 id="org005b143">Data Flow Graph Combinators</h3>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #2aa1ae; background-color: #ecf3ec;">--  </span><span style="color: #2aa1ae; background-color: #ecf3ec;">partition a graph by a given predicate</span>
+<span style="color: #6c3163; font-weight: bold;">partitionDFGraph</span> <span style="color: #715ab1;">::</span> <span style="color: #3a81c3; font-weight: bold;">forall</span> h <span style="color: #715ab1;">.</span> <span style="color: #ba2f59; font-weight: bold;">Hardware</span> h
+  <span style="color: #715ab1;">=&gt;</span> <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h
+  <span style="color: #715ab1;">-&gt;</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Node</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Bool</span><span style="color: #3a81c3;">)</span>
+  <span style="color: #715ab1;">-&gt;</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h,<span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h<span style="color: #3a81c3;">)</span>
+
+<span style="color: #2aa1ae; background-color: #ecf3ec;">-- </span><span style="color: #2aa1ae; background-color: #ecf3ec;">iteratively apply partitionDFGraph into n stages </span>
+<span style="color: #6c3163; font-weight: bold;">multiPartDFGraph</span> <span style="color: #715ab1;">::</span> <span style="color: #3a81c3; font-weight: bold;">forall</span> h <span style="color: #715ab1;">.</span> <span style="color: #ba2f59; font-weight: bold;">Hardware</span> h
+  <span style="color: #715ab1;">=&gt;</span> <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h
+  <span style="color: #715ab1;">-&gt;</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Int</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Node</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Bool</span><span style="color: #3a81c3;">)</span>
+  <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Int</span>
+  <span style="color: #715ab1;">-&gt;</span> <span style="color: #3a81c3;">[</span><span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h<span style="color: #3a81c3;">]</span>
 </pre>
 </div>
 <p>
-<font color="navy">Modulo Scheduled loop body</font>
+<font color="navy">Decomposition</font>
+</p>
+
+</section>
+<section id="slide-org95a9d92">
+<h3 id="org95a9d92">Data Flow Graph Combinators</h3>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #2aa1ae; background-color: #ecf3ec;">-- </span><span style="color: #2aa1ae; background-color: #ecf3ec;">unpartition a graph (by tying together input/output node tags) </span>
+<span style="color: #6c3163; font-weight: bold;">unPartDFGraph</span> <span style="color: #715ab1;">::</span> <span style="color: #3a81c3; font-weight: bold;">forall</span> h <span style="color: #715ab1;">.</span> <span style="color: #ba2f59; font-weight: bold;">Hardware</span> h
+  <span style="color: #715ab1;">=&gt;</span> <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h
+  <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h
+  <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h
+
+<span style="color: #2aa1ae; background-color: #ecf3ec;">-- </span><span style="color: #2aa1ae; background-color: #ecf3ec;">merge graphs in parallel (for software pipelining)</span>
+<span style="color: #6c3163; font-weight: bold;">parallelMergeDFGraph</span> <span style="color: #715ab1;">::</span> <span style="color: #3a81c3; font-weight: bold;">forall</span> h <span style="color: #715ab1;">.</span> <span style="color: #ba2f59; font-weight: bold;">Hardware</span> h
+  <span style="color: #715ab1;">=&gt;</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h,<span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h<span style="color: #3a81c3;">)</span>
+  <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h
+</pre>
+</div>
+<p>
+<font color="navy">Recomposition</font>
+</p>
+
+</section>
+<section id="slide-orge78f814">
+<h3 id="orge78f814">Software Pipelining Case Study</h3>
+<div class="column" style="float:left; width: 50%">
+
+<p>
+<img src="unpiplinedloop.png" alt="unpiplinedloop.png" />
+<font color="navy">Sample loop body</font>
+</p>
+</div>
+
+<div class="column" style="float:right; width: 50%">
+
+<p>
+<img src="softwarepipelining.png" alt="softwarepipelining.png" />
+<font color="navy">Pipelined loop body</font>
 </p>
 </div>
 
 </section>
-<section id="slide-orgb375231">
-<h3 id="orgb375231">Software Pipelining Case Study</h3>
-<ul>
-<li><p>
-Partition the dataflow graph by stage using <b>partNGraphByInstr</b>
-</p>
+<section id="slide-org0862d39">
+<h3 id="org0862d39">Software Pipelining Case Study</h3>
 <div class="org-src-container">
 
 <pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">numStages</span>   <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Int</span>
 <span style="color: #6c3163; font-weight: bold;">withinStage</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Int</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Node</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Bool</span>
 <span style="color: #715ab1;">...</span>
 <span style="color: #6c3163; font-weight: bold;">partDFGraphs</span> <span style="color: #715ab1;">::</span> <span style="color: #3a81c3;">[</span><span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h<span style="color: #3a81c3;">]</span>
-<span style="color: #6c3163; font-weight: bold;">partDFGraphs</span> <span style="color: #715ab1;">=</span> partNGraphByInstr dfGraph withinStage numStages
+<span style="color: #6c3163; font-weight: bold;">partDFGraphs</span> <span style="color: #715ab1;">=</span> multiPartDFGraph dfGraph withinStage numStages
 </pre>
-</div></li>
-<li><p>
-Apply transformations to each partition and then pipeline using <b>parallelMergeGraphs</b>
+</div>
+<p>
+Partition the data flow graph by stage
 </p>
-<div class="org-src-container">
-
-<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">kerenelParts</span> <span style="color: #715ab1;">::</span> <span style="color: #3a81c3;">[</span><span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> h<span style="color: #3a81c3;">]</span>
-<span style="color: #6c3163; font-weight: bold;">kernelParts</span> <span style="color: #715ab1;">=</span> map applyIncrement <span style="color: #3a81c3;">(</span>zip <span style="color: #6c3163;">[</span><span style="color: #4e3163;">0</span><span style="color: #715ab1;">..</span><span style="color: #6c3163;">]</span> partDFGraphs <span style="color: #3a81c3;">)</span>
-
-<span style="color: #6c3163; font-weight: bold;">kernel</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span>
-<span style="color: #6c3163; font-weight: bold;">kernel</span> <span style="color: #715ab1;">=</span> parallelMergeDFGraphs kernelParts
-</pre>
-</div></li>
-
-</ul>
 
 </section>
-<section id="slide-org5f8c763">
-<h3 id="org5f8c763">Control Flow Graph Composition</h3>
+<section id="slide-org189c493">
+<h3 id="org189c493">Software Pipelining Case Study</h3>
 <p>
-Given a dataflow graphs with tagged inputs/outputs
+<font color="navy">partitionDFGraph</font> 
 </p>
 <div class="column" style="float:left; width: 50%">
 <div class="org-src-container">
 
-<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">dfGraph0</span> <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> <span style="color: #3a81c3;">{</span>
-  fglGraph <span style="color: #715ab1;">=</span> <span style="color: #715ab1;">....</span>
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">dfGraph</span> <span style="color: #715ab1;">=</span> <span style="color: #3a81c3;">{</span>
+  dataFlowGraph <span style="color: #715ab1;">=</span> <span style="color: #715ab1;">...</span>
   ,dataFlowInputs <span style="color: #715ab1;">=</span>
-    <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"x:0"</span>,<span style="color: #4e3163;">0</span><span style="color: #2d9574;">)(</span><span style="color: #2d9574;">"y:0"</span>,<span style="color: #4e3163;">1</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
+      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"x"</span>,<span style="color: #4e3163;">0</span><span style="color: #2d9574;">)(</span><span style="color: #2d9574;">"y"</span>,<span style="color: #4e3163;">1</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
   ,dataFlowOutputs <span style="color: #715ab1;">=</span>
-    <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"x:0"</span>,<span style="color: #4e3163;">2</span><span style="color: #2d9574;">)(</span><span style="color: #2d9574;">"z:0"</span>,<span style="color: #4e3163;">3</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
-  ,dataFlowStage <span style="color: #715ab1;">=</span> <span style="color: #4e3163;">0</span>
-  <span style="color: #3a81c3;">}</span>
+      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"x"</span>,<span style="color: #4e3163;">2</span><span style="color: #2d9574;">)(</span><span style="color: #2d9574;">"y"</span>,<span style="color: #4e3163;">3</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
+  <span style="color: #715ab1;">...</span>
+<span style="color: #3a81c3;">}</span>
 </pre>
 </div>
 </div>
@@ -449,35 +468,127 @@ Given a dataflow graphs with tagged inputs/outputs
 <div class="column" style="float:right; width: 50%">
 <div class="org-src-container">
 
-<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">dfGraph1</span> <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span> <span style="color: #3a81c3;">{</span>
-    fglGraph <span style="color: #715ab1;">=</span> <span style="color: #715ab1;">....</span>
-    ,dataFlowInputs <span style="color: #715ab1;">=</span>
-      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"x:1"</span>,<span style="color: #4e3163;">4</span><span style="color: #2d9574;">)(</span><span style="color: #2d9574;">"z:1"</span>,<span style="color: #4e3163;">5</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
-    ,dataFlowOutputs <span style="color: #715ab1;">=</span>
-      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"x:1"</span>,<span style="color: #4e3163;">5</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
-    ,dataFlowStage <span style="color: #715ab1;">=</span> <span style="color: #4e3163;">1</span>
-    <span style="color: #3a81c3;">}</span>
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">dfGraph0</span> <span style="color: #715ab1;">=</span> <span style="color: #3a81c3;">{</span>
+  dataFlowGraph <span style="color: #715ab1;">=</span> <span style="color: #715ab1;">...</span>
+  ,dataFlowInputs <span style="color: #715ab1;">=</span>
+      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"x:0"</span>,<span style="color: #4e3163;">0</span><span style="color: #2d9574;">)(</span><span style="color: #2d9574;">"y:0"</span>,<span style="color: #4e3163;">1</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
+  ,dataFlowOutputs <span style="color: #715ab1;">=</span>
+      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"i0:0"</span>,<span style="color: #4e3163;">2</span><span style="color: #2d9574;">)(</span><span style="color: #2d9574;">"i1:0"</span>,<span style="color: #4e3163;">3</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
+  <span style="color: #715ab1;">...</span>
+<span style="color: #3a81c3;">}</span>
+
+<span style="color: #6c3163; font-weight: bold;">dfGraph1</span> <span style="color: #715ab1;">=</span> <span style="color: #3a81c3;">{</span>
+  dataFlowGraph <span style="color: #715ab1;">=</span> <span style="color: #715ab1;">...</span>
+  ,dataFlowInputs <span style="color: #715ab1;">=</span>
+      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"i0:1"</span>,<span style="color: #4e3163;">4</span><span style="color: #2d9574;">)(</span><span style="color: #2d9574;">"i1:1"</span>,<span style="color: #4e3163;">5</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
+  ,dataFlowOutputs <span style="color: #715ab1;">=</span>
+      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"x:1"</span>,<span style="color: #4e3163;">6</span><span style="color: #2d9574;">)(</span><span style="color: #2d9574;">"y:1"</span>,<span style="color: #4e3163;">7</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
+  <span style="color: #715ab1;">...</span>
+<span style="color: #3a81c3;">}</span>
 </pre>
 </div>
 </div>
-<p>
-Compose Graph in Control Flow
-</p>
+
+</section>
+<section id="slide-org5dc0baf">
+<h3 id="org5dc0baf">Software Pipelining Case Study</h3>
 <div class="org-src-container">
 
-<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">compose</span> dfGraph0 dfGraph1 <span style="color: #715ab1;">=</span>
-  <span style="color: #3a81c3; font-weight: bold;">do</span> blockA <span style="color: #715ab1;">&lt;-</span> genBlock <span style="color: #715ab1;">$</span> dfGraph0
-     blockB <span style="color: #715ab1;">&lt;-</span> genBlock <span style="color: #715ab1;">$</span> dfGraph1
-     jumpCompose <span style="color: #3a81c3;">(</span><span style="color: #715ab1;">\</span>i <span style="color: #715ab1;">-&gt;</span> i<span style="color: #715ab1;">+</span><span style="color: #4e3163;">1</span> <span style="color: #715ab1;">`mod`</span> numStages<span style="color: #3a81c3;">)</span>
-                 <span style="color: #3a81c3;">(</span>cfOut blockA<span style="color: #3a81c3;">)</span>
-                 <span style="color: #3a81c3;">(</span>cfIn blockB<span style="color: #3a81c3;">)</span>
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">kernel</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">DataFlowGraph</span>
+<span style="color: #6c3163; font-weight: bold;">kernel</span> <span style="color: #715ab1;">=</span> parallelMergeDFGraphs
+           <span style="color: #3a81c3;">(</span>map applyIncrement partDFGraphs<span style="color: #3a81c3;">)</span>
 </pre>
 </div>
+<p>
+Apply transformations to each partition and then pipeline using <b>parallelMergeGraphs</b>
+</p>
+
+</section>
+<section id="slide-orge56adda">
+<h3 id="orge56adda">Software Pipelining Case Study</h3>
+<p>
+<font color="navy">parallelMergeGraphs</font> 
+</p>
+<div class="column" style="float:left; width: 50%">
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">dfGraph0</span> <span style="color: #715ab1;">=</span> <span style="color: #3a81c3;">{</span>
+  dataFlowGraph <span style="color: #715ab1;">=</span> <span style="color: #715ab1;">...</span>
+  ,dataFlowInputs <span style="color: #715ab1;">=</span>
+      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"x:0"</span>,<span style="color: #4e3163;">0</span><span style="color: #2d9574;">)</span>,<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"y:0"</span>,<span style="color: #4e3163;">1</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
+  ,dataFlowOutputs <span style="color: #715ab1;">=</span>
+      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"i0:0"</span>,<span style="color: #4e3163;">2</span><span style="color: #2d9574;">)</span>,<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"i1:0"</span>,<span style="color: #4e3163;">3</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
+  <span style="color: #715ab1;">...</span>
+<span style="color: #3a81c3;">}</span>
+
+<span style="color: #6c3163; font-weight: bold;">dfGraph1</span> <span style="color: #715ab1;">=</span> <span style="color: #3a81c3;">{</span>
+  dataFlowGraph <span style="color: #715ab1;">=</span> <span style="color: #715ab1;">...</span>
+  ,dataFlowInputs <span style="color: #715ab1;">=</span>
+      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"i0:1"</span>,<span style="color: #4e3163;">4</span><span style="color: #2d9574;">)</span>,<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"i1:1"</span>,<span style="color: #4e3163;">5</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
+  ,dataFlowOutputs <span style="color: #715ab1;">=</span>
+      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"x:1"</span>,<span style="color: #4e3163;">6</span><span style="color: #2d9574;">)</span>,<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"y:1"</span>,<span style="color: #4e3163;">7</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
+  <span style="color: #715ab1;">...</span>
+<span style="color: #3a81c3;">}</span>
+</pre>
+</div>
+</div>
+
+<div class="column" style="float:right; width: 50%">
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">dfGraph</span> <span style="color: #715ab1;">=</span> <span style="color: #3a81c3;">{</span>
+  dataFlowGraph <span style="color: #715ab1;">=</span> <span style="color: #715ab1;">...</span>
+  ,dataFlowInputs <span style="color: #715ab1;">=</span>
+      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"x:0"</span>,<span style="color: #4e3163;">0</span><span style="color: #2d9574;">)</span>,<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"y:0"</span>,<span style="color: #4e3163;">1</span><span style="color: #2d9574;">)</span>
+      ,<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"i0:1"</span>,<span style="color: #4e3163;">4</span><span style="color: #2d9574;">)</span>,<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"i1:1"</span>,<span style="color: #4e3163;">5</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
+  ,dataFlowOutputs <span style="color: #715ab1;">=</span>
+      <span style="color: #6c3163;">[</span><span style="color: #2d9574;">(</span><span style="color: #2d9574;">"i0:0"</span>,<span style="color: #4e3163;">2</span><span style="color: #2d9574;">)</span>,<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"i1:0"</span>,<span style="color: #4e3163;">3</span><span style="color: #2d9574;">)</span>
+      ,<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"x:1"</span>,<span style="color: #4e3163;">6</span><span style="color: #2d9574;">)</span>,<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"y:1"</span>,<span style="color: #4e3163;">7</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>
+  <span style="color: #715ab1;">...</span>
+<span style="color: #3a81c3;">}</span>
+</pre>
+</div>
+</div>
+
+</section>
+<section id="slide-orge42f425">
+<h3 id="orge42f425">Control Flow Graph Composition</h3>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">controlFlowGraph</span> dfGraph0 dfGraph1 <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">do</span> blockA <span style="color: #715ab1;">&lt;-</span> genBlock <span style="color: #715ab1;">$</span> dfGraph0
+     blockB <span style="color: #715ab1;">&lt;-</span> genBlock <span style="color: #715ab1;">$</span> dfGraph1
+     jumpCFS <span style="color: #3a81c3;">(</span><span style="color: #715ab1;">\</span>tag0 tag1 <span style="color: #715ab1;">-&gt;</span> increment tag0 <span style="color: #715ab1;">==</span> tag1<span style="color: #3a81c3;">)</span>
+             <span style="color: #3a81c3;">(</span>cfOut blockA<span style="color: #3a81c3;">)</span>
+             <span style="color: #3a81c3;">(</span>cfIn blockB<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+<p>
+Generate a control flow graph that ties performs a jump, tying together tags
+that satisfy a given predicate
+</p>
+
 </section>
 </section>
 <section>
-<section id="slide-org630be18">
-<h2 id="org630be18">Questions?</h2>
+<section id="slide-org45e4378">
+<h2 id="org45e4378">Future Work</h2>
+<ul>
+<li>Analysis of schedule space</li>
+<li>Use statistical inference to estimate optimal schedule</li>
+<li>New heuristics</li>
+<li>New performance critical code sections to benchmark against?</li>
+
+</ul>
+
+</section>
+<section id="slide-orgb667cdf">
+<h3 id="orgb667cdf">Questions?</h3>
+<ul>
+<li>curtisda@ca.ibm.com</li>
+<li>enenkel@ca.ibm.com</li>
+
+</ul>
 </section>
 </section>
 </div>
