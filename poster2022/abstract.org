@@ -1,0 +1,24 @@
+#+TITLE: CAS Project 1006: Exploring Stochastic Algorithms for Instruction Scheduling
+#+AUTHOR: Curtis D'Alves
+#+EMAIL: dalvescb@mcmaster.ca
+
+* Abstract
+
+CAS Project 1006 has been experimenting with stochastic instruction scheduling
+algorithms for performance critical code. We have developed a continuous
+optimization algorithm (first non-linear and now linear) that uses penalties to
+express heuristics for prioritizing instruction order and constraints to enforce
+a valid schedule. Furthermore, by adding a stochastically scaled penalty we can
+utilize extra computation to "discover" schedules that would not be captured by
+a simple heuristic. Our primary goal has been to use this algorithm to squeeze
+as much performance as possible out of the standard math functions in the IBM
+MASS library for z/OS, and we have had considerable success gaining up to 20%
+speedup compared to the previously scheduled code on certain functions, and
+continue to find better schedules to this date.
+
+We have done this with the aid of a rapid prototyping environment we are
+developing known as CoConUT (Code Constructing User Tool). for easy and
+effective testing. Over the last year we have made considerable improvements to
+Coconut, extending its capabilities to allow for control flow beyond what we
+have previously hard-coded to suit our needs for the MASS libraries, and are
+excited to show off its potential.

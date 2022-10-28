@@ -1,0 +1,1833 @@
+#+TITLE: Analysis of Compiler Heuristics via Stochastic Scheduling
+#+DESCRIPTION: Ph.D Thesis by Curtis D'Alves; McMaster University
+#+AUTHOR: [[mailto:dalvescb@mcmaster.ca][Curtis D'Alves]]
+#+EMAIL: curtis.dalves@gmail.com
+#+OPTIONS: toc:nil d:nil title:nil
+#+PROPERTY: header-args :tangle no :comments link
+
+# At the end of a section, explain why the section is there,
+# and what the reader should take away from it.
+
+# MA: LaTeX pads colons, :, with spacing.
+# For inline typing annotations, use ghost colon “\:” to avoid this issue.
+
+* Preamble & title page :ignore:
+
+# Top level editorial comments.
+#+MACRO: remark  @@latex: \fbox{\textbf{Comment: $1 }}@@
+
+** Minted setup -- colouring code blocks                            :ignore:
+
+#+LATEX_HEADER: \usepackage[]{minted}
+#+LATEX_HEADER: \usepackage{tcolorbox}
+#+LATEX_HEADER: \usepackage{etoolbox}
+#+LATEX_HEADER: \def\mytitle{??? Program Code ???}
+#+LATEX_HEADER: \BeforeBeginEnvironment{minted}{\begin{tcolorbox}[title=\hfill \mytitle]}%
+#+LATEX_HEADER: \AfterEndEnvironment{minted}{\end{tcolorbox}}%
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \usepackage{algorithmic}
+
+# Before a code block, write {{{code(title-of-block)}}}
+#
+#+MACRO: code     #+LaTeX: \def\mytitle{$1}
+
+#+LaTeX: \setminted[haskell]{fontsize=\footnotesize}
+#+LaTeX: \setminted[agda]{fontsize=\footnotesize}
+
+# Removing the red box that appears in "minted" when using unicode.
+# Src: https://tex.stackexchange.com/questions/343494/minted-red-box-around-greek-characters
+#
+#+LATEX_HEADER: \makeatletter
+#+LATEX_HEADER: \AtBeginEnvironment{minted}{\dontdofcolorbox}
+#+LATEX_HEADER: \def\dontdofcolorbox{\renewcommand\fcolorbox[4][]{##4}}
+#+LATEX_HEADER: \makeatother
+** LaTeX setup                                                      :ignore:
+
+# Hijacking \date to add addtional text to the frontmatter of a ‘report’.
+#
+#
+# DATE: \today\vfill \centerline{---Supervisors---} \newline [[mailto:carette@mcmaster.ca][Jacques Carette]] and [[mailto:kahl@cas.mcmaster.ca][Wolfram Kahl]]
+
+#+LATEX_HEADER: \usepackage[hmargin=25mm,vmargin=25mm]{geometry}
+#+LaTeX_HEADER: \setlength{\parskip}{1em}
+#+latex_class_options: [12pt]
+#+LATEX_CLASS: report-noparts
+# Defined below.
+#
+# Double spacing:
+# LaTeX: \setlength{\parskip}{3em}\renewcommand{\baselinestretch}{2.0}
+#
+#+LATEX_HEADER: \setlength{\parskip}{1em}
+
+#+LATEX_HEADER: \usepackage[backend=biber,style=alphabetic]{biblatex}
+#+LATEX_HEADER: \addbibresource{References.bib}
+
+#+LATEX_HEADER: \usepackage{MyUnicodeSymbols}
+
+#+LATEX_HEADER: \usepackage[dvipsnames]{xcolor} % named colours
+#+LATEX_HEADER: \usepackage{color}
+#+LATEX_HEADER: \definecolor{darkred}{rgb}{0.3, 0.0, 0.0}
+#+LATEX_HEADER: \definecolor{darkgreen}{rgb}{0.0, 0.3, 0.1}
+#+LATEX_HEADER: \definecolor{darkblue}{rgb}{0.0, 0.1, 0.3}
+#+LATEX_HEADER: \definecolor{darkorange}{rgb}{1.0, 0.55, 0.0}
+#+LATEX_HEADER: \definecolor{sienna}{rgb}{0.53, 0.18, 0.09}
+#+LATEX_HEADER: \hypersetup{colorlinks,linkcolor=darkblue,citecolor=darkblue,urlcolor=darkgreen}
+
+#+NAME: symbols for itemisation environment
+#+BEGIN_EXPORT latex
+\def\labelitemi{$\diamond$}
+\def\labelitemii{$\circ$}
+\def\labelitemiii{$\star$}
+
+% Level 0                 Level 0
+% + Level 1               ⋄ Level 1
+%   - Level 2       --->      ∘ Level 2
+%     * Level 3                   ⋆ Level 3
+%
+#+END_EXPORT
+
+# Having small-font code blocks.
+# LATEX_HEADER: \RequirePackage{fancyvrb}
+# LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\scriptsize}
+
+** ~reports-noparts~ LaTeX Class                                    :noexport:
+
+A custom version of the reports class which makes the outermost headings chapters, rather than parts.
+#+NAME: make-reports-class
+#+BEGIN_SRC emacs-lisp :results none
+(add-to-list
+  'org-latex-classes
+    '("report-noparts"
+      "\\documentclass{report}"
+      ("\\chapter{%s}" . "\\chapter*{%s}")
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+#+END_SRC
+
+Source: Mark Armstrong --github ~armkeh~
+** Personal title page                                              :ignore:
+
+#+begin_center org
+
+#+begin_export latex
+\thispagestyle{empty}
+
+{\color{white}{.}}
+
+\vspace{5em}
+
+{\Huge Analysis of Compiler Heuristics via Stochastic Scheduling and Hyper-Heuristics}
+
+\vspace{1em}
+
+{\Large A Thesis Proposal}
+
+\vspace{2em}
+
+Department of Computing and Software
+
+McMaster University
+
+\vspace{2em}
+\href{mailto:curtis.dalves@gmail.com}{Curtis D'Alves}
+
+\vspace{2em}
+\today
+#+end_export
+
+\vfill
+
+{{{code({\sc Thesis Proposal \hspace{12em} \color{grey}{.} })}}}
+#+begin_src haskell
+-- Supervisors
+Christopher Anand                                    anandc@mcmaster.ca
+Wolfram Kahl                                         kahl@cas.mcmaster.ca
+#+end_src
+#+end_center
+
+# LaTeX: \centerline{\sc Draft}
+
+* Abstract and toc                                                   :ignore:
+:PROPERTIES:
+:CUSTOM_ID: abstract
+:END:
+
+# Use:  x vs.{{{null}}} ys
+# This informs LaTeX not to put the normal space necessary after a period.
+#
+#+MACRO: null  @@latex:\null{}@@
+
+#+begin_abstract
+
+In compiler optimization, Instruction Scheduling seeks to optimize the order of
+a sequence of instructions to maximize throughput while preserving semantics. As
+modern architectures become increasing more complex, with supported
+techniques/features such as super-scalar, out of order execution, register
+remapping, VLIW (Very Large Instruction Word) and more; opportunities to exploit
+Instruction Level Parallelism increase in turn. However as a known NP-Complete
+problem, finding the optimal schedule for a non-trivial program is too costly.
+Conventional compilers opt to utilize heuristics, many of which are developed on
+an ad-hoc basis.
+
+
+\vspace{1em}
+
+We present a stochastic non-linear programming algorithm, capable of spanning
+all valid schedules by relaxing the problem to a continuous domain and
+optimizing with constraints. We combine the optimization problem with heuristics
+by encoding them as penalty functions that can be scaled to adjust priority. By
+stochastically generating scaling parameters, we can generate datasets of
+schedules that were obtained by optimizing a variety of schedule spaces that
+model different combinations of priorities to sets of heuristics. So far, we
+have used this method to effectively find schedules for performance-critical
+code on IBM MASS libraries for the IBM Z15 architecture, gaining up to 20%
+speedup compared to previously scheduled code.
+
+\vspace{1em}
+
+Although unsuitable for implementation in a conventional compiler, we believe
+the method may prove useful for hyper-heuristic based architecture analysis. By
+analyzing generated datasets together with the space of the model for a given
+architecture, we hope to gain insights into how different heuristics impact
+different architectures. We give an overview of current efforts for
+hyper-heuristic development in compilers and propose this model as a basis for
+developing hyper-heuristic methods for instruction scheduling.
+
+#+begin_center org
+#+begin_small
+---Source: https://github.com/dalvescb/phd_thesis ---
+#+end_small
+#+end_center
+#+end_abstract
+
+\newpage
+\thispagestyle{empty}
+\tableofcontents
+\newpage
+
+* Introduction (Background to Instruction Scheduling)
+  Modern processors are built with architectures capable of exploiting
+  Instruction Level Parallelism (ILP) on a single core 
+  through pipelining and superscalar behavior. Superscalar
+  processors of degree $n$ are architectures theoretically capable of issuing
+  and executing $n$ instructions on $n$ parallel execution units. However
+  maximizing throughput is not always achievable, in part due to instruction
+  dependency (i.e the execution of an instruction cannot occur until it's
+  operands are available). A sequence of dependent instructions of sufficient
+  latency may achieve no benefit from a superscalar architecture. That is, unless they can be
+  interleaved with a set of relatively independent instructions. Furthermore,
+  resource constraints such as the number of available registers and functional
+  units can also delay execution. This creates an interesting problem for
+  hardware and/or compilers: selecting a schedule of instructions.
+#+LaTex: \begin{tcolorbox}[title=Problem: Instruction Scheduling]
+Given an a dependency graph (DAG) of instructions and resource limitations
+(number of registers, functional units, etc), designate an ordering (find a *schedule*) 
+maximizing execution throughput 
+#+LaTex: \end{tcolorbox}
+
+Even simple formulations of optimal instruction scheduling are an NP-Complete
+search problem \parencite{hennessy1983postpass}, and problems attempting to
+integrate resource limitations on modern architectures are NP-Hard
+\parencite{motwani1995combining}. Thus practical solutions to instruction
+scheduling problems are given by either:
+    - *Heuristics* most commonly used by conventional schedulers
+    - *Approximation Algorithms* some experimental use done for near optimal
+      schedules \parencite{costa2016approx}
+These solutions can implemented in hardware to execute at run-time
+ (dynamically), or implemented at compiler time via the compiler. With the
+ exception of certain niche architectures known as Very Long Instruction Word
+ (VLIW) architectures that seek to move the burden of scheduling to the compiler
+ entirely \parencite{fisher1983very}, modern architectures approach scheduling
+ from both the compiler and hardware. In general, comprehensive scheduling
+ algorithms take a model of the program (typically represented as a dependency
+ DAG \parencite{gibbons1986efficient}) as input and return an ordered model to
+ be used by the assembler during compilation.
+
+** Types of Instruction Scheduling
+   There are two broad criteria that have historically influenced scheduling
+   algorithms: the first being the control flow of the dependency graph, the
+   second being the nature/constraints of the architecture being scheduled for
+   \parencite{rau1993instruction}. The second criteria yields ad-hoc solutions
+   that are difficult to categorize and often forgotten through the evolution of
+   architectures. However an effective scheduling algorithm must consider both criteria.
+
+   Within the first criterion (scheduling based on control flow), the following
+   categories are worth noting \parencite{rau1993instruction}:
+   - *Basic Block:* (local acyclic) break code into blocks within branches (most commonly performed scheduling)
+	 - *Global Scheduling:* (global cyclic) schedule across basic block boundaries
+	 - *Modulo Scheduling:* (local cyclic) schedules basic blocks inside of a loop, seeking to
+     optimize by interleaving iterations
+	 - *Trace Scheduling:* (global acyclic/cyclic) tries to optimize control flow by predicting routes
+     taken on branches
+   Each of the above categories are distinguished by what consideration is given
+   to different types of branching. Initial research into scheduling focused
+   entirely on local scheduling (ignoring branching)
+   \parencite{rau1993instruction} and culminated in the use of various list
+   scheduling algorithms in most schedulers by the 80s
+   \parencite{fisher1983very}. An intuitive approach to global scheduling is to
+   first schedule basic blocks then attempt to move operations from one block to
+   empty slots in neighboring blocks. However this approach would need to take
+   into account/possibly reverse too many arbitrary decisions made in local
+   scheduling in every possible neighboring block. To compensate for this,
+   techniques for predicting more frequently occurring branch routes to improve
+   global scheduling was invented known as trace scheduling
+   \parencite{fisher1981trace}. Cyclic scheduling deals with branching that
+   conforms to a loop in the control graph, and could be dealt with in the same
+   fashion as global/trace scheduling, however because so much
+   performance-critical code is in looping it is important enough to
+   have it's own class of algorithm known as modulo scheduling (discussed in a
+   later section).
+   
+*** TODO COMMENT reference list and modulo scheduling section
+    
+** SuperScalar Architectures
+   
+   #+BEGIN_SRC ditaa :file figures/RISCPipeline.png
+   /----------+----------+----------+----------+----------\
+   |       IF |       ID |       EX |      MEM | cBLU  WB |
+   \----------+----------+----------+----------+----------+----------\ 
+              |       IF |       ID |       EX | cBLU MEM |       WB |
+              \----------+----------+----------+----------+----------+----------\
+   |                     |       IF |       ID | cBLU  EX |      MEM |       WB |
+   v                     \----------+----------+----------+----------+----------+----------\
+   instr. i                         |       IF | cBLU  ID |       EX |      MEM |       WB |
+                                    \----------+----------+----------+----------+----------+----------\
+   --->                                        | cBLU  IF |       ID |       EX |      MEM |       WB |
+     cycle t                                   \----------+----------+----------+----------+----------/
+  
+   #+END_SRC
+
+   #+ATTR_LATEX: :width 1.0\textwidth 
+   #+CAPTION: Simple Pipelined Architecture
+   #+LABEL: fig:PipelinedArchitecture
+   #+RESULTS:
+   [[file:figures/RISCPipeline.png]]
+   
+  
+   Simple pipelined architectures issue a single instruction per cycle.
+   Through pipeling, ILP is still exploitable, but limited by only having one of
+   each type of functional unit. Figure [[fig:PipelinedArchitecture]] shows an
+   example simple RISC architecture with a 5 stage pipeline (IF=Fetch,
+   ID=Decode, EX=Execute,MEM=Memory Access,WB=Write Back) that exploits ILP while using only a single
+   execution unit. In contrast, figure [[fig:SuperScalarArchitecture]] shows a
+   superscalar architecture that utilizes parallel execution units.  
+   
+   #+BEGIN_SRC ditaa :file figures/SuperScalarPipeline.png
+   /----------+----------+----------+----------+----------\
+   |       IF |       ID |       EX |      MEM | cBLU  WB |
+   +----------+----------+----------+----------+----------+ 
+   |       IF |       ID |       EX |      MEM | cBLU  WB |
+   \----------+----------+----------+----------+----------+----------\ 
+              |       IF |       ID |       EX | cBLU MEM |       WB |
+              +----------+----------+----------+----------+----------+
+              |       IF |       ID |       EX | cBLU MEM |       WB |
+              \----------+----------+----------+----------+----------+----------\
+  |                      |       IF |       ID | cBLU  EX |      MEM |       WB |
+  v                      +----------+----------+----------+----------+----------+
+  instr i                |       IF |       ID | cBLU  EX |      MEM |       WB |
+                         \----------+----------+----------+----------+----------+----------\
+                                    |       IF | cBLU  ID |       EX |      MEM |       WB |
+  --->                              +----------+----------+----------+----------+----------+
+     cycle t                        |       IF | cBLU  ID |       EX |      MEM |       WB |
+                                    \----------+----------+----------+----------+----------+----------\
+                                               | cBLU  IF |       ID |       EX |      MEM |       WB |
+                                               +----------+----------+----------+----------+----------+
+                                               | cBLU  IF |       ID |       EX |      MEM |       WB |
+                                               \----------+----------+----------+----------+----------/
+   #+END_SRC
+
+   #+ATTR_LATEX: :width 1.0\textwidth 
+   #+CAPTION: SuperScalar Architecture   
+   #+LABEL: fig:SuperScalarArchitecture
+   #+RESULTS:
+   [[file:figures/SuperScalarPipeline.png]]
+   
+  
+   Superscalar architectures are all uniprocessors that can execute two or more
+   scalar operations in parallel; this encompasses a wide variety of
+   architectures, but common to all these architectures is the existence of
+   parallel and pipelined functional units, and the need to manage that
+   parallelism \parencite{zyuban2001inherently}. In particular, superscalar
+   architectures put increased strain on resource management. This poses a more
+   serious challenge for scheduling algorithms, since basic block scheduling is
+   often not sufficient to allow full utilization of machine
+   resources \parencite{bernstein1991global}. 
+
+   An simple architecture to schedule for would be a RISC architecture with
+   a collection of functional units of $m$ types, where the machine has $n_1$,
+   $n_2$, ..., $n_m$ units of each type. One could view optimizing a schedule over such
+   an architecture as maximizing the amount of live functional units per
+   cycle (i.e maximum throughput). This would generally be accomplished by
+   interleaving different types of instructions, however stretching data
+   dependent instructions too far apart doing runs the risk of running out 
+   available registers (increasing register pressure). 
+   
+** Pipeline Stalls
+   Both of the previous figures [[fig:PipelinedArchitecture]] and
+   [[fig:SuperScalarArchitecture]] show an ideal schedule with *NO* stalls. A stall
+   occurs when, because of various architecture *hazards* that can arise, full throughput
+   cannot be achieved and a NOOP (No-Operation) instruction must be inserted.
+   This is also known as inserting a bubble in the pipeline.
+   Figure [[fig:PipelineStall]] gives an example of inserting a NOOP (bubble),
+   because of a Read After Write (RAW) hazard.
+
+   #+BEGIN_SRC ditaa :file figures/PipelineStall.png
+
+   +-------------+-------------+--------------+--------------+-------------+-------------+-------------+
+   |                                            Cycles                                                 | 
+   +-------------+-------------+--------------+--------------+-------------+-------------+-------------+
+   |    1        |     2       |      3       |      4       |      5      |      6      |      7      |
+   +-------------+-------------+--------------+--------------+-------------+-------------+-------------+
+
+   Example: Invalid Pipeline 
+   +----------+   +---------+   +----------+   +----------+   +----------+
+   |       IF |---|      ID |---|       EX |---|      MEM |-+-|       WB |
+   +----------+   +---------+   +----------+   +----------+ | +----------+ 
+                                                            |   Cannot pass data backwords
+                                             +--------------+ 
+                  +----------+   +---------+ | +----------+   +----------+   +----------+
+                  |       IF |---| cRED ID |-+-|  cRED EX |---|      MEM |---|       WB |
+                  +----------+   +---------+   +----------+   +----------+   +----------+ 
+                                 Bad Data
+
+
+
+   Example: Valid Pipeline With NOOP Inserted
+   +----------+   +---------+   +----------+   +----------+   +----------+
+   |       IF |---|      ID |---|       EX |---|      MEM |-+-|       WB |
+   +----------+   +---------+   +----------+   +----------+ | +----------+ 
+                                                            |  Can pass data forwards 
+                                                            | 
+                  +----------+   +---------+   /----------\ | +----------+   +----------+   +----------+
+                  |       IF |---| cRED ID |---|  cBLU    |-+-|  cGRE EX |---|      MEM |---|       WB |
+                  +----------+   +---------+   \----------/   +----------+   +----------+   +----------+ 
+                                 Bad Data
+   #+END_SRC
+
+   #+ATTR_LATEX: :width 1.0\textwidth 
+   #+CAPTION: Example of a bubble (NOOP) being inserted to fix an unfullfilled data dependency
+   #+LABEL: fig:PipelineStall
+   #+RESULTS:
+   [[file:figures/PipelineStall.png]]
+
+** Hazards
+   Architecture hazards can be broken up broadly into three categories
+   \parencite{patterson2013computer}
+   - *Data Hazards* occur when a data dependency is broken. There are three
+     situations in which this can occur: read after write (RAW), write after
+     read (WAR) and write after write (WAW)  
+\begin{align*}
+\textbf{RAW}                    & \qquad & \textbf{WAR}                   & \qquad & \textbf{WAW} \\
+\textbf{R2} \leftarrow R5 + R3  & \qquad & R4 \leftarrow R1 + \textbf{R5} & \qquad & \textbf{R2} \leftarrow R4 + R7 \\
+R4 \leftarrow \textbf{R2} + R3  & \qquad & \textbf{R5} \leftarrow R1 + R2 & \qquad & \textbf{R2} \leftarrow R1 + R3
+\end{align*}
+     - *Structural Hazards* occurs when an aspect of hardware is accessed at the
+       same time (such as a functional unit)
+     - *Control Hazards* also known as Branch Hazards, occur when a bad branch
+       prediction is made causing instructions that were brought into the
+       pipeline needing to be discarded 
+*** COMMENT see hazard section here [[http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.69.7453&rep=rep1&type=pdf]]
+
+*** TODO COMMENT add section for SSA
+
+** Register Allocation via Graph Coloring
+   The theory of graph coloring deals with algorithms that seek to partition a
+   set of objects into classes, given simple rules associating objects that may
+   not belong to the same class \parencite{jensen2011graph}. These algorithms
+   operate on graphs, where the objects are vertices and the edges
+   denote connected vertices that cannot be in the same class. Classes are
+   represented via colors, where a *k-coloring* denotes a partitioning into k
+   distinct classes. The problem of finding a *k-coloring* is a well-known
+   NP-Complete problem \parencite{jensen2011graph}.
+
+   Architectures provide a finite set of registers that must be allocated
+   after or during instruction scheduling. Finding an allocation for a given
+   schedule (assuming one exists) has been shown to be equivalent to the Graph
+   Coloring problem and hence NP-Complete \parencite{chaitin1981register}. Given
+   a code schedule in Single Static Assignment (SSA) form, a unique interference
+   graph can be constructed that denotes data dependency. On an architecture
+   with *k* registers, a register allocation is found via a *k-coloring* of
+   vertices of this interference graph. See Figure [[fig:GraphColor]] as an example.
+   
+#+BEGIN_SRC ditaa :file figures/GraphColor.png
+ Code Schedule  Interference Graph            Allocation
+
+A <- ...     /--------\         /--------\     R1 <- ...
+B <- ...     | cGRE A |         | cGRE D |     R2 <- ...
+    B ...    \--------/         \--------/         R2 ...
+C <- ...         |   |               |         R2 <- ...
+    A ...        |   \-----------\   |             R1 ...
+                 |               |   |
+D <- ...     /--------\         /--------\     R1 <- ...
+    D ...    | cBLU B |         | cBLU C |         R1 ...
+    C ...    \--------/         \--------/         R2 ...
+#+END_SRC 
+
+#+CAPTION:Register Allocation via Graph Coloring
+#+NAME: fig:GraphColor 
+#+RESULTS:
+[[file:figures/GraphColor.png]]
+
+** Spilling
+  Finding the existence of a *k-coloring* for a given graph is itself an
+  NP-Complete problem \parencite{jensen2011graph}, and the absence of an
+  existing coloring presents a difficult problem. When a schedule cannot be
+  register allocated, variables must be /spilled/ to memory (spilling is the
+  action of storing variables into memory rather than registers
+  \parencite{bouchez2007complexity}). Spilling requires the addition of new
+  instructions to store/load from memory, which changes not only the
+  interference graph (allowing different register allocations) but the
+  dependency graph as well (allowing different schedules). Therefore adding spills
+  alters the space of valid schedules, and merits consideration when searching
+  for a "truly optimal" schedule (although addition of spills unnecessarily is
+  generally detrimental).
+ 
+  Graph coloring heuristics can be bolstered to include the addition of spilling
+  when they fail to find a proper *k-coloring*
+  \parencite{Chaitin:1982:RAS:872726.806984},\parencite{briggs1989coloring}. The
+  choice of which node to spill is a cost/benefit estimation. Each edge in the
+  interference graph can be assigned an estimated live range (sections of code
+  which a value is defined and used but not re-defined). Eliminating longer live
+  ranges alleviates more register pressure and creates a more flexible
+  scheduling space.
+
+** Combining Register Allocation and Instruction Scheduling
+   Register allocation can be performed before, after, or combined with
+   instruction scheduling, but is generally performed after
+   \parencite{brasier1995craig}. Performing allocation before scheduling
+   involves allocating on top of a "default" schedule and then manipulating the
+   schedule while maintaining a fixed allocation. Having a fixed allocation
+   creates new dependencies (known as /anti-dependencies/) that limit the space
+   of valid schedules. Conversely, register allocation done after instruction
+   scheduling is uninhibited by these anti-dependencies and may find more
+   efficient schedules, but they may require post-hoc intervention via spilling.
+
+   Attempts to combine register allocation and scheduling are rare in
+   conventional compilers, as even a simple instance of the problem (single
+   register, no latencies, single functional unit) is /NP-hard/
+   \parencite{motwani1995combining} \parencite{Pinter:1993:RAI:173262.155114}.
+   Heuristics developed for combining register allocation and scheduling
+   generally involve estimating a tradeoff between controlling register pressure
+   and instruction parallelism considerations \parencite{motwani1995combining}.
+   
+*** COMMENT more on register allocation here [[http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.69.7453&rep=rep1&type=pdf]]
+
+** Modulo Scheduling: Staging
+#+BEGIN_SRC ditaa :file figures/SwingModuloStaging.png
+                                     
+                                     /---------\
+                                     |         |
+                                     |         v
+                                     |   /-----------\
+                                     |   |    cBLU   |
+                                     |   | Stage 3_1 |
+               /---------\           |   \-----------/
+               |         |           |         |
+               |         v           |         v
+               |   /-----------\     |   /-----------\
+               |   |    c1AB   |     |   |   c1AB    |
+               |   | Stage 2_1 |     |   | Stage 2_2 |
+               |   \-----------/     |   \-----------/
+               |         |           |         |
+               |         v           |         v
+/-----------\  |   /-----------\     |   /-----------\
+|   c1FF    |  |   |    c1FF   |     |   |   c1FF    | 
+| Stage 1_1 |  |   | Stage 1_2 |     |   | Stage 1_3 |
+\-----------/  |   \-----------/     |   \-----------/
+     |         |         |           |         
+     \---------/         \-----------/
+#+END_SRC
+
+#+CAPTION:Example 3-Staged for Modulo Scheduling
+#+NAME: fig:SwingStaging 
+#+ATTR_LATEX: :width 0.6\textwidth
+#+RESULTS:
+[[file:figures/SwingModuloStaging.png]]
+
+   The objective of modulo scheduling is to engineer a schedule for one
+   iteration of the loop such that when this same schedule (known as the kernel)
+   is repeated at regular intervals, no intra- or inter-iteration dependence is
+   violated, and no resource usage conflicts arise between operations of either
+   the same or distinct iterations \parencite{rau1996iterative}. This generally
+   involves a sort of /loop pipelining/, where a basic block of a loop can be
+   broken into stages and the loop can be /unrolled/ to interleave stages
+   between iterations (see Figure [[fig:SwingStaging]]). Integral to this is the
+   concept of an *Initiation Interval* or II, which is essentially the fixed
+   delay between the start of successive iterations (see Figure
+   [[fig:InitiationInterval]]). Each iteration of the loop can be divided into
+   stages each consisting of II cycles. A smaller II corresponds to shorter
+   execution time.
+
+#+BEGIN_SRC ditaa :file figures/InitiationInterval.png
+ --------------------------------->
+     time 
+
+              /-----------\        
+              |   c1FF    | 
+              | Iter 3    | 
+              \-----------/ 
+        /-----------\               
+  II    |   c1FF    |       
+<---->  | Iter 2    |       
+        \-----------/       
+/-----------\  
+|   c1FF    |   
+| Iter 1    |  
+\-----------/  
+#+END_SRC
+
+#+CAPTION: Initiation Interval
+#+NAME: fig:InitiationInterval 
+#+ATTR_LATEX: :width 0.6\textwidth
+#+RESULTS:
+[[file:figures/InitiationInterval.png]]
+
+   Modulo Scheduling algorithms require a candidate II be selected before
+   scheduling is attempted. The *Minimum Initiation Interval* or $\operatorname{MII}$ is a lower
+   bound on the possible value of any II for which a modulo schedule exists. The
+   MII is constrained by both resource constraints ($\operatorname{resMII}$) and recurrence
+   constraints ($\operatorname{recMII}$). The resource constraint simply holds that resources
+   (such as functional units) must be sufficiently available and any extra
+   latency created waiting for a resource to become available must be accounted
+   for (the exact calculation of resMII is architecture specific and can
+   become very complicated on Out-of-Order execution architectures, covered in a
+   later section). The recurrence constraint lower bound is defined as the
+   maximum, taken over all cycles C in the dependence graph, of the sum of
+   latencies along C divided by the sum of distance along C:
+
+\begin{align}
+ \operatorname{MII} &= \max(\operatorname{recMII},\operatorname{resMII}) \\
+ \operatorname{recMII} &= \max\limits_{C \in DepGraph} \frac{\sum\limits_{e \in C} latency(e)}{\sum\limits_{e \in C}
+distance(e)} 
+\end{align}
+   The task of generating an optimal, resource-constrained schedule for loops
+   with arbitrary recurrences is known to be NP-complete
+   \parencite{lam2012systolic}. A heuristic approach via Swing Modulo
+   Scheduling has been implemented in the GNU C Compiler (GCC)
+   \parencite{hagog2004swing}.
+   
+** Register Pressure In Staged Loops
+   Staging can increase throughput by enabling more instructions to
+   be scheduled between high latency operations and subsequent use.
+   However this also increases the number of live instances of loop
+   variables and thus requires more registers to accommodate the schedule.
+   Swing Modulo Scheduling (SMS) is a notable variation of modulo scheduling
+   that utilizes a heuristic approach that aims to reduce register pressure
+   \parencite{gosling2000java}. Some architectures also provide hardware
+   mechanisms for *Register Queuing* that provide more efficient spilling.
+
+   Due to the nature of modulo scheduling, the lifetime of a variable can
+   overlap with a previous definition of itself. To handle this, some form of
+   register renaming needs to be provided. Some hardware provides support for
+   this in the form of *Rotating Register Files* \parencite{rau1989cydra}. When
+   no hardware solution is provided, the problem of overlapping lifetimes can be
+   solved by a technique known as *Modulo Variable Expansion* (MVE), wherein the
+   kernel is unrolled and multiple definitions of a variable are renamed at
+   compile time \parencite{valluri1998modulo}. 
+
+** Register Remapping/Renaming
+   Not to be confused with renaming of registers at compile time, register
+   renaming in hardware is a technique to remove false data dependencies ---
+   write after read (WAR) and write after write (WAW) --- between register
+   operands of subsequent instructions at runtime \parencite{sima2000design}.
+   For example, a WAR hazard could be rewritten like so
+   
+\begin{align*}
+\textbf{Before}                   & \qquad &                 \textbf{After} \\
+R2 \leftarrow \textbf{R4} + R3    & \qquad &                 R2 \leftarrow \textbf{R4} + R3 \\
+\textbf{R4} \leftarrow R1 + R5    & \qquad \Longrightarrow & \textbf{R33} \leftarrow R1 + R5
+\end{align*}
+
+   A register renaming scheme must not rename to a register that would introduce
+   a new hazard, this would present a difficult problem were it not for the
+   existence of *Logical* and *Physical* Registers. When executing machine code,
+   hardware maps *Logical Registers* to *Physical Registers*
+   -  *Logical Registers* are a set of registers usable directly when
+     writing/generating assembly code (limited by system architecture)
+   - *Physical Registers* are a set of registers actually available in hardware
+   Having a larger number of Physical registers than Logical registers gives
+   hardware extra flexibility when dispatching instructions for *Out-of-Order Execution*.
+    
+** Out-of-Order Execution
+   
+   The execution flow of an instruction on a CPU can be implemented in one of
+   two paradigms: *in-order* or *out-of-order* (OoO, also known as dynamic)
+   execution. Execution of an instruction cycle in each paradigm comprises
+   different steps:
+  
+#+LATEX:\noindent 
+*In-Order Execution*
+    1. Instruction fetch
+    2. Stall until all operands are available
+    3. Dispatch to appropriate functional unit
+    4. Execute (on appropriate functional unit)
+    5. Write back to register file
+
+#+LATEX: \noindent
+*Out-Of-Order Execution*
+    1. Instruction fetch
+    2. Dispatch to a temporary queue known as *Reservation Station*
+    3. Wait in the reservation station until operands are available
+    4. Issue once operands are available (even if before an older
+       instruction)
+    5. Execute (on appropriate functional unit)
+    6. Retire results to another temporary queue
+    7. Write results back to register files after all older instructions have their results written back
+
+   Although a more complicated design, OoO execution presents an opportunity to
+   increase throughput by filling in time that would be wasted stalling in step
+   2 of in-order execution with instructions that are ready, then re-ordering
+   the instructions back to appear they finished in order (known as retiring).
+   This essentially decouples the fetch and decode stages of the pipeline from
+   the execution stages. As the instruction pipeline deepens, there is therefore
+   increased opportunity to dispatch out of order. When combined with Register
+   Renaming, this is of particular benefit allowing instructions that are data
+   independent but register dependent to be executed in parallel. OoO
+   dispatching also provides benefits over in-order when cache misses (or high
+   latency memory accesses in general) occur \parencite{stark1997reducing}.
+   Figure [[fig:OutOfOrder]] illustrates the general control flow in an OoO machine.
+   
+   #+BEGIN_SRC ditaa :file figures/OoODiagram.png
+   /--------------\      /-------------\
+   | Instr 0.     | ...  | Instr. n    |
+   \--------------/      \-------------/
+         |           |         |
+   /--------------\      /-------------\
+   | Fetcher 0.   | ...  | Fetcher n   |
+   \--------------/      \-------------/
+         |           |         |
+         |           |         |
+         \---------------------/
+                     |
+                     v
+            /-----------------\
+            | cBLU Dispatch   |           Register Remapping
+            \-----------------/
+                     |
+                     |
+                     v 
+            /-----------------\
+            | cBLU Reservation|
+            \-----------------/
+                     |
+     -------------------------------------
+     |      |                     |      |
+   /----\ /----\               /----\ /----\
+   |cRED| |cRED|     ....      |cRED| |cRED|    Exection Units
+   \----/ \----/               \----/ \----/
+     |      |                     |      |
+     -------------------------------------
+                     |
+                     v 
+            /-----------------\
+            | cBLU Retire     |           Register UnMapping
+            \-----------------/
+   #+END_SRC
+
+   #+CAPTION: Out-Of-Order Execution Control Flow
+   #+NAME: fig:OutOfOrder 
+   #+ATTR_LATEX: :width 0.7\textwidth
+   #+RESULTS:
+   [[file:figures/OoODiagram.png]]
+
+  Out-of-Order execution requires dynamic scheduling (scheduling at runtime by
+  hardware) performed via methods such as *Tomasulo's Algorithm* or a *Register
+  Score-board*. Both methods seek to enable more efficient use of multiple
+  execution units while preventing breaking of data dependencies. A register
+  scoreboard checks resources for an instruction to see if the required
+  resources are available for the instruction to execute, and if so allows
+  dispatch. The scoreboard record (locks) the resources that would be modified
+  by the instruction at issue time, and any subsequent instructions that want to
+  access those resources cannot be issued until the instruction that initially
+  locked them subsequently unlocks them \parencite{popescu1997processor}.
+  Tomasulo's Algorithm innovated upon score-boarding by allowing improved parallel
+  execution although requiring new hardware features such as register renaming
+  in hardware, reservation stations for all execution units and a common data
+  bus between all reservation stations \parencite{tomasulo1967efficient}.
+
+* Current State of the Art and Notable/Relevant Works in Instruction Scheduling
+*** TODO COMMENT write intro to current/previous approaches
+** List Scheduling (most commonly performed scheduling)
+   List scheduling is the most widely used technique for instruction scheduling
+   \parencite{gibbons1986efficient}. List scheduling encompasses a class of
+   algorithms for basic block scheduling via a chosen heuristic. It takes a list (of
+   instructions), assigns priorities via a heuristic and schedules them in a
+   topological order in decreasing priority \parencite{wang2018list}. The
+   general structure of a list scheduling algorithm can be described as follows
+
+{{{code({\sc Basic Structure of List Scheduling Algorithms \hspace{12em} \color{grey}{.} })}}}
+#+BEGIN_SRC fortran
+while there are instrs to be scheduled do 
+      Identify highest priority instr n
+      Choose a processor p for n
+      Schedule n on p at est(n,p)
+end
+
+est(n,p) = earliest start time of n on p
+#+END_SRC
+
+    Priorities can be static (remain constant for the DAG) or dynamic (change
+    through iteration of the algorithm). The complexity of list scheduling
+    depends on the heuristic, but is generally polynomial time
+    \parencite{wang2018list}. List scheduling can also be performed /forward/ or
+    /backward/, or performed successively, applying heuristic on top of
+    heuristics. Examples of common heuristics are given in Table
+    [[tab:ListHeuristics]] \parencite{sarangal2018list}.
+
+
+       
+#+CAPTION: Example List Scheduling Heuristics   
+#+NAME: tab:ListHeuristics 
+| *Heuristic*                              | *Description*                          |
+|------------------------------------------+----------------------------------------|
+| HLFET                                    | priority is chosen by the attributes   |
+| (Highest level first with estimate time) | of static levels                       |
+|------------------------------------------+----------------------------------------|
+| MCP (Modified Critical path)             | priority by utilizing ALAP (As late    |
+|                                          | as possible) attribute                 |
+|------------------------------------------+----------------------------------------|
+| ETF (Earliest time first)                | finds the earliest start time for each |
+|                                          | task and later chooses the task having |
+|                                          | less initial time                      |
+|------------------------------------------+----------------------------------------|
+| DLS (Dynamic level scheduling)           | finds the task priority on the tasks   |
+|                                          | priority on dynamic basis              |
+|------------------------------------------+----------------------------------------|
+| CNPT (Critical node parent tree)         | prioritization of task is determined   |
+|                                          | with CN (Critical node) attribute      |
+|------------------------------------------+----------------------------------------|
+
+    
+    List scheduling is the chosen method for most conventional compilers because
+    of its flexibility, efficiency and ability to find near-optimal schedules for
+    most basic blocks. Although originally thought to yield near optimal
+    schedules for almost all schedules, analysis of list scheduling techniques
+    have shown that List Scheduling techniques have difficulty finding
+    near-optimal schedules for codes with a moderate amount of available
+    parallelism --- the peak difficulty varying with both the number of
+    processing elements and schedule length \parencite{cooper1998experimental}.
+    Therefore as architectures become more sophisticated and provide more
+    opportunity to exploit parallelism, list scheduling will in turn become
+    increasingly inadequate.
+
+    Limitations of list scheduling most likely stem from the use of a single
+    choice heuristic. There are many factors to consider when constructing a
+    schedule, and it is difficult (or more accurately impossible) to condense
+    this to assigning a priority via a polynomial time heuristic. As mentioned
+    before, combinations of heuristics can be applied through successive
+    iterations, but each iteration could undo previous iterations work.
+
+** Constraint Programming
+   As an inherently discrete problem, a number of works have sought to formulate
+   instruction scheduling as an Integer Linear Programming (ILP) problem
+   (\parencite{wilken2000optimal}, \parencite{chang1997using},
+   \parencite{kastner2001ilp}, \parencite{nagarakatte2007register},
+   \parencite{kastner1999code}). These models optimize over integer objective
+   variables (representing schedule dispatch times for instructions), and
+   utilize constraints and penalties to achieve valid and desirable schedules.
+   Solving an ILP problem is an NP-Complete problem, so
+   formulating scheduling as an ILP only really serves to generalize
+   solutions to heuristics/approximation algorithms used by ILP solvers.
+    
+   Another approach which has been far less investigated would be to optimize
+   the problem focusing entirely on constraints (known as constraint
+   programming). This type of optimization model would find a desirable schedule
+   through constraints alone (converting penalties). Notable efforts into this
+   approach are the works of McInnes/Beek in
+   \parencite{malik2008optimal},\parencite{van2001fast}. The constraint problem
+   in \parencite{malik2008optimal} found provably optimal schedules for basic
+   blocks , with the following types of constraints:
+   - *Latency Constraints*, i.e
+     - Given a labeled dependency DAG $G = (N,E)$ 
+       - $\forall (i,j) \in E \cdot j \geq i + l(i,j)$ 
+   - *Resource Constraints* that ensured functional units were not exceeded
+   - *Distance Constraints*, i.e
+     - Given a labeled dependency *DAG*  $G = (N,E)$ 
+        - $\forall (i,j) \in E \cdot j \geq i + d(i,j)$
+
+   The approach has some limitations on sophisticated enough architectures. The
+   hard constraints on latency would not account for *Register Remapping* in
+   *Out-Of-Order Execution* architectures that would be able to find more
+   optimal schedules despite the fact that latencies in normal execution would
+   create *pipeline stalls*.
+   
+{{{code({\sc Assembly Code Example Requiring Register Renaming for Optimal Scheduling \hspace{12em} \color{grey}{.} })}}}
+   #+BEGIN_SRC haskell
+   fma r3,r3,r4
+   fma r2,r2,r4
+   fma r4,r0,r3
+   fma r0,r1,r2
+   #+END_SRC
+   On a system with only 5 registers and an instruction fma of large enough
+   latency, the scheduler would need to push these instructions apart to avoid
+   breaking the anti-dependency on register r4. However a machine
+   could use register remapping to execute these instructions efficiently Out-of-Order
+   making that constraint unnecessary. 
+  
+   Despite limitations introduced by using hard constraints, this work is
+   notable as it illustrates how scheduling can be modeled as constraints. Even
+   with the limitations on OoO architectures cutting of the optimal schedule,
+   it's reasonable to assume the model would find near-optimal schedules. And by
+   converting hard constraints to soft constraints (penalties) its simple to
+   assert this space would contain the optimal solution.
+
+** Stochastic Search
+   There is a notable work to explore the space of schedules through a
+   stochastic algorithm by Schkufza, Sharma, Aiken at Stanford
+   \parencite{Schkufza:2016:SPO:2886013.2863701}. The efforts are culminated in
+   a piece of open source software known as STOKE that serves as a "stochastic
+   optimizer and program synthesizer" for x86-64 instruction sets. Stoke is a
+   super-optimizer with the following notable qualities:
+
+  - Suitable for *Short Basic Block* assembly code sequences (no modulo scheduling)
+  - Utilizes a multi-pass algorithm, applying possibly overlapping program
+    transformations each pass
+  - Encodes constraints as a *Cost Function* and uses a *Model Checker* to
+    ensure valid schedules (undo-ing transformations otherwise)
+  - Uses *Markov Chain Monte Carlo Sampler* to add a stochastic element to
+    program transformation
+
+  Each pass of the optimization minimizes the cost function
+
+  \begin{equation*}
+    \operatorname{cost}(R; T) = w_e \times \operatorname{eq}(R; T) + w_p \times \operatorname{perf}(R; T)
+  \end{equation*}
+
+  | $\color{lightgreen}{\boldsymbol{R}}$             | any rewrite of the program                                        |
+  | $\color{lightgreen}{\boldsymbol{T}}$             | the input program sequence                                        |
+  | $\color{lightgreen}{\operatorname{eq}(\cdot)}$   | the equivalence function (0 if $\color{lightgreen}{R \equiv T}$ ) |
+  | $\color{lightgreen}{\operatorname{perf}(\cdot)}$ | a metric for performance                                          |
+  | $\color{lightgreen}{\boldsymbol{w_e}}$           | weight for the equivalence term                                   |
+  | $\color{lightgreen}{\boldsymbol{w_p}}$           | weight for the performance term                                   |
+
+  Limitations with the approach (as outlined in \parencite{Schkufza:2016:SPO:2886013.2863701}) include
+   - Only optimizes basic blocks (no loops)
+   - Extremely innefficent (only practical for very short scheduling)
+   - Cost function doesn't model the space of valid checking (hence model
+     checking is required per each rewrite)
+    
+  This approach highlights the ability to use stochastic optimization to find
+  near-optimal schedules and the use of MCMC to explore the space of schedules.
+  Although the cost function doesn't model the space of valid schedules, using
+  it to generate schedules along with a model checker may still prove to be the
+  most practical way to explore a variety of schedules.
+  
+** Meta-Optimization / Hyper-Heuristics
+   Meta-optimization deals with the use of one optimization method to tune
+   another one. 
+   Hyper-heuristics are an off-spring of meta-optimization, that search within the search space of heuristics vs. the entire problem solution space.
+   Hyper-heuristics are a relatively new concept (first used in 2000 to describe
+   heuristics to choose heuristics) the definition has more recently been
+   extended to refer to a search method or learning mechanism for selecting or
+   generating heuristics to solve computational search problems
+   \parencite{burke2013hyper}. When speaking of hyper-heuristics, two main
+   categories should be considered: heuristic /selection/ and heuristic
+   /generation/. 
+
+   Previous research into meta-optimization of compilers has been attempted,
+   using machine learning to improve compiler heuristics
+   \parencite{stephenson2003meta}. The use of genetic programming has rarely
+   been used to solve production scheduling instances directly, because of the
+   difficulty of encoding solutions. However it has been found highly suitable
+   for encoding scheduling heuristics \parencite{jakobovic2007genetic}.
+
+   In the work of \parencite{jakobovic2007genetic}, genetic programming is used
+   to evolve dispatching rules, which are functions that assign a score to a job
+   based on the state of the problem. When a machine becomes idle, the
+   dispatching rule function is evaluated once for each job in the machine's
+   queue, and each result is assigned to the job as its score. The job in the
+   queue with the highest score is the next job to be assigned to the machine.
+   This approach shows genetic programming combining and rearranging heuristic
+   components to create heuristics superior to those which have been created by
+   humans (heuristic generation).
+
+   Although more works have investigated usage of heuristic generation for
+   scheduling (particularly through genetic programming
+   \parencite{beaty1991genetic},\parencite{kri2004genetic},\parencite{stephenson2003genetic},\parencite{wang2005instruction})
+   no works have been found (at the time of writing for this proposal) on
+   using heuristic selection / generation to analysis the effectiveness of
+   existing heuristics on scheduling in different architectures architectures.
+   Some work has been performed using ML in the form of Support-vector machines
+   (SVM) to learn compilation strategies (although not specific to scheduling)
+   in JiT compilers for the Java Virtual Machine \parencite{sanchez2011using}.
+
+*** TODO COMMENT read and summerize using Genetic Algorithms [[https://pdfs.semanticscholar.org/530b/e5eb7f81d8083cd0e4b47e38271c0529fd0f.pdf]]
+*** TODO COMMENT read and summerize learning heuristics for basic block scheduling [[https://link.springer.com/article/10.1007/s10732-007-9051-1]]   
+*** TODO COMMENT read and summerize Hyper-Heuristics paper [[https://orsociety.tandfonline.com/doi/full/10.1057/jors.2013.71?casa_token=fOf2wR5Su64AAAAA%3A69plSPDMUXUurTufXWal6lCO6_73-XTubToX-9HY09raeRuaCwbO2SIre-CKBCBYHjsLFWBM4os#.XfFyqXWYUUG]]
+*** TODO COMMENT read and sumemrize ML for iterative optimizaiton slides [[https://www.eecis.udel.edu/~cavazos/cgo-2006-talk.pdf]]
+* Proposed Approaches To Stochastic Scheduling and Heuristic Analysis via Hyper-Heuristics
+  In this section I will introduce a Stochastic Scheduling Algorithm that
+  utilizes a continuous optimization model with stochastically generated
+  parameters, and propose it's use as a training set generator for ML driven
+  heuristics selection and possibly generation. The full goal of this approach would
+  be to not only find a means to evaluate the effectiveness of scheduling heuristics on a
+  given architecture by observing learned heuristic selection, but to also be
+  able to evaluate the limitations of an architecture by analyzing the space of
+  valid schedules via the continuous model used for optimization.
+
+** Optimization Model for Modulo Scheduling
+
+   The following is a specification for a continuous optimization model for instruction scheduling
+   
+\begin{align*}
+    \color{lightblue}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
+    \color{lightblue}{\text{Indicator Function }} & \operatorname{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
+    & t_i :& \text{dispatch time} \\
+    & b_i :& \text{completion time} \\
+    & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
+     \color{lightblue}{\text{Constants }}& \operatorname{II} : & \text{iteration interval} = \frac{\# instructions}{dispatches/cycle} \\
+\end{align*}
+
+\begin{align}
+    \color{lightblue}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
+								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \operatorname{II}  \\
+								 & b_i + \epsilon \leq t_i + \operatorname{II} \\
+    \color{lightblue}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
+\end{align}
+
+The above is similar
+to the work detailed in Constraint Programming by \parencite{malik2008optimal},
+but only maintaining the constraints necessary for ensuring a valid schedule,
+and relaxing the problem into a continuous domain as opposed to the Integer
+Linear Programming models mentioned. This model contains a set of objective
+variables: $t_i$,$b_i$,$f_i$ for each instruction $i$ to be scheduled. Each
+variable $t_i$,$b_i$ represents the dispatch and completion times of the
+$i^{th}$ instruction respectively. As we wish to model an Out-of-Order execution
+architecture, completion times are not necessarily fixed to dispatch times. The
+third variable, $f_i$, which is constrained to be between 0 and 1, is the
+probability that the instruction $i$ should spill. The constant variable
+$\operatorname{II}$ is the pre-computed Initiation Interval.
+
+Unlike the work of \parencite{malik2008optimal}, the proposed model makes little
+use of constraints. In fact the only constraints used are to enforce the
+resulting schedule is a valid modulo schedule. The notation $i \rightarrow j$
+used in the Hard Constraints equations above denotes that instruction $j$
+depends on instruction $i$. The first hard constraint enforces that any 
+instruction must be dispatched only after it's dependencies. The second
+constraint sets a limit on the overall execution time that instructions must
+fall within. And the third constraint enforces that an instruction must complete
+within the same interval it was dispatched to avoid an anti-dependency hazard. 
+
+Without any *Penalties*, the above objective model would squash all dispatch and
+completion times down, moving dependent instructions apart only by a given
+$\epsilon$ (a small constant) and assigning 0 to all $f_i$. A *Key Idea* to this work: encode
+choice heuristics as penalties, and adjust preference between heuristics by
+scaling. Heuristics, such as the ones detailed for use in List Scheduling, can
+all be encoded as Penalty Functions (functions that return a large value to push
+down in the schedule, or a large negative value to push up). By picking a large
+or small number to scale a penalty function we can prioritize a schedule.
+
+** IO Penalty
+   Since we're not pushing instructions apart through latency constraints like
+   in \parencite{malik2008optimal}, we need a penalty to compensate. We propose
+   penalizing the dispatch time of instructions based on the quantity and
+   latencies of it's dependencies. *Note*: unlike a hard constraint on
+   latencies, this won't cut off valid schedules that could be optimal on OoO
+   architectures. 
+   \begin{align}
+            \color{lightblue}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
+            \color{lightblue}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
+            \qquad & \qquad & \qquad \\
+            \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \operatorname{IN}(t_i - t_j) & \qquad 
+    \end{align}
+   
+    #+NAME: fig:sigmoid
+    #+CAPTION: Custom Indicator Function
+    [[file:figures/sigmoid.jpg]] 
+
+** Indicator Function
+   The function $\operatorname{IN}$ specified in the model and used in the IO Penalty
+   above is what's known as an Indicator Function, and is important for
+   implementing heuristics that rely on testing the proximity of two
+   instructions. Essentially, the function can be used to indicate (via a
+   non-zero value) whether two instructions are scheduled within a certain range
+   of each-other. For this purpose, we developed a custom indicator function (an
+   alteration of the sigmoid function often used in neural networks)
+   shown in Figure [[fig:sigmoid]].
+\begin{align}
+     S(x) = \frac{1}{(1 + e^{s(-0.5 + v)})(1 + e^{s(-0.5-v)})}
+\end{align} 
+
+** Stochastic Scaling
+   The scaling $\frac{1}{N_j}$ may be a good guess, but not necessarily effective in practice
+   - *IDEA* scale the *IO penalty* stochastically by a multiple of the II
+   \begin{align}
+    \color{lightblue}{\text{Define a Grouping}} \qquad & \mathbb{C} = \text{Group}(\forall i \mid i \rightarrow j) \\
+    \color{lightblue}{\text{For each Group i}} \qquad & c_i \in \mathbb{RAND(R)} \\
+    \color{lightblue}{\text{Stochastic Penalty}} \qquad & \sum_i c_i II \cdot \mathbb{IO}(i)
+   \end{align}
+   
+   As previously mentioned, various other heuristics can be encoded and also scaled
+   stochastically, in basically the same manner as the IO penalty. The nature
+   of many heuristics can be encapsulated by simply choosing the same scaling
+   based on the type of instruction (i.e push all loads up or down). 
+ 
+** Opportunity for Hyper-Heuristic Development  
+  By representing the space of schedules in a continuous model (i.e the space of
+  $\mathbb{R}^n$) and encoding heuristics as penalties, we can evaluate the
+  merits of various heuristics in combination with each other. The continuous
+  nature of the model provides more degrees of freedom when evaluating
+  overlapping heuristics. By scaling these heuristics stochastically, we
+  already have a method to analyze heuristic selection through analyzing which
+  scalings provide better performing schedules.
+
+  By generating a variety of schedules for different types of basic blocks using
+  the stochastic method we can also obtain a "training set" which can
+  subsequently be used with various supervised Machine Learning (ML) algorithms,
+  most notably Support Vector Machines (SVM), supervised learning models that
+  analyze data used for classification and regression analysis. The use of
+  neural nets, ensemble methods or genetic algorithms may also be worth
+  exploring.
+
+   Principal Component Analysis is a dimension reduction tool that can be used
+   to reduce a large set of variables to a small set that still contains most of
+   the information in the large set. Principal component analysis can possibly
+   be performed over the scaling parameters in conjunction with the training set
+   results in order to judge the influence of penalties on a given architecture.
+
+   
+  Clustering methods (unsupervised learning) can possibly be used for heuristic
+  generation, by finding new groupings to scale. Given a clustering with scaling
+  $c_i$ we can check the following assertion: For each scaling
+  $\color{lightgreen}{c_i \in \mathbb{RAND(R)}}$, there exists an
+  $\color{lightgreen}{\epsilon \in \mathbb(R)}$ such that
+  $\color{lightgreen}{c_i + \epsilon}$ produces a distinct schedule from
+  $\color{lightgreen}{c_i}$. If the assertion fails, the clustering is useless.
+  A prominent research question would be for this work would be whether or not
+  it's possible to avoid such clusterings. 
+
+* Timeline
+
+#+CAPTION: Proposed Timeline   
+#+NAME: tab:ProposedTimeline 
+| *Schedule*      | *Goals*                                                      |
+|-----------------+--------------------------------------------------------------|
+| *2020 Jan-Feb*  | Write paper on stochastic scheduling                         |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+| *2020 Jan-Mar*  | Update Coconut to schedule for POWER and release open-source |
+|                 | - *Jan* Simulator                                            |
+|                 | - *Feb* CodeGraph Library                                    |
+|                 | - *Mar* Update DSL                                           |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+| *2020 May*      | Present at IBM TechConnect                                   |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+| *2020 Jun-Sept* | Generate Schedules for MASS on Power and experiment          |
+|                 | with Hyper-Heuristic methods                                 |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+| *2020 Jun-Aug*  | Write paper on schedule optimization for OoO architectures   |
+|                 | to submit to TACO                                            |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+| *2020 Aug-Oct*  | Write paper on Hyper-Heuristics to submit to one of the big  |
+|                 | ML conferences (ICML,IJCAI,etc)                              |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+| *2020 Nov*      | Present at IBM CASCON                                        |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+| *2020 Oct-Dec*  | Attmpt to apply Hypr-Heuristic methods developed on power    |
+|                 | to schedule for Z                                            |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+| *2021 Jun*      | Defend Thesis                                                |
+|                 |                                                              |
+|-----------------+--------------------------------------------------------------|
+
+* Bib                                                                :ignore:
+# LaTeX: \addcontentsline{toc}{section}{References}
+#+LaTeX: \addcontentsline{toc}{part}{References}
+#+LaTeX: \printbibliography
+
+* Org-Bibtex                                                         :ignore:
+** COMMENT PUT BIBTEX ENTRIES HERE IN SUBSECTION ENDED WITH IGNORE USING ORG-BIBTEX-YANK COMMAND :ignore:
+** COMMENT EXPORT TO References.bib USING ORG-BIBTEX COMMAND :ignore:
+** Using machines to learn method-specific compilation strategies :ignore:
+   :PROPERTIES:
+   :TITLE:    Using machines to learn method-specific compilation strategies
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: sanchez2011using
+   :AUTHOR:   Sanchez, Ricardo Nabinger and Amaral, Jose Nelson and Szafron, Duane and Pirvu, Marius and Stoodley, Mark
+   :BOOKTITLE: International Symposium on Code Generation and Optimization (CGO 2011)
+   :PAGES:    257--266
+   :YEAR:     2011
+   :ORGANIZATION: IEEE
+   :END:
+** Instruction scheduling using MAX-MIN ant system optimization :ignore:
+   :PROPERTIES:
+   :TITLE:    Instruction scheduling using MAX-MIN ant system optimization
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: wang2005instruction
+   :AUTHOR:   Wang, Gang and Gong, Wenrui and Kastner, Ryan
+   :BOOKTITLE: Proceedings of the 15th ACM Great Lakes symposium on VLSI
+   :PAGES:    44--49
+   :YEAR:     2005
+   :ORGANIZATION: ACM
+   :END:
+** Genetic programming applied to compiler heuristic optimization :ignore:
+   :PROPERTIES:
+   :TITLE:    Genetic programming applied to compiler heuristic optimization
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: stephenson2003genetic
+   :AUTHOR:   Stephenson, Mark and O’Reilly, Una-May and Martin, Martin C and Amarasinghe, Saman
+   :BOOKTITLE: European conference on genetic programming
+   :PAGES:    238--253
+   :YEAR:     2003
+   :ORGANIZATION: Springer
+   :END:
+** Genetic instruction scheduling and register allocation :ignore:
+   :PROPERTIES:
+   :TITLE:    Genetic instruction scheduling and register allocation
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: kri2004genetic
+   :AUTHOR:   Kri, Fernanda and Feeley, Marc
+   :BOOKTITLE: XXIV International Conference of the Chilean Computer Science Society
+   :PAGES:    76--83
+   :YEAR:     2004
+   :ORGANIZATION: IEEE
+   :END:
+** Genetic algorithms and instruction scheduling :ignore:
+   :PROPERTIES:
+   :TITLE:    Genetic algorithms and instruction scheduling
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: beaty1991genetic
+   :AUTHOR:   Beaty, Steven J
+   :BOOKTITLE: MICRO
+   :VOLUME:   24
+   :PAGES:    206--211
+   :YEAR:     1991
+   :ORGANIZATION: Citeseer
+   :END:
+** Genetic programming heuristics for multiple machine scheduling :ignore:
+   :PROPERTIES:
+   :TITLE:    Genetic programming heuristics for multiple machine scheduling
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: jakobovic2007genetic
+   :AUTHOR:   Jakobovi{\'c}, Domagoj and Jelenkovi{\'c}, Leonardo and Budin, Leo
+   :BOOKTITLE: European Conference on Genetic Programming
+   :PAGES:    321--330
+   :YEAR:     2007
+   :ORGANIZATION: Springer
+   :END:
+** Fast optimal instruction scheduling for single-issue processors with arbitrary latencies :ignore:
+   :PROPERTIES:
+   :TITLE:    Fast optimal instruction scheduling for single-issue processors with arbitrary latencies
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: van2001fast
+   :AUTHOR:   Van Beek, Peter and Wilken, Kent
+   :BOOKTITLE: International conference on principles and practice of constraint programming
+   :PAGES:    625--639
+   :YEAR:     2001
+   :ORGANIZATION: Springer
+   :END:
+** Code optimization by integer linear programming :ignore:
+   :PROPERTIES:
+   :TITLE:    Code optimization by integer linear programming
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: kastner1999code
+   :AUTHOR:   K{\"a}stner, Daniel and Langenbach, Marc
+   :BOOKTITLE: International Conference on Compiler Construction
+   :PAGES:    122--136
+   :YEAR:     1999
+   :ORGANIZATION: Springer
+   :END:
+** Register allocation and optimal spill code scheduling in software pipelined loops using 0-1 integer linear programming formulation :ignore:
+   :PROPERTIES:
+   :TITLE:    Register allocation and optimal spill code scheduling in software pipelined loops using 0-1 integer linear programming formulation
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: nagarakatte2007register
+   :AUTHOR:   Nagarakatte, Santosh G and Govindarajan, R
+   :BOOKTITLE: International Conference on Compiler Construction
+   :PAGES:    126--140
+   :YEAR:     2007
+   :ORGANIZATION: Springer
+   :END:
+** ILP-based Instruction Scheduling for IA-64 :ignore:
+   :PROPERTIES:
+   :TITLE:    ILP-based Instruction Scheduling for IA-64
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: kastner2001ilp
+   :AUTHOR:   K{\"a}stner, Daniel and Winkel, Sebastian
+   :BOOKTITLE: ACM SIGPLAN Notices
+   :VOLUME:   36
+   :NUMBER:   8
+   :PAGES:    145--154
+   :YEAR:     2001
+   :ORGANIZATION: ACM
+   :END:
+** Using integer linear programming for instruction scheduling and register allocation in multi-issue processors :ignore:
+   :PROPERTIES:
+   :TITLE:    Using integer linear programming for instruction scheduling and register allocation in multi-issue processors
+   :BTYPE:    article
+   :CUSTOM_ID: chang1997using
+   :AUTHOR:   Chang, Chia-Ming and Chen, Chien-Ming and King, Chung-Ta
+   :JOURNAL:  Computers \& Mathematics with Applications
+   :VOLUME:   34
+   :NUMBER:   9
+   :PAGES:    1--14
+   :YEAR:     1997
+   :PUBLISHER: Elsevier
+   :END:
+** LIST SCHEDULING ALGORITHMS CLASSIFICATION: AN ANALYTICAL STUDY :ignore:
+   :PROPERTIES:
+   :TITLE:    LIST SCHEDULING ALGORITHMS CLASSIFICATION: AN ANALYTICAL STUDY
+   :BTYPE:    article
+   :CUSTOM_ID: sarangal2018list
+   :AUTHOR:   Sarangal, Akanksha and Kaur, Nirmal and Kaur, Ravreet
+   :JOURNAL:  International Journal of Advanced Research in Computer Science
+   :VOLUME:   9
+   :NUMBER:   2
+   :PAGES:    385
+   :YEAR:     2018
+   :PUBLISHER: International Journal of Advanced Research in Computer Science
+   :END:
+** List-scheduling versus cluster-scheduling :ignore:
+   :PROPERTIES:
+   :TITLE:    List-scheduling versus cluster-scheduling
+   :BTYPE:    article
+   :CUSTOM_ID: wang2018list
+   :AUTHOR:   Wang, Huijun and Sinnen, Oliver
+   :JOURNAL:  IEEE Transactions on Parallel and Distributed Systems
+   :VOLUME:   29
+   :NUMBER:   8
+   :PAGES:    1736--1749
+   :YEAR:     2018
+   :PUBLISHER: IEEE
+   :END:
+** Efficient instruction scheduling for a pipelined architecture :ignore:
+   :PROPERTIES:
+   :TITLE:    Efficient instruction scheduling for a pipelined architecture
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: gibbons1986efficient
+   :AUTHOR:   Gibbons, Philip B and Muchnick, Steven S
+   :BOOKTITLE: Acm sigplan notices
+   :VOLUME:   21
+   :NUMBER:   7
+   :PAGES:    11--16
+   :YEAR:     1986
+   :ORGANIZATION: ACM
+   :END:
+** An experimental evaluation of list scheduling :ignore:
+   :PROPERTIES:
+   :TITLE:    An experimental evaluation of list scheduling
+   :BTYPE:    article
+   :CUSTOM_ID: cooper1998experimental
+   :AUTHOR:   Cooper, Keith D and Schielke, Philip J and Subramanian, Devika
+   :JOURNAL:  TR98
+   :VOLUME:   326
+   :YEAR:     1998
+   :END:
+** Processor architecture providing out-of-order execution :ignore:
+   :PROPERTIES:
+   :TITLE:    Processor architecture providing out-of-order execution
+   :BTYPE:    misc
+   :CUSTOM_ID: popescu1997processor
+   :AUTHOR:   Popescu, Valeri and Schultz, Merle A and Gibson, Gary A and Spracklen, John E and Lightner, Bruce D
+   :YEAR:     1997
+   :MONTH:    may # "~6"
+   :PUBLISHER: Google Patents
+   :NOTE:     US Patent 5,627,983
+   :END:
+** Reducing the performance impact of instruction cache misses by writing instructions into the reservation stations out-of-order :ignore:
+   :PROPERTIES:
+   :TITLE:    Reducing the performance impact of instruction cache misses by writing instructions into the reservation stations out-of-order
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: stark1997reducing
+   :AUTHOR:   Stark, Jared and Racunas, Paul and Patt, Yale N
+   :BOOKTITLE: Proceedings of the 30th Annual ACM/IEEE International Symposium on Microarchitecture
+   :PAGES:    34--43
+   :YEAR:     1997
+   :ORGANIZATION: IEEE Computer Society
+   :END:
+** Iterative modulo scheduling  :ignore:
+   :PROPERTIES:
+   :TITLE:    Iterative modulo scheduling
+   :BTYPE:    article
+   :CUSTOM_ID: rau1996iterative
+   :AUTHOR:   Rau, B Ramakrishna
+   :JOURNAL:  International Journal of Parallel Programming
+   :VOLUME:   24
+   :NUMBER:   1
+   :PAGES:    3--64
+   :YEAR:     1996
+   :PUBLISHER: Springer
+   :END:
+** The Java language specification :ignore:
+   :PROPERTIES:
+   :TITLE:    The Java language specification
+   :BTYPE:    book
+   :CUSTOM_ID: gosling2000java
+   :AUTHOR:   Gosling, James and Joy, Bill and Steele, Guy and Bracha, Gilad
+   :YEAR:     2000
+   :PUBLISHER: Addison-Wesley Professional
+   :END:
+** Swing modulo scheduling for gcc :ignore:
+   :PROPERTIES:
+   :TITLE:    Swing modulo scheduling for gcc
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: hagog2004swing
+   :AUTHOR:   Hagog, Mostafa and Zaks, Ayal
+   :BOOKTITLE: Proceedings of the 2004 GCC Developers’ Summit
+   :PAGES:    55--64
+   :YEAR:     2004
+   :END:
+** On the complexity of register coalescing :ignore:
+   :PROPERTIES:
+   :TITLE:    On the complexity of register coalescing
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: bouchez2007complexity
+   :AUTHOR:   Bouchez, Florent and Darte, Alain and Rastello, Fabrice
+   :BOOKTITLE: Proceedings of the International Symposium on Code Generation and Optimization
+   :PAGES:    102--114
+   :YEAR:     2007
+   :ORGANIZATION: IEEE Computer Society
+   :END:
+** Graph coloring problems :ignore:
+   :PROPERTIES:
+   :TITLE:    Graph coloring problems
+   :BTYPE:    book
+   :CUSTOM_ID: jensen2011graph
+   :AUTHOR:   Jensen, Tommy R and Toft, Bjarne
+   :VOLUME:   39
+   :YEAR:     2011
+   :PUBLISHER: John Wiley \& Sons
+   :END:
+** The Cydra 5 departmental supercomputer: Design philosophies, decisions, and trade-offs :ignore:
+   :PROPERTIES:
+   :TITLE:    The Cydra 5 departmental supercomputer: Design philosophies, decisions, and trade-offs
+   :BTYPE:    article
+   :CUSTOM_ID: rau1989cydra
+   :AUTHOR:   Rau, B. Ramakrishna and Yen, David W. L. and Yen, Wei and Towle, Ross A.
+   :JOURNAL:  Computer
+   :VOLUME:   22
+   :NUMBER:   1
+   :PAGES:    12--35
+   :YEAR:     1989
+   :PUBLISHER: IEEE
+   :END:
+** Modulo-variable expansion sensitive scheduling :ignore:
+   :PROPERTIES:
+   :TITLE:    Modulo-variable expansion sensitive scheduling
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: valluri1998modulo
+   :AUTHOR:   Valluri, Madhavi Gopal and Govindarajan, R
+   :BOOKTITLE: Proceedings. Fifth International Conference on High Performance Computing (Cat. No. 98EX238)
+   :PAGES:    334--341
+   :YEAR:     1998
+   :ORGANIZATION: IEEE
+   :END:
+** The design space of register renaming techniques :ignore:
+   :PROPERTIES:
+   :TITLE:    The design space of register renaming techniques
+   :BTYPE:    article
+   :CUSTOM_ID: sima2000design
+   :AUTHOR:   Sima, Dezso
+   :JOURNAL:  IEEE micro
+   :VOLUME:   20
+   :NUMBER:   5
+   :PAGES:    70--83
+   :YEAR:     2000
+   :PUBLISHER: IEEE
+   :END:
+** Computer organization and design MIPS edition: the hardware/software interface :ignore:
+   :PROPERTIES:
+   :TITLE:    Computer organization and design MIPS edition: the hardware/software interface
+   :BTYPE:    book
+   :CUSTOM_ID: patterson2013computer
+   :AUTHOR:   Patterson, David A and Hennessy, John L
+   :YEAR:     2013
+   :PUBLISHER: Newnes
+   :END:
+** Meta optimization: improving compiler heuristics with machine learning :ignore:
+   :PROPERTIES:
+   :TITLE:    Meta optimization: improving compiler heuristics with machine learning
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: stephenson2003meta
+   :AUTHOR:   Stephenson, Mark and Amarasinghe, Saman and Martin, Martin and O'Reilly, Una-May
+   :BOOKTITLE: ACM SIGPLAN Notices
+   :VOLUME:   38
+   :NUMBER:   5
+   :PAGES:    77--90
+   :YEAR:     2003
+   :ORGANIZATION: ACM
+   :END:
+** Hyper-heuristics: A survey of the state of the art :ignore:
+   :PROPERTIES:
+   :TITLE:    Hyper-heuristics: A survey of the state of the art
+   :BTYPE:    article
+   :CUSTOM_ID: burke2013hyper
+   :AUTHOR:   Burke, Edmund K and Gendreau, Michel and Hyde, Matthew and Kendall, Graham and Ochoa, Gabriela and {\"O}zcan, Ender and Qu, Rong
+   :JOURNAL:  Journal of the Operational Research Society
+   :VOLUME:   64
+   :NUMBER:   12
+   :PAGES:    1695--1724
+   :YEAR:     2013
+   :PUBLISHER: Taylor \& Francis
+   :END:
+** An efficient algorithm for exploiting multiple arithmetic units :ignore:
+   :PROPERTIES:
+   :TITLE:    An efficient algorithm for exploiting multiple arithmetic units
+   :BTYPE:    article
+   :CUSTOM_ID: tomasulo1967efficient
+   :AUTHOR:   Tomasulo, Robert M
+   :JOURNAL:  IBM Journal of research and Development
+   :VOLUME:   11
+   :NUMBER:   1
+   :PAGES:    25--33
+   :YEAR:     1967
+   :PUBLISHER: IBM
+   :END:
+** The superblock: an effective technique for VLIW and superscalar compilation :ignore:
+   :PROPERTIES:
+   :TITLE:    The superblock: an effective technique for VLIW and superscalar compilation
+   :BTYPE:    incollection
+   :CUSTOM_ID: hwu1993superblock
+   :AUTHOR:   Hwu, Wen-Mei W and Mahlke, Scott A and Chen, William Y and Chang, Pohua P and Warter, Nancy J and Bringmann, Roger A and Ouellette, Roland G and Hank, Richard E and Kiyohara, Tokuzo and Haab, Grant E and others
+   :BOOKTITLE: Instruction-Level Parallelism
+   :PAGES:    229--248
+   :YEAR:     1993
+   :PUBLISHER: Springer
+   :END:
+** Inherently lower-power high-performance superscalar architectures :ignore:
+   :PROPERTIES:
+   :TITLE:    Inherently lower-power high-performance superscalar architectures
+   :BTYPE:    article
+   :CUSTOM_ID: zyuban2001inherently
+   :AUTHOR:   Zyuban, Victor V and Kogge, Peter M
+   :JOURNAL:  IEEE Transactions on Computers
+   :VOLUME:   50
+   :NUMBER:   3
+   :PAGES:    268--285
+   :YEAR:     2001
+   :PUBLISHER: IEEE
+   :END:
+** Very long instruction word architectures and the ELI-512 :ignore:
+   :PROPERTIES:
+   :TITLE:    Very long instruction word architectures and the ELI-512
+   :BTYPE:    book
+   :CUSTOM_ID: fisher1983very
+   :AUTHOR:   Fisher, Joseph A
+   :VOLUME:   11
+   :NUMBER:   3
+   :YEAR:     1983
+   :PUBLISHER: ACM
+   :END:
+** Trace scheduling: A technique for global microcode compaction  :ignore:
+   :PROPERTIES:
+   :TITLE:    Trace scheduling: A technique for global microcode compaction
+   :BTYPE:    article
+   :CUSTOM_ID: fisher1981trace
+   :AUTHOR:   Fisher, Joseph A.
+   :JOURNAL:  IEEE transactions on computers
+   :NUMBER:   7
+   :PAGES:    478--490
+   :YEAR:     1981
+   :PUBLISHER: IEEE
+   :END:
+** Optimization of horizontal microcode within and beyond basic blocks: an application of processor scheduling with resources :ignore:
+   :PROPERTIES:
+   :TITLE:    Optimization of horizontal microcode within and beyond basic blocks: an application of processor scheduling with resources
+   :BTYPE:    techreport
+   :CUSTOM_ID: fisher1979optimization
+   :AUTHOR:   Fisher, Joseph A
+   :YEAR:     1979
+   :INSTITUTION: New York Univ., NY (USA). Courant Mathematics and Computing Lab.
+   :END:
+** Postpass code optimization of pipeline constraints                :ignore:
+   :PROPERTIES:
+   :TITLE:    Postpass code optimization of pipeline constraints
+   :BTYPE:    article
+   :CUSTOM_ID: hennessy1983postpass
+   :AUTHOR:   Hennessy, John and Gross, Thomas
+   :JOURNAL:  ACM Trans. Program. Lang. Syst.;(United States)
+   :VOLUME:   3
+   :YEAR:     1983
+   :PUBLISHER: Stanford Univ., CA
+   :END:
+** A systolic array optimizing compiler :ignore:
+   :PROPERTIES:
+   :TITLE:    A systolic array optimizing compiler
+   :BTYPE:    book
+   :CUSTOM_ID: lam2012systolic
+   :AUTHOR:   Lam, Monica S
+   :VOLUME:   64
+   :YEAR:     2012
+   :PUBLISHER: Springer Science \& Business Media
+   :END:
+** Topology and geometry :ignore: 
+   :PROPERTIES:
+   :TITLE:    Topology and geometry
+   :BTYPE:    book
+   :CUSTOM_ID: bredon2013topology
+   :AUTHOR:   Bredon, Glen E
+   :VOLUME:   139
+   :YEAR:     2013
+   :PUBLISHER: Springer Science \& Business Media
+   :END:
+*** COMMENT [[https://books.google.ca/books?hl=en&lr=&id=wuUlBQAAQBAJ&oi=fnd&pg=PA1&dq=bredon+glen+topology+and+geometry&ots=LFqjujWMGd&sig=fccl_8xgDo7xPGII14WyzTrJaNw#v=onepage&q=bredon%20glen%20topology%20and%20geometry&f=false][Topology and geometry]]
+** Constraint-Based Register Allocation and Instruction Scheduling   :ignore:
+   :PROPERTIES:
+   :TITLE:    Constraint-Based Register Allocation and Instruction Scheduling
+   :BTYPE:    phdthesis
+   :CUSTOM_ID: castaneda2018constraint
+   :AUTHOR:   Casta{\~n}eda Lozano, Roberto
+   :YEAR:     2018
+   :SCHOOL:   KTH Royal Institute of Technology
+   :END:
+*** COMMENT [[http://www.diva-portal.org/smash/get/diva2:1232941/FULLTEXT01.pdf][Constraint Based Register allocation and Instruction Scheduling]]   
+** Combining register allocation and instruction scheduling          :ignore:
+  :PROPERTIES:
+  :TITLE:    Combining register allocation and instruction scheduling
+  :BTYPE:    article
+  :CUSTOM_ID: motwani1995combining
+  :AUTHOR:   Motwani, Rajeev and Palem, Krishna V and Sarkar, Vivek and Reyen, Salem
+  :JOURNAL:  Courant Institute, New York University
+  :YEAR:     1995
+  :END:
+*** COMMENT [[https://arxiv.org/pdf/1804.02452.pdf][Combining Register Allocation and Instruction Scheduling]]
+
+** Register Allocation with Instruction Scheduling :ignore:
+   :PROPERTIES:
+   :TITLE:    Register Allocation with Instruction Scheduling
+   :BTYPE:    article
+   :CUSTOM_ID: Pinter:1993:RAI:173262.155114
+   :AUTHOR:   Pinter, Shlomit S.
+   :JOURNAL:  SIGPLAN Not.
+   :ISSUE_DATE: June 1993
+   :VOLUME:   28
+   :NUMBER:   6
+   :MONTH:    jun
+   :YEAR:     1993
+   :ISSN:     0362-1340
+   :PAGES:    248--257
+   :NUMPAGES: 10
+   :URL:      http://doi.acm.org/10.1145/173262.155114
+   :DOI:      10.1145/173262.155114
+   :ACMID:    155114
+   :PUBLISHER: ACM
+   :ADDRESS:  New York, NY, USA
+   :END:
+*** COMMENT [[http://delivery.acm.org/10.1145/160000/155114/p248-pinter.pdf?ip=130.113.109.215&id=155114&acc=ACTIVE%20SERVICE&key=FD0067F557510FFB%2ED816932E3DB0B89D%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&__acm__=1564584969_261ecbe26f943fdf33018f2f39ebfbd2][Register Allocation with Instruction Scheduling: A New Approach]]
+
+** Evaluating the use of register queues in software pipelined loops :ignore:
+   :PROPERTIES:
+   :TITLE:    Evaluating the use of register queues in software pipelined loops
+   :BTYPE:    article
+   :CUSTOM_ID: tyson2001evaluating
+   :AUTHOR:   Tyson, Gary S and Smelyanskiy, Mikhail and Davidson, Edward S
+   :JOURNAL:  IEEE Transactions on Computers
+   :VOLUME:   50
+   :NUMBER:   8
+   :PAGES:    769--783
+   :YEAR:     2001
+   :PUBLISHER: IEEE
+   :END:
+*** COMMENT [[https://ieeexplore.ieee.org/document/947006][Evaluating the Use of Register Queues in Software Pipelined Loops]]
+
+** Software-pipelining on multi-core architectures :ignore:
+   :PROPERTIES:
+   :TITLE:    Software-pipelining on multi-core architectures
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: douillet2007software
+   :AUTHOR:   Douillet, Alban and Gao, Guang R
+   :BOOKTITLE: Proceedings of the 16th International Conference on Parallel Architecture and Compilation Techniques
+   :PAGES:    39--48
+   :YEAR:     2007
+   :ORGANIZATION: IEEE Computer Society
+   :END:
+*** COMMENT [[https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=4336198][Software Pipelining on Multi-core Architectures]]
+
+** Global instruction scheduling for superscalar machines :ignore:
+   :PROPERTIES:
+   :TITLE:    Global instruction scheduling for superscalar machines
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: bernstein1991global
+   :AUTHOR:   Bernstein, David and Rodeh, Michael
+   :BOOKTITLE: ACM SIGPLAN Notices
+   :VOLUME:   26
+   :NUMBER:   6
+   :PAGES:    241--255
+   :YEAR:     1991
+   :ORGANIZATION: ACM
+   :END:
+*** COMMENT [[http://pages.cs.wisc.edu/~fischer/cs701.f06/berstein_rodeh.pdf][Global instruction scheduling for superscalar machines]]
+
+** Efficient instruction scheduling for a pipelined architecture :ignore:
+   :PROPERTIES:
+   :TITLE:    Efficient instruction scheduling for a pipelined architecture
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: gibbons1986efficient
+   :AUTHOR:   Gibbons, Philip B and Muchnick, Steven S
+   :BOOKTITLE: Acm sigplan notices
+   :VOLUME:   21
+   :NUMBER:   7
+   :PAGES:    11--16
+   :YEAR:     1986
+   :ORGANIZATION: ACM
+   :END:
+*** COMMENT [[http://delivery.acm.org.libaccess.lib.mcmaster.ca/10.1145/20000/13312/p11-gibbons.pdf?ip=130.113.111.210&id=13312&acc=ACTIVE%20SERVICE&key=FD0067F557510FFB%2ED816932E3DB0B89D%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&__acm__=1566799515_cd89aab9c480dc291845f8e0ab01483f][Efficient scheduling for pipelined architectures]]
+** Instruction-level parallel processing: history, overview, and perspective :ignore:
+   :PROPERTIES:
+   :TITLE:    Instruction-level parallel processing: history, overview, and perspective
+   :BTYPE:    incollection
+   :CUSTOM_ID: rau1993instruction
+   :AUTHOR:   Rau, B Ramakrishna and Fisher, Joseph A
+   :BOOKTITLE: Instruction-Level Parallelism
+   :PAGES:    9--50
+   :YEAR:     1993
+   :PUBLISHER: Springer
+   :END:
+*** COMMENT [[http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.799.7976&rep=rep1&type=pdf][Instruction-level parallel processing]]
+** Register allocation via coloring                                  :ignore:
+   :PROPERTIES:
+   :TITLE:    Register allocation via coloring
+   :BTYPE:    article
+   :CUSTOM_ID: chaitin1981register
+   :AUTHOR:   Chaitin, Gregory J and Auslander, Marc A and Chandra, Ashok K and Cocke, John and Hopkins, Martin E and Markstein, Peter W
+   :JOURNAL:  Computer languages
+   :VOLUME:   6
+   :NUMBER:   1
+   :PAGES:    47--57
+   :YEAR:     1981
+   :PUBLISHER: Elsevier
+   :END:
+** CRAIG: a practical framework for combining instruction scheduling and register assignment. :ignore:
+   :PROPERTIES:
+   :TITLE:    CRAIG: a practical framework for combining instruction scheduling and register assignment.
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: brasier1995craig
+   :AUTHOR:   Brasier, Thomas S and Sweany, Philip H and Beaty, Steven J and Carr, Steve
+   :BOOKTITLE: PACT
+   :PAGES:    11--18
+   :YEAR:     1995
+   :ORGANIZATION: Citeseer
+   :END:
+** Coloring heuristics for register allocation :ignore:
+   :PROPERTIES:
+   :TITLE:    Coloring heuristics for register allocation
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: briggs1989coloring
+   :AUTHOR:   Briggs, Preston and Cooper, Keith D and Kennedy, Ken and Torczon, Linda
+   :BOOKTITLE: PLDI
+   :VOLUME:   89
+   :PAGES:    275--284
+   :YEAR:     1989
+   :ORGANIZATION: Citeseer
+   :END:
+** Register Allocation \& Spilling via Graph Coloring :ignore:
+   :PROPERTIES:
+   :TITLE:    Register Allocation \& Spilling via Graph Coloring
+   :BTYPE:    article
+   :CUSTOM_ID: Chaitin:1982:RAS:872726.806984
+   :AUTHOR:   Chaitin, G. J.
+   :JOURNAL:  SIGPLAN Not.
+   :ISSUE_DATE: June 1982
+   :VOLUME:   17
+   :NUMBER:   6
+   :MONTH:    jun
+   :YEAR:     1982
+   :ISSN:     0362-1340
+   :PAGES:    98--101
+   :NUMPAGES: 4
+   :URL:      http://doi.acm.org.libaccess.lib.mcmaster.ca/10.1145/872726.806984
+   :DOI:      10.1145/872726.806984
+   :ACMID:    806984
+   :PUBLISHER: ACM
+   :ADDRESS:  New York, NY, USA
+   :END:
+*** COMMENT [[http://delivery.acm.org.libaccess.lib.mcmaster.ca/10.1145/810000/806984/p98-chaitin.pdf?ip=130.113.111.210&id=806984&acc=ACTIVE%20SERVICE&key=FD0067F557510FFB%2ED816932E3DB0B89D%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&__acm__=1566800641_adc76422d7bd921a1521c82893f6dceb][Register Allocation]]
+
+** Optimal basic block instruction scheduling for multiple-issue processors using constraint programming :ignore:
+  :PROPERTIES:
+  :TITLE:    Optimal basic block instruction scheduling for multiple-issue processors using constraint programming
+  :BTYPE:    article
+  :CUSTOM_ID: malik2008optimal
+  :AUTHOR:   Malik, Abid M and McInnes, Jim and Van Beek, Peter
+  :JOURNAL:  International Journal on Artificial Intelligence Tools
+  :VOLUME:   17
+  :NUMBER:   01
+  :PAGES:    37--54
+  :YEAR:     2008
+  :PUBLISHER: World Scientific
+  :END:
+*** COMMENT [[https://cs.uwaterloo.ca/research/tr/2005/CS-2005-19.pdf][Optimal Basic Block Instruction Scheduling for Multiple Issue Processors Using Constraint Programming]] (IBM guys)
+** Optimal instruction scheduling using integer programming :ignore:
+   :PROPERTIES:
+   :TITLE:    Optimal instruction scheduling using integer programming
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: wilken2000optimal
+   :AUTHOR:   Wilken, Kent and Liu, Jack and Heffernan, Mark
+   :BOOKTITLE: Acm sigplan notices
+   :VOLUME:   35
+   :NUMBER:   5
+   :PAGES:    121--133
+   :YEAR:     2000
+   :ORGANIZATION: ACM
+   :END:
+*** COMMENT [[http://web.cs.ucla.edu/~palsberg/course/cs239/S04/papers/WilkenLiuHeffernan00.pdf][Optimal scheduling using Integer Programming]]
+** MultiLoop: Efficient Software Pipelining for Modern Hardware      :ignore:
+   :PROPERTIES:
+   :TITLE:    MultiLoop: Efficient Software Pipelining for Modern Hardware
+   :BTYPE:    inproceedings
+   :CUSTOM_ID: Anand:2007:MES:1321211.1321242
+   :AUTHOR:   Anand, Christopher Kumar and Kahl, Wolfram
+   :BOOKTITLE: Proceedings of the 2007 Conference of the Center for Advanced Studies on Collaborative Research
+   :SERIES:   CASCON '07
+   :YEAR:     2007
+   :LOCATION: Richmond Hill, Ontario, Canada
+   :PAGES:    260--263
+   :NUMPAGES: 4
+   :URL:      http://dx.doi.org/10.1145/1321211.1321242
+   :DOI:      10.1145/1321211.1321242
+   :ACMID:    1321242
+   :PUBLISHER: IBM Corp.
+   :ADDRESS:  Riverton, NJ, USA
+   :END:
+*** COMMENT [[https://link.springer.com/content/pdf/10.1007%2F978-1-4899-7797-7_6.pdf][Multi-Loop: Efficient Software Piplining for Modern Hardware]] (Anand,Kahl)
+
+** Stochastic Program Optimization :ignore:
+   :PROPERTIES:
+   :TITLE:    Stochastic Program Optimization
+   :BTYPE:    article
+   :CUSTOM_ID: Schkufza:2016:SPO:2886013.2863701
+   :AUTHOR:   Schkufza, Eric and Sharma, Rahul and Aiken, Alex
+   :JOURNAL:  Commun. ACM
+   :ISSUE_DATE: February 2016
+   :VOLUME:   59
+   :NUMBER:   2
+   :MONTH:    jan
+   :YEAR:     2016
+   :ISSN:     0001-0782
+   :PAGES:    114--122
+   :NUMPAGES: 9
+   :URL:      http://doi.acm.org/10.1145/2863701
+   :DOI:      10.1145/2863701
+   :ACMID:    2863701
+   :PUBLISHER: ACM
+   :ADDRESS:  New York, NY, USA
+   :END:
+*** COMMENT [[http://delivery.acm.org/10.1145/2870000/2863701/p114-schkufza.pdf?ip=130.113.109.215&id=2863701&acc=ACTIVE%20SERVICE&key=FD0067F557510FFB%2ED816932E3DB0B89D%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&__acm__=1564586602_105c24f842dcdd9a6b420b8bd3191e66][Stochastic Program Optimization]]
+
+** Kristons Thesis  :ignore:
+   :PROPERTIES:
+   :TITLE: Approximation Algorithm based Approach Instruction Scheduling
+   :BTYPE: article
+   :CUSTOM_ID: costa2016approx
+   :JOURNAL: MacSphere
+   :AUTHOR: Kriston Costa
+   :URI: http://hdl.handle.net/11375/18865  
+   :PUBLISHER: MacSphere
+   :END:
+*** COMMENT [[https://macsphere.mcmaster.ca/bitstream/11375/18865/2/costa_kriston_p_201602_msc.pdf][Approximation Algorithm based Approach Instruction Scheduling]] (Kriston's thesis)
+* COMMENT footer                                                     :ignore:
+
+# Local Variables:
+# eval: (progn (org-babel-goto-named-src-block "make-reports-class") (org-babel-execute-src-block) (outline-hide-sublevels 1))
+# compile-command: (progn (org-babel-tangle) (org-latex-export-to-pdf) (async-shell-command "evince proposal.pdf"))
+# End:
