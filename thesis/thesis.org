@@ -119,11 +119,11 @@ Source: Mark Armstrong --github ~armkeh~
 
 \vspace{5em}
 
-{\Huge Analysis of Compiler Heuristics via Stochastic Scheduling and Hyper-Heuristics}
+{\Huge Analysis of Compiler Heuristics via Stochastic Scheduling}
 
 \vspace{1em}
 
-{\Large A Thesis Proposal}
+% {\Large A Thesis Proposal}
 
 \vspace{2em}
 
@@ -140,7 +140,7 @@ McMaster University
 
 \vfill
 
-{{{code({\sc Thesis Proposal \hspace{12em} \color{grey}{.} })}}}
+{{{code({\sc PhD Thesis \hspace{12em} \color{grey}{.} })}}}
 #+begin_src haskell
 -- Supervisors
 Christopher Anand                                    anandc@mcmaster.ca
@@ -208,7 +208,8 @@ developing hyper-heuristic methods for instruction scheduling.
 \tableofcontents
 \newpage
 
-* Introduction (Background to Instruction Scheduling)
+* Introduction
+** Background to Instruction Scheduling
   Modern processors are built with architectures capable of exploiting
   Instruction Level Parallelism (ILP) on a single core 
   through pipelining and superscalar behavior. Superscalar
@@ -246,7 +247,7 @@ These solutions can implemented in hardware to execute at run-time
  DAG \parencite{gibbons1986efficient}) as input and return an ordered model to
  be used by the assembler during compilation.
 
-** Types of Instruction Scheduling
+*** Types of Instruction Scheduling
    There are two broad criteria that have historically influenced scheduling
    algorithms: the first being the control flow of the dependency graph, the
    second being the nature/constraints of the architecture being scheduled for
@@ -283,7 +284,7 @@ These solutions can implemented in hardware to execute at run-time
    
 *** TODO COMMENT reference list and modulo scheduling section
     
-** SuperScalar Architectures
+*** SuperScalar Architectures
    
    #+BEGIN_SRC ditaa :file figures/RISCPipeline.png
    /----------+----------+----------+----------+----------\
@@ -365,7 +366,7 @@ These solutions can implemented in hardware to execute at run-time
    dependent instructions too far apart doing runs the risk of running out 
    available registers (increasing register pressure). 
    
-** Pipeline Stalls
+*** Pipeline Stalls
    Both of the previous figures [[fig:PipelinedArchitecture]] and
    [[fig:SuperScalarArchitecture]] show an ideal schedule with *NO* stalls. A stall
    occurs when, because of various architecture *hazards* that can arise, full throughput
@@ -413,7 +414,7 @@ These solutions can implemented in hardware to execute at run-time
    #+RESULTS:
    [[file:figures/PipelineStall.png]]
 
-** Hazards
+*** Hazards
    Architecture hazards can be broken up broadly into three categories
    \parencite{patterson2013computer}
    - *Data Hazards* occur when a data dependency is broken. There are three
@@ -433,7 +434,7 @@ R4 \leftarrow \textbf{R2} + R3  & \qquad & \textbf{R5} \leftarrow R1 + R2 & \qqu
 
 *** TODO COMMENT add section for SSA
 
-** Register Allocation via Graph Coloring
+*** Register Allocation via Graph Coloring
    The theory of graph coloring deals with algorithms that seek to partition a
    set of objects into classes, given simple rules associating objects that may
    not belong to the same class \parencite{jensen2011graph}. These algorithms
@@ -471,7 +472,7 @@ D <- ...     /--------\         /--------\     R1 <- ...
 #+RESULTS:
 [[file:figures/GraphColor.png]]
 
-** Spilling
+*** Spilling
   Finding the existence of a *k-coloring* for a given graph is itself an
   NP-Complete problem \parencite{jensen2011graph}, and the absence of an
   existing coloring presents a difficult problem. When a schedule cannot be
@@ -494,7 +495,7 @@ D <- ...     /--------\         /--------\     R1 <- ...
   ranges alleviates more register pressure and creates a more flexible
   scheduling space.
 
-** Combining Register Allocation and Instruction Scheduling
+*** Combining Register Allocation and Instruction Scheduling
    Register allocation can be performed before, after, or combined with
    instruction scheduling, but is generally performed after
    \parencite{brasier1995craig}. Performing allocation before scheduling
@@ -515,7 +516,7 @@ D <- ...     /--------\         /--------\     R1 <- ...
    
 *** COMMENT more on register allocation here [[http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.69.7453&rep=rep1&type=pdf]]
 
-** Modulo Scheduling: Staging
+*** Modulo Scheduling: Staging
 #+BEGIN_SRC ditaa :file figures/SwingModuloStaging.png
                                      
                                      /---------\
@@ -609,7 +610,7 @@ distance(e)}
    Scheduling has been implemented in the GNU C Compiler (GCC)
    \parencite{hagog2004swing}.
    
-** Register Pressure In Staged Loops
+*** Register Pressure In Staged Loops
    Staging can increase throughput by enabling more instructions to
    be scheduled between high latency operations and subsequent use.
    However this also increases the number of live instances of loop
@@ -628,7 +629,7 @@ distance(e)}
    kernel is unrolled and multiple definitions of a variable are renamed at
    compile time \parencite{valluri1998modulo}. 
 
-** Register Remapping/Renaming
+*** Register Remapping/Renaming
    Not to be confused with renaming of registers at compile time, register
    renaming in hardware is a technique to remove false data dependencies ---
    write after read (WAR) and write after write (WAW) --- between register
@@ -651,7 +652,7 @@ R2 \leftarrow \textbf{R4} + R3    & \qquad &                 R2 \leftarrow \text
    Having a larger number of Physical registers than Logical registers gives
    hardware extra flexibility when dispatching instructions for *Out-of-Order Execution*.
     
-** Out-of-Order Execution
+*** Out-of-Order Execution
    
    The execution flow of an instruction on a CPU can be implemented in one of
    two paradigms: *in-order* or *out-of-order* (OoO, also known as dynamic)
@@ -748,9 +749,9 @@ R2 \leftarrow \textbf{R4} + R3    & \qquad &                 R2 \leftarrow \text
   in hardware, reservation stations for all execution units and a common data
   bus between all reservation stations \parencite{tomasulo1967efficient}.
 
-* Current State of the Art and Notable/Relevant Works in Instruction Scheduling
+** Current State of the Art and Notable/Relevant Works in Instruction Scheduling
 *** TODO COMMENT write intro to current/previous approaches
-** List Scheduling (most commonly performed scheduling)
+*** List Scheduling (most commonly performed scheduling)
    List scheduling is the most widely used technique for instruction scheduling
    \parencite{gibbons1986efficient}. List scheduling encompasses a class of
    algorithms for basic block scheduling via a chosen heuristic. It takes a list (of
@@ -820,7 +821,7 @@ est(n,p) = earliest start time of n on p
     before, combinations of heuristics can be applied through successive
     iterations, but each iteration could undo previous iterations work.
 
-** Constraint Programming
+*** Constraint Programming
    As an inherently discrete problem, a number of works have sought to formulate
    instruction scheduling as an Integer Linear Programming (ILP) problem
    (\parencite{wilken2000optimal}, \parencite{chang1997using},
@@ -874,7 +875,7 @@ est(n,p) = earliest start time of n on p
    converting hard constraints to soft constraints (penalties) its simple to
    assert this space would contain the optimal solution.
 
-** Stochastic Search
+*** Stochastic Search
    There is a notable work to explore the space of schedules through a
    stochastic algorithm by Schkufza, Sharma, Aiken at Stanford
    \parencite{Schkufza:2016:SPO:2886013.2863701}. The efforts are culminated in
@@ -915,7 +916,7 @@ est(n,p) = earliest start time of n on p
   it to generate schedules along with a model checker may still prove to be the
   most practical way to explore a variety of schedules.
   
-** Meta-Optimization / Hyper-Heuristics
+*** Meta-Optimization / Hyper-Heuristics
    Meta-optimization deals with the use of one optimization method to tune
    another one. 
    Hyper-heuristics are an off-spring of meta-optimization, that search within the search space of heuristics vs. the entire problem solution space.
@@ -1099,50 +1100,10 @@ or small number to scale a penalty function we can prioritize a schedule.
   A prominent research question would be for this work would be whether or not
   it's possible to avoid such clusterings. 
 
-* Timeline
-
-#+CAPTION: Proposed Timeline   
-#+NAME: tab:ProposedTimeline 
-| *Schedule*      | *Goals*                                                      |
-|-----------------+--------------------------------------------------------------|
-| *2020 Jan-Feb*  | Write paper on stochastic scheduling                         |
-|                 |                                                              |
-|-----------------+--------------------------------------------------------------|
-| *2020 Jan-Mar*  | Update Coconut to schedule for POWER and release open-source |
-|                 | - *Jan* Simulator                                            |
-|                 | - *Feb* CodeGraph Library                                    |
-|                 | - *Mar* Update DSL                                           |
-|                 |                                                              |
-|-----------------+--------------------------------------------------------------|
-| *2020 May*      | Present at IBM TechConnect                                   |
-|                 |                                                              |
-|-----------------+--------------------------------------------------------------|
-| *2020 Jun-Sept* | Generate Schedules for MASS on Power and experiment          |
-|                 | with Hyper-Heuristic methods                                 |
-|                 |                                                              |
-|-----------------+--------------------------------------------------------------|
-| *2020 Jun-Aug*  | Write paper on schedule optimization for OoO architectures   |
-|                 | to submit to TACO                                            |
-|                 |                                                              |
-|-----------------+--------------------------------------------------------------|
-| *2020 Aug-Oct*  | Write paper on Hyper-Heuristics to submit to one of the big  |
-|                 | ML conferences (ICML,IJCAI,etc)                              |
-|                 |                                                              |
-|-----------------+--------------------------------------------------------------|
-| *2020 Nov*      | Present at IBM CASCON                                        |
-|                 |                                                              |
-|-----------------+--------------------------------------------------------------|
-| *2020 Oct-Dec*  | Attmpt to apply Hypr-Heuristic methods developed on power    |
-|                 | to schedule for Z                                            |
-|                 |                                                              |
-|-----------------+--------------------------------------------------------------|
-| *2021 Jun*      | Defend Thesis                                                |
-|                 |                                                              |
-|-----------------+--------------------------------------------------------------|
 
 * Bib                                                                :ignore:
-# LaTeX: \addcontentsline{toc}{section}{References}
-#+LaTeX: \addcontentsline{toc}{part}{References}
+# LaTeX: \addcontentsline{toc}{section}{thesis}
+#+LaTeX: \addcontentsline{toc}{part}{thesis}
 #+LaTeX: \printbibliography
 
 * Org-Bibtex                                                         :ignore:
