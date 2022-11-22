@@ -60,7 +60,7 @@
 #+LATEX_HEADER: \setlength{\parskip}{1em}
 
 #+LATEX_HEADER: \usepackage[backend=biber,style=alphabetic]{biblatex}
-#+LATEX_HEADER: \addbibresource{References.bib}
+#+LATEX_HEADER: \addbibresource{thesis.bib}
 
 #+LATEX_HEADER: \usepackage{MyUnicodeSymbols}
 
@@ -209,6 +209,7 @@ developing hyper-heuristic methods for instruction scheduling.
 \newpage
 
 * Introduction
+  TODO summarize introduction
 ** Background to Instruction Scheduling
   Modern processors are built with architectures capable of exploiting
   Instruction Level Parallelism (ILP) on a single core 
@@ -959,7 +960,296 @@ est(n,p) = earliest start time of n on p
 *** TODO COMMENT read and summerize learning heuristics for basic block scheduling [[https://link.springer.com/article/10.1007/s10732-007-9051-1]]   
 *** TODO COMMENT read and summerize Hyper-Heuristics paper [[https://orsociety.tandfonline.com/doi/full/10.1057/jors.2013.71?casa_token=fOf2wR5Su64AAAAA%3A69plSPDMUXUurTufXWal6lCO6_73-XTubToX-9HY09raeRuaCwbO2SIre-CKBCBYHjsLFWBM4os#.XfFyqXWYUUG]]
 *** TODO COMMENT read and sumemrize ML for iterative optimizaiton slides [[https://www.eecis.udel.edu/~cavazos/cgo-2006-talk.pdf]]
-* Proposed Approaches To Stochastic Scheduling and Heuristic Analysis via Hyper-Heuristics
+* Coconut (Code Construction User Tool)
+  TODO summarize COCONUT and it's importance for developing stochastic
+  scheduling algorithms, including constructing modulo scheduled loops
+
+
+   COCONUT:( *CO*de *CON*structing *U*ser *T*ool )
+
+     #+BEGIN_SRC mermaid :file figures/coconut.png
+      graph TD
+        A[DSL] -->|Language Instance| B[Interpreter]
+        A -->|Language Instance| C[CodeGraph]
+        C --> D[Scheduler]
+        D --> C
+        C --> E[Simulator]
+        C -->|Printer| F[AssemblyCode]
+     #+END_SRC
+
+     #+ATTR_HTML: :width 70% :height 50%
+
+     #+CAPTION: Coconut
+     #+NAME: fig:Coconut
+     #+ATTR_LATEX: :width 0.7\textwidth
+     #+RESULTS:
+     [[file:figures/coconut.png]]
+** Coconut Embedded Domain Specific Language
+
+   Performance critical assembly code can be encoded in the Coconut *DSL*
+   TODO
+   {{{code({\sc Example Core Domain Specific Language Declaration \hspace{12em} \color{grey}{.} })}}}
+   #+BEGIN_SRC haskell
+   class CoreISA r where
+       unintegerG :: Integer -> r GPR
+       unintegerV :: Integer -> r VR
+       add :: r GPR -> r GPR -> r GPR
+       mult :: r GPR -> r GPR -> r GPR
+       vadd :: r VR -> v VR -> v VR
+       ...
+   #+END_SRC
+*** One piece of code, a lot of functionality
+   We can write SSA (Single-Static-Assignment) form basic blocks in our DSL, for example
+
+   {{{code({\sc Sample Basic Block In Coconut DSL \hspace{12em} \color{grey}{.} })}}}
+   #+BEGIN_SRC haskell
+   sampleBasicBlock :: CoreISA r =>
+              r GPR -> r GPR -> (r GPR,r GPR)
+   sampleBasicBlock r1 r2 =
+     let
+       r3 = add r2 r1
+       r4 = add r3 r1
+       r5 = add r4 r2
+     in (r5,r4)
+   #+END_SRC
+    TODO describe how Finally Tagless form gives use overloaded functionality
+    for:
+     - Code Generation
+     - Interpretation
+     - Simulation
+*** Code Generation
+    TODO
+*** Interpretation
+    TODO
+*** Simulation
+    TODO
+** Tagged Data Flow Graphs
+   A data flow graph is a Directed Acyclic Graph which represents data
+   dependencies between instructions and the registers they act upon. The graph
+   is acyclic and hence does not encode any control flow information, making it
+   suitable only for encoding basic blocks. Coconut uses bipartite data flow
+   graph's, that contain disjoint sets of instruction and register nodes such
+   that no two nodes in the same set are adjacent. This property is not enforced
+   statically but through construction via the DSL.
+
+   TODO update sample data flow graph figure to exemplify new bipartite graph structure
+    #+CAPTION: Sample Data Flow Graph
+    #+NAME: fig:DataFlowGraph
+     [[file:figures/DAG.png]]
+
+  TODO describe the "tagged" input output 
+
+  Basic blocks are encoded as Data Flow Graphs with tagged inputs/outputs
+   {{{code({\sc Tagged Data Flow Graph Data Structure \hspace{12em} \color{grey}{.} })}}}
+  #+BEGIN_SRC haskell :results value
+  data DataFlowGraph h =
+    DataFlowGraph { -- the underlying functional graph structure
+                    dataFlowGraph :: Gr (DFNode h) DFEdge
+                    -- inputs nodes with tags
+                  , dataFlowInputs :: [(String,Node)]
+                    -- output nodes with tags
+                  , dataFlowOutputs :: [(String,Node)]
+                  ...
+                  }
+  #+END_SRC
+
+  Example, a given basic block
+   {{{code({\sc Sample DSL Code \hspace{12em} \color{grey}{.} })}}}
+   #+BEGIN_SRC haskell
+   f :: CoreISA r =>
+     r GPR -> r GPR -> (r GPR,r GPR)
+   f x y =
+     let
+       z = add x y
+       n = mult z x
+     in (z,n)
+   #+END_SRC
+  produces the following data flow graph structure
+   {{{code({\sc Sample Tagged Data Flow Graph \hspace{12em} \color{grey}{.} })}}}
+  #+BEGIN_SRC haskell :results value
+  dfGraph :: DataFlowGraph h
+  dfGraph = {
+     dataFlowGraph = ...
+    ,dataFlowInputs = [("x",0),("y",1)]
+    ,dataFlowOutputs = [("z",2),("n",3)]
+    ...
+  }
+  #+END_SRC
+
+*** Data Flow Graph Combinators
+    Composing and decomposing data flow graphs is necessary for performing
+    post-processing optimizations such as modulo scheduling. Generalizing
+    composition and decomposition of data flow graphs through a combinator API
+    allows easy construction of post-processing optimizations of data flow
+    graphs. This enhances Coconut's ability to experiment with implementing
+    different optimizations.
+
+
+   Standard composition of data flow graphs involves connecting input/output
+   nodes by tag. We use a higher order function to allow specification of which
+   tags should be matched together. Additionally, we can combine data flow
+   graphs for in parallel (to allow for software pipelining).
+   {{{code({\sc Data Flow Graph Composition \hspace{12em} \color{grey}{.} })}}}
+    #+BEGIN_SRC haskell :results value
+    -- compose a graph (by tying together input/output node tags)
+    composeDFGraph :: forall h . Hardware h
+      => (String -> String -> Node)
+      -> DataFlowGraph h
+      -> DataFlowGraph h
+      -> DataFlowGraph h
+
+    -- merge graphs in parallel (for software pipelining)
+    parallelMergeDFGraph :: forall h . Hardware h
+      => (DataFlowGraph h,DataFlowGraph h)
+      -> DataFlowGraph h
+    #+END_SRC
+
+   Decomposition of data flow graphs involves partitioning a graph, again using
+   higher order functions to specify the conditions of partitioning.
+   {{{code({\sc Data Flow Graph Decomposition \hspace{12em} \color{grey}{.} })}}}
+    #+BEGIN_SRC haskell :results value
+    --  partition a graph by a given predicate
+    partitionDFGraph :: forall h . Hardware h
+      => DataFlowGraph h
+      -> (Node -> Bool)
+      -> (DataFlowGraph h,DataFlowGraph h)
+
+    -- iteratively apply partitionDFGraph into n stages
+    multiPartDFGraph :: forall h . Hardware h
+      => DataFlowGraph h
+      -> (Int -> Node -> Bool)
+      -> Int
+      -> [DataFlowGraph h]
+    #+END_SRC
+
+*** Case Study: Software Pipelining
+   Partition the data flow graph by stage
+    {{{code({\sc Software Pipelining using Combinator API \hspace{12em} \color{grey}{.} })}}}
+     #+BEGIN_SRC haskell :results value
+     numStages   :: Int
+     withinStage :: Int -> Node -> Bool
+     ...
+     partDFGraphs :: [DataFlowGraph h]
+     partDFGraphs = multiPartDFGraph dfGraph withinStage numStages
+
+     kernel :: DataFlowGraph
+     kernel = parallelMergeDFGraphs
+               (map applyIncrement partDFGraphs)
+     #+END_SRC
+
+** Control Flow Graphs
+   Control flow graphs are implemented on top of data flow graphs. Each control
+   flow node contains tagged nodes, and edges are either data flow graphs or
+   control flow operations.
+
+   TODO reference kahl/anand code graphs, discuss differences in implementations
+   
+   #+BEGIN_SRC mermaid :file controlflow.png
+   graph TD
+    A[a0] -->|DataFlowA| B[a1]
+    B -->|BranchEQ| C[b0]
+    B -->|BranchNE| D[c0]
+    C -->|DataFlowB| E[b1]
+    D -->|DataFlowC| F[c1]
+    F -->|Jump| A
+   #+END_SRC
+
+   #+CAPTION: Control Flow Graph
+   #+NAME: fig:ControlFlowGraph
+   #+ATTR_LATEX: :width 0.3\textwidth
+   #+RESULTS:
+   [[file:controlflow.png]]
+
+
+*** Type Safe Control Flow API
+    Control flow graphs are built by combining blocks, with given input and
+    output types. The first step in designing a type safe control flow interface
+    is encapsulating a Coconut EDSL function into a type Block.
+   {{{code({\sc Block Construction API \hspace{12em} \color{grey}{.} })}}}
+    #+BEGIN_SRC haskell
+    -- | Generate a @Block@
+    -- Takes a label and @Graph@ combinator, generates a corresponding @DataFlowGraph@
+    -- and creates a @CFDataFlow@ edge with a single input and output CFNode in the
+    -- "in-construction" @ControlFlowGraph@
+    basicBlock :: forall h a b . (Unwrappable h a,Unwrappable h b)
+      => String -> [String] -> [String] -> (a -> b) -> Block h (Unwrapped a,Unwrapped b)
+    basicBlock label inTags outTags f  = ...
+
+    -- | Generate a @BranchBlock@
+    -- Same as @basicBlock@ but specifies a condition register
+    branchingBlock :: forall h a b . (Unwrappable h a,Unwrappable h b)
+      => String -> [String] -> [String] -> (a -> (Graph h BRANCH,b))
+      -> BranchBlock h (Unwrapped a,Unwrapped b)
+    branchingBlock label inTags outTags f = ..
+    #+END_SRC
+
+    We are able to "capture" the types of a EDSL function using a type class
+    (i.e., Unwrappable). Enumerated instances of this type class cause easily be
+    generated via template haskell
+
+   {{{code({\sc Unwrappable Type Class \hspace{12em} \color{grey}{.} })}}}
+    #+BEGIN_SRC haskell
+    class Unwrappable h a where
+      -- | Unwraps the phantom parameter (i.e. Unwrapped (Graph h a) becomes just a)
+      type Unwrapped a
+      -- | A function to wrap a list of CGMState types into a type `a`.
+      wrap :: [(CGBState h Node,Maybe String)] -> a
+      -- | A function to unwrap the type `a` to a list of CGMState types.
+      unwrap :: a -> [(CGBState h Node,Maybe String)]
+      -- | A string representing the Unwrappable object.
+      idStr :: String -- TODO do we need this, is this and nodeType redundant?
+      -- | The list of ResTypes associated with this 'Unwrappable' thing
+      nodeType :: [ResType h]
+    #+END_SRC
+
+    TODO further explanation of Unwrappable
+
+    We can now implement a type safe control flow API via Block combinators
+    {{{code({\sc Type Safe Control Flow Interface \hspace{12em} \color{grey}{.} })}}}
+    #+BEGIN_SRC haskell
+    -- | Type-safe composition of @Block@'s
+    -- Adds a new @ControlFlowGraph@ edge @CFCompose@ with implicitly
+    -- tied dataflow input/outputs in-order.
+    compose :: Block h (a,b) -> Block h (b,c) -> Block h (a,c)
+
+    -- | Type-safe branching of @Block@'s (i.e. if-then-else)
+    -- Adds two new edges to @ControlFlowGraph@ (i.e. @CFBranchEQ@ to
+    -- blockA and @CFBranchNE@ to blockB), a new @CFJoinNode@ node,
+    -- and finally two edges from blockA,blockB
+    branch :: BranchBlock h (a,b) -> Block h (b,c) -> Block h (b,c)
+           -> Block h (c,d) -> Block h (a,d)
+
+    -- | Type-safe looping
+    -- Adds a @CFLoopEQ@ edge from the end to the start of a
+    -- BranchBlock and a @CFLoopNE@ edge from the end of the
+    -- @BranchBlock@ to a post @Block@
+    doWhile :: BranchBlock h (a,a) -> Block h (a,c) -> Block h (a,c)
+    #+END_SRC
+*** Unsafe Control Flow Interface
+    The type-safe control flow interface is limiting, particularly when
+    performing post-processing reconstruction of a control flow graph (like with
+    modulo scheduling). So we provide a control flow API that joins input/output
+    nodes for blocks not by zipping together nodes implicitly but by using
+    tagged joining of nodes (as described in Tagged Data Flow Graphs)
+
+    TODO further explanation of control flow graphs based on tagged nodes
+
+    {{{code({\sc UnSafe Control Flow Interface \hspace{12em} \color{grey}{.} })}}}
+   #+BEGIN_SRC haskell
+   controlFlowGraph dfGraph0 dfGraph1 =
+     do blockA <- genBlock $ dfGraph0
+        blockB <- genBlock $ dfGraph1
+        jumpCFS (\tag0 tag1 -> increment tag0 == tag1)
+                (cfOut blockA)
+                (cfIn blockB)
+   #+END_SRC
+
+** Code Graph Construction
+   TODO discuss implementation details of code graph construction
+*** Detection of sharing in EDSL
+    TODO discuss scaling issues due to not implicit detection of sharing
+
+* Stochastic Scheduling Model
   In this section I will introduce a Stochastic Scheduling Algorithm that
   utilizes a continuous optimization model with stochastically generated
   parameters, and propose it's use as a training set generator for ML driven
@@ -1066,7 +1356,18 @@ or small number to scale a penalty function we can prioritize a schedule.
    of many heuristics can be encapsulated by simply choosing the same scaling
    based on the type of instruction (i.e push all loads up or down). 
  
-** Opportunity for Hyper-Heuristic Development  
+** Linear Vs Non-Linear Model
+   TODO show how linear model can span the same space of schedules as non-linear
+
+* Analysis of Schedule Space
+  TODO
+  
+   #+CAPTION: Distribution Stochastic Schedules
+   #+NAME: fig:DistributionStochastic
+   #+ATTR_LATEX: :width 1.0\textwidth
+  [[file:figures/DistributionStochasticSchedules.png]]
+
+* Opportunity for Hyper-Heuristic Development
   By representing the space of schedules in a continuous model (i.e the space of
   $\mathbb{R}^n$) and encoding heuristics as penalties, we can evaluate the
   merits of various heuristics in combination with each other. The continuous
@@ -1089,7 +1390,7 @@ or small number to scale a penalty function we can prioritize a schedule.
    be performed over the scaling parameters in conjunction with the training set
    results in order to judge the influence of penalties on a given architecture.
 
-   
+ 
   Clustering methods (unsupervised learning) can possibly be used for heuristic
   generation, by finding new groupings to scale. Given a clustering with scaling
   $c_i$ we can check the following assertion: For each scaling
@@ -1098,9 +1399,10 @@ or small number to scale a penalty function we can prioritize a schedule.
   $\color{lightgreen}{c_i + \epsilon}$ produces a distinct schedule from
   $\color{lightgreen}{c_i}$. If the assertion fails, the clustering is useless.
   A prominent research question would be for this work would be whether or not
-  it's possible to avoid such clusterings. 
+  it's possible to avoid such clusterings.
 
-
+* Conclusion
+  TODO
 * Bib                                                                :ignore:
 # LaTeX: \addcontentsline{toc}{section}{thesis}
 #+LaTeX: \addcontentsline{toc}{part}{thesis}
@@ -1108,7 +1410,7 @@ or small number to scale a penalty function we can prioritize a schedule.
 
 * Org-Bibtex                                                         :ignore:
 ** COMMENT PUT BIBTEX ENTRIES HERE IN SUBSECTION ENDED WITH IGNORE USING ORG-BIBTEX-YANK COMMAND :ignore:
-** COMMENT EXPORT TO References.bib USING ORG-BIBTEX COMMAND :ignore:
+** COMMENT EXPORT TO thesis.bib USING ORG-BIBTEX COMMAND             :ignore:
 ** Using machines to learn method-specific compilation strategies :ignore:
    :PROPERTIES:
    :TITLE:    Using machines to learn method-specific compilation strategies
@@ -1792,3 +2094,5 @@ or small number to scale a penalty function we can prioritize a schedule.
 # eval: (progn (org-babel-goto-named-src-block "make-reports-class") (org-babel-execute-src-block) (outline-hide-sublevels 1))
 # compile-command: (progn (org-babel-tangle) (org-latex-export-to-pdf) (async-shell-command "evince proposal.pdf"))
 # End:
+
+#  LocalWords:  Tagless EDSL Org Bibtex

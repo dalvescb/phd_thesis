@@ -2,35 +2,61 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title>Ph.D Commmittee Meeting</title>
+<title>Ph.D Committee Meeting</title>
 <meta name="author" content="Curtis D'Alves"/>
 <style type="text/css">
 .underline { text-decoration: underline; }
 </style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/css/reveal.css"/>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/sky.css" id="theme"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/css/theme/sky.css" id="theme"/>
 
-<link rel="stylesheet" href="./mystyle.css"/>
+<link rel="stylesheet" href="./reveal_extra.css"/>
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </head>
 <body>
 <div class="reveal">
 <div class="slides">
 <section id="sec-title-slide">
-<h1 class="title">Ph.D Commmittee Meeting</h1><h2 class="author">Curtis D'Alves</h2><h2 class="date">2019-11-22</h2>
+<h1 class="title">Ph.D Committee Meeting</h1><h2 class="author">Curtis D'Alves</h2><h2 class="date">2020-11-11</h2>
 </section>
 
+
 <section>
-<section id="slide-orgbff20ec">
-<h2 id="orgbff20ec">Recap: Research Efforts</h2>
-<div class="outline-text-2" id="text-orgbff20ec">
-</div>
+<section id="slide-orga25f225">
+<h2 id="orga25f225">Section 1</h2>
 </section>
-<section id="slide-org1b1027d">
-<h3 id="org1b1027d">Constrained Optimization Model For Modulo Scheduling</h3>
-<div class="cmath" id="org33e3a87">
-<small>
+</section>
+<section>
+<section id="slide-org1bb348f">
+<h2 id="org1bb348f">Overview of My Research Efforts Thus Far</h2>
+</section>
+</section>
+<section>
+<section id="slide-org212e4ff">
+<h2 id="org212e4ff">Recap Research Efforts: Instruction Scheduling</h2>
+<ul>
+<li>Developing stochastic algorithms for instruction scheduling in compilers</li>
+<li>Focusing on performance critical code</li>
+<li>Focusing on advanced Out-Of-Order execution architectures</li>
+<li>Using IBM MASS functions as testing bed, modulo scheduling for loops of
+particular importance</li>
+
+</ul>
+</section>
+<section id="slide-org483d3dd">
+<h3 id="org483d3dd">Constrained Optimization Model For Modulo Scheduling</h3>
 <div>
 \begin{align*}
     \color{navy}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
@@ -43,15 +69,6 @@
 \end{align*}
 
 </div>
-</small>
-
-</div>
-
-</section>
-<section id="slide-org55318dd">
-<h3 id="org55318dd">Constrained Optimization Model</h3>
-<div class="cmath" id="orgf741e28">
-<small>
 <div>
 \begin{align}
     \color{navy}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
@@ -61,27 +78,20 @@
 \end{align}
 
 </div>
-</small>
-
-</div>
 
 <p>
-<font color="navy">Key Idea:</font> Encode choice heuristics as penalties, adjust preference
+<b>Key Idea</b> Encode choice heuristics as penalties, adjust preference
 between heuristics by scaling
 </p>
 
 </section>
-<section id="slide-org982a883">
-<h3 id="org982a883">IO Penalty</h3>
-<ul>
-<li><font color="navy">IDEA</font> penalize dispatch time of instructions based on the quantity and
-latencies of it's dependencies</li>
-<li><font color="navy">Note</font> This is a <b>penalty</b> not a <b>hard</b> constraint on latencies</li>
+<section id="slide-org4cb1ac4">
+<h3 id="org4cb1ac4">IO Penalty</h3>
+<p>
+Penalize dispatch time of instructions based on the quantity and
+latencies of it's dependencies
+</p>
 
-</ul>
-
-<div class="cmath" id="orgc167702">
-<small>
 <div>
 \begin{align*}
          \color{navy}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
@@ -91,21 +101,16 @@ latencies of it's dependencies</li>
  \end{align*}
 
 </div>
-</small>
-
-</div>
 
 </section>
-<section id="slide-orgcb4f9d4">
-<h3 id="orgcb4f9d4">Stochastic Scaling</h3>
+<section id="slide-orge10ac45">
+<h3 id="orge10ac45">Stochastic Scaling</h3>
 <ul>
-<li>The scaling \(\color{black}{\frac{1}{N_j}}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
-<li><font color="navy">IDEA</font> scale the <font color="navy">IO penalty</font> stochastically</li>
-<li></li>
+<li>The scaling \(\frac{1}{N_j}\) may be a good <b>guess</b>, but not necessarily effective in practice</li>
+<li><p>
+<b>IDEA</b> scale the IO penalty stochastically
+</p>
 
-</ul>
-<div class="cmath" id="org1f11de1">
-<small>
 <div>
 \begin{align*}
     \color{navy}{\text{Define a Grouping}} \qquad & \mathbb{C} = \text{Group}(\forall i \mid i \rightarrow j) \\
@@ -113,95 +118,201 @@ latencies of it's dependencies</li>
     \color{navy}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
   \end{align*}
 
-</div>
-</small>
+</div></li>
 
-</div>
+</ul>
 
 </section>
-<section id="slide-org341f4c2">
-<h3 id="org341f4c2">COCONUT Frameworks</h3>
+<section id="slide-org77132c5">
+<h3 id="org77132c5">Current Results</h3>
 <ul>
-<li>Provides <font color="navy">Domain Specific Languages</font> for <b>functional assembly</b>
-<ul>
-<li>In only Z and Power currently</li>
+<li>Scheduling of IBM MASS Library Functions</li>
+<li><p>
+20% speedup on select functions
+</p>
 
-</ul></li>
-<li>Provides <font color="navy">Code Graph Library</font> for modeling dependency <b>DAG</b></li>
-<li>Provides <font color="navy">Register Allocator</font> (needs upgrading)</li>
-<li>Provides <font color="navy">Hardware Simulator</font> (needs upgrading)</li>
-<li>Provides <font color="navy">Code Generation</font></li>
+<div id="org6dd87de" class="figure">
+<p><img src="imgs/results.jpg" alt="results.jpg" />
+</p>
+</div></li>
 
 </ul>
 
 </section>
 </section>
 <section>
-<section id="slide-orge6d4c84">
-<h2 id="orge6d4c84">Efforts Since Last Committee Meeting</h2>
-<div class="outline-text-2" id="text-orge6d4c84">
+<section id="slide-org67d25c4">
+<h2 id="org67d25c4">Current Research Efforts: COCONUT Framework for Rapid Prototyping</h2>
+
+<div id="org700c717" class="figure">
+<p><img src="imgs/CoconutBetter2.png" alt="CoconutBetter2.png" />
+</p>
 </div>
-</section>
-<section id="slide-org78fc485">
-<h3 id="org78fc485">Improvements to Coconut</h3>
 <ul>
-<li>Integrated <font color="navy">IPOPT</font> (non-linear constrained optimization solver) into Coconut</li>
-<li><font color="navy">Automated</font> Schedule Generation</li>
-<li>Added support for <font color="navy">Stochastic Parameters</font></li>
-<li>Updated <font color="navy">Hashed Expression</font> library to use as front-end to <font color="navy">IPOPT</font></li>
+<li>Developed in Haskell</li>
+<li><p>
+Provides embedded domain specific languages for <b>typed functional assembly</b>
+</p>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #33CED8;">testDSL</span> r0 r1 r2 <span style="color: #718CA1;">=</span>
+  <span style="color: #5EC4FF;">let</span>
+    r3 <span style="color: #718CA1;">=</span> add r1 r0
+    r4 <span style="color: #718CA1;">=</span> add r2 r0
+    r5 <span style="color: #718CA1;">=</span> mult r3 r4
+  <span style="color: #5EC4FF;">in</span> <span style="color: #5EC4FF;">(</span>r4,r5<span style="color: #5EC4FF;">)</span>
+</pre>
+</div></li>
+<li>Supports code generation (to IBM Z and Power assembly), interpretation and
+hardware simulation</li>
 
 </ul>
 
 </section>
-<section id="slide-org6277345">
-<h3 id="org6277345">Acquired Interim Results</h3>
+<section id="slide-orgb3c563d">
+<h3 id="orgb3c563d">Refactoring COCONUT for Extensibility</h3>
+<p>
+In order to improve COCONUT's capabilities as a rapid prototyping environment
+<b>across a variety of architectures</b>, we want it to be easily extensible in a
+number of dimensions:
+</p>
 <ul>
-<li>Generated schedules for <font color="navy">ECC</font> (elliptic curve cryptography) kernels on IBM's
-<font color="navy">Z14</font> architecture (was successfully productized)</li>
-<li>Generated schedules for core math functions on <font color="navy">IBM's MASS Library</font> achieving
-up to 20% speedup (also on <font color="navy">Z14</font> and product pending)</li>
+<li>DSL Instructions</li>
+<li>Register Types</li>
+<li>Printing</li>
+<li>Scheduling Heuristics</li>
+<li>Hardware Simulation</li>
 
 </ul>
 
 </section>
-<section id="slide-org6d6b44f">
-<h3 id="org6d6b44f">Co-Author Contributions to the Following Works</h3>
+<section id="slide-org25301e8">
+<h3 id="org25301e8">Transitioning to Finally Tagless Form</h3>
 <ul>
-<li><font color="navy">Using z14 Fused-Multiply-Add Instructions to Accelerate Elliptic Curve Cryptography</font>
+<li>Old</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #5EC4FF;">class</span> <span style="color: #5EC4FF;">(</span><span style="color: #EBBF83;">Show</span> <span style="color: #E27E8D;">(</span><span style="color: #EBBF83;">VR</span> n<span style="color: #E27E8D;">)</span>,<span style="color: #EBBF83;">Show</span> <span style="color: #E27E8D;">(</span><span style="color: #EBBF83;">GPR</span> n<span style="color: #E27E8D;">)</span> <span style="color: #718CA1;">=&gt;</span> <span style="color: #EBBF83;">ZType</span> n <span style="color: #5EC4FF;">where</span>
+   <span style="color: #5EC4FF;">data</span>  <span style="color: #EBBF83;">VR</span> n           <span style="color: #41505E;">-- </span><span style="color: #41505E;">vector register</span>
+   <span style="color: #5EC4FF;">data</span>  <span style="color: #EBBF83;">GPR</span> n          <span style="color: #41505E;">-- </span><span style="color: #41505E;">general purpose register</span>
+   add    <span style="color: #718CA1;">::</span> <span style="color: #EBBF83;">GPR</span> n <span style="color: #718CA1;">-&gt;</span> <span style="color: #EBBF83;">GPR</span> n <span style="color: #718CA1;">-&gt;</span> <span style="color: #EBBF83;">GPR</span> n
+   mult   <span style="color: #718CA1;">::</span> <span style="color: #EBBF83;">GPR</span> n <span style="color: #718CA1;">-&gt;</span> <span style="color: #EBBF83;">GPR</span> n <span style="color: #718CA1;">-&gt;</span> <span style="color: #EBBF83;">GPR</span> n
+   addV   <span style="color: #718CA1;">::</span> <span style="color: #EBBF83;">VR</span> n <span style="color: #718CA1;">-&gt;</span> <span style="color: #EBBF83;">VR</span> n <span style="color: #718CA1;">-&gt;</span> <span style="color: #EBBF83;">VR</span> n
+   <span style="color: #718CA1;">...</span>
+</pre>
+</div>
 <ul>
-<li>published conference paper CASCON 2019 and won best Paper</li>
+<li>New</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #5EC4FF;">data</span> <span style="color: #EBBF83;">GPR</span>
+<span style="color: #5EC4FF;">data</span> <span style="color: #EBBF83;">VR</span>
+
+<span style="color: #5EC4FF;">class</span> <span style="color: #EBBF83;">CoreISA</span> repr <span style="color: #5EC4FF;">where</span>
+  add   <span style="color: #718CA1;">::</span> repr <span style="color: #EBBF83;">GPR</span> <span style="color: #718CA1;">-&gt;</span> repr <span style="color: #EBBF83;">GPR</span> <span style="color: #718CA1;">-&gt;</span> repr <span style="color: #EBBF83;">GPR</span>
+  mult  <span style="color: #718CA1;">::</span> repr <span style="color: #EBBF83;">GPR</span> <span style="color: #718CA1;">-&gt;</span> repr <span style="color: #EBBF83;">GPR</span> <span style="color: #718CA1;">-&gt;</span> repr <span style="color: #EBBF83;">GPR</span>
+  addV  <span style="color: #718CA1;">::</span> repr <span style="color: #EBBF83;">VR</span> <span style="color: #718CA1;">-&gt;</span> repr <span style="color: #EBBF83;">VR</span> <span style="color: #718CA1;">-&gt;</span> repr <span style="color: #EBBF83;">VR</span>
+  <span style="color: #718CA1;">...</span>
+
+<span style="color: #5EC4FF;">class</span> <span style="color: #EBBF83;">ExtendedISA</span> repr <span style="color: #5EC4FF;">where</span>
+  <span style="color: #718CA1;">...</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-orgfa56082">
+<h3 id="orgfa56082">Parameterizing Code Graph By Hardware</h3>
+<ul>
+<li><p>
+Code Graphs (Directed Acyclic HyperGraphs encoding basic blocks) are
+parameterized by a Hardware instance
+</p>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #5EC4FF;">newtype</span> <span style="color: #EBBF83;">Graph</span> h r <span style="color: #718CA1;">=</span> <span style="color: #EBBF83;">Graph</span> <span style="color: #5EC4FF;">{</span> <span style="color: #718CA1;">...</span> <span style="color: #5EC4FF;">}</span> 
+
+<span style="color: #5EC4FF;">instance</span> <span style="color: #EBBF83;">Hardware</span> h <span style="color: #718CA1;">=&gt;</span> <span style="color: #EBBF83;">CoreISA</span> <span style="color: #5EC4FF;">(</span><span style="color: #EBBF83;">Graph</span> h<span style="color: #5EC4FF;">)</span> <span style="color: #5EC4FF;">where</span>
+  <span style="color: #718CA1;">...</span>
+</pre>
+</div>
+<ul>
+<li><p>
+The Hardware type class uses associated type families to provide specific
+hardware architecture details for simulation / printing
+</p>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #5EC4FF;">class</span> <span style="color: #EBBF83;">Hardware</span> h <span style="color: #5EC4FF;">where</span>
+  <span style="color: #5EC4FF;">data</span> <span style="color: #EBBF83;">RegType</span> h 
+  <span style="color: #5EC4FF;">data</span> <span style="color: #EBBF83;">HardwareST</span> h
+  simInstruction <span style="color: #718CA1;">::</span> <span style="color: #EBBF83;">Schedule</span> h <span style="color: #718CA1;">-&gt;</span> <span style="color: #EBBF83;">RegMap</span> h <span style="color: #718CA1;">-&gt;</span> <span style="color: #EBBF83;">Instruction</span> <span style="color: #718CA1;">-&gt;</span> <span style="color: #EBBF83;">SimState</span> h <span style="color: #EBBF83;">Instuction</span>
+  <span style="color: #718CA1;">...</span> 
+</pre>
+</div></li>
 
 </ul></li>
-<li><font color="navy">A Framework for Preadolescent Programmers to Create Cooperative Multiplayer Reading Games</font></li>
 
 </ul>
 
 </section>
-<section id="slide-org0ef7533">
-<h3 id="org0ef7533">Presentations</h3>
+<section id="slide-orgc0d0f52">
+<h3 id="orgc0d0f52">Control Flow Arrangements</h3>
 <ul>
-<li><font color="navy">Poster Presentation</font> at IBM TechConnect 2019</li>
-<li><font color="navy">Poster Presentation</font> at IBM CASCON 2019</li>
-<li><font color="navy">Workshop</font> at CASCON 2019 (published proceeding Two Functional MDD's for the
-Price of One)</li>
+<li><p>
+Basic Blocks are encoded as Code Graphs (i.e. data flow graphs)
+</p>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #5EC4FF;">type</span> <span style="color: #EBBF83;">CodeGraph</span> h <span style="color: #718CA1;">=</span> <span style="color: #EBBF83;">HyperGraph</span> <span style="color: #EBBF83;">NodeType</span> <span style="color: #5EC4FF;">(</span><span style="color: #EBBF83;">ResType</span> h<span style="color: #5EC4FF;">)</span> <span style="color: #5EC4FF;">(</span><span style="color: #EBBF83;">EdgeType</span> h<span style="color: #5EC4FF;">)</span>
+</pre>
+</div>
+
+<div id="org3fb85af" class="figure">
+<p><img src="./imgs/dataflow.gif" alt="dataflow.gif" />  
+</p>
+</div></li>
+<li><p>
+Control Flow Arrangements use Code Graphs as edges, describe control flow
+</p>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #5EC4FF;">type</span> <span style="color: #EBBF83;">ControlFlow</span> h <span style="color: #718CA1;">=</span> <span style="color: #EBBF83;">HyperGraph</span> <span style="color: #EBBF83;">NodeType</span> <span style="color: #5EC4FF;">(</span><span style="color: #EBBF83;">ResType0</span> h<span style="color: #5EC4FF;">)</span> <span style="color: #5EC4FF;">(</span><span style="color: #EBBF83;">CodeGraph</span> h<span style="color: #5EC4FF;">)</span>
+</pre>
+</div>
+
+<div id="org6054763" class="figure">
+<p><img src="./imgs/controlflow.jpg" alt="controlflow.jpg" />
+</p>
+</div>
+<ul>
+<li>The underlying Hyper Graph structure needs to be configured to be correct
+by construction and provide easy means to pattern match</li>
+
+</ul></li>
 
 </ul>
 
 </section>
-<section id="slide-orgc3fc335">
-<h3 id="orgc3fc335">Awards</h3>
-<p>
-<font color="navy">Won IBM CAS Student of the Year</font> 
-</p>
+</section>
+<section>
+<section id="slide-org6d49fe2">
+<h2 id="org6d49fe2">Current Short Term Goals</h2>
+<ul>
+<li>Finish getting COCONUT into working shape</li>
+<li>Generate schedules for new Z architecture</li>
+<li>Finish writing COCONUT paper</li>
+
+</ul>
 </section>
 </section>
 </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/search/search.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/zoom/zoom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/lib/js/head.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/js/reveal.js"></script>
 <script>
 // Full list of configuration options available here:
 // https://github.com/hakimel/reveal.js#configuration
@@ -220,15 +331,17 @@ hashOneBasedIndex: false,
 pdfSeparateFragments: true,
 overview: true,
 
-transition: 'convex',
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'convex', // see README of reveal.js for options
 transitionSpeed: 'default',
-
-// Plugins with reveal.js 4.x
-plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
 
 // Optional libraries used to extend reveal.js
 dependencies: [
-]
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.9.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }]
 
 });
 </script>

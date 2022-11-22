@@ -1,10 +1,11 @@
-#+Title: Ph.D Committee Meeting 
-#+Date: 2020-11-11
+#+Title: Ph.D Committee Meeting
+#+Date: 2022-11-22
 #+Email: curtis.dalves@gmail.com
 #+Author: Curtis D'Alves
 
+
 * Overview of My Research Efforts Thus Far
-* Recap Research Efforts: Instruction Scheduling
+* Recap: Instruction Scheduling
  + Developing stochastic algorithms for instruction scheduling in compilers
  + Focusing on performance critical code
  + Focusing on advanced Out-Of-Order execution architectures
@@ -13,19 +14,18 @@
 ** Constrained Optimization Model For Modulo Scheduling
 
 \begin{align*}
-    \color{navy}{\text{Objective Variables }} & t_i, b_i, f_i:& \mathbb{R} \\
+    \color{navy}{\text{Objective Variables }} & t_i, b_i:& \mathbb{R} \\
     \color{navy}{\text{Constants }} & \textrm{II} :& \mathbb{R} \\
     \color{navy}{\text{Indicator Function }} & \mathbb{IN} :& \mathbb{R} \rightarrow \mathbb{R} \\
     & t_i :& \text{dispatch time} \\
     & b_i :& \text{completion time} \\
-    & f_i :& \text{FIFO use } 0 \leq f_i \leq 1 \\
     & \textrm{II} :& \text{iteration interval} \frac{\# instructions}{dispatches/cycle} \\
 \end{align*}
 \begin{align}
     \color{navy}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
 								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  \\
 								 & b_i + \epsilon \leq t_i + \textrm{II} \\
-    \color{navy}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} (b_i - t_i + f_i) + \text{Penalties}
+    \color{navy}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} t_i + \text{Penalties}
 \end{align}
 
 *Key Idea* Encode choice heuristics as penalties, adjust preference
@@ -34,31 +34,31 @@ between heuristics by scaling
 ** IO Penalty
    Penalize dispatch time of instructions based on the quantity and
    latencies of it's dependencies
-   
+
    \begin{align*}
             \color{navy}{\text{Given }} \qquad  & t_i,t_j \qquad & \forall i,j \mid i \rightarrow j  \\
             \color{navy}{\text{For each i }} \qquad & N_j  =  \sum_{i \rightarrow j} \text{latency}(j) & \\
             \qquad & \qquad & \qquad \\
-            \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad 
+            \qquad & \mathbb{IO}(i) = \sum_{j} \frac{1}{N_j} \mathbb{IN}(t_i - t_j) & \qquad
     \end{align*}
 
 ** Stochastic Scaling
    - The scaling $\frac{1}{N_j}$ may be a good *guess*, but not necessarily effective in practice
    - *IDEA* scale the IO penalty stochastically
-     
+
       \begin{align*}
           \color{navy}{\text{Define a Grouping}} \qquad & \mathbb{C} = \text{Group}(\forall i \mid i \rightarrow j) \\
           \color{navy}{\text{For each Group i}} \qquad & c_i \in \mathbb{RAND(R)} \\
           \color{navy}{\text{Stochastic Penalty}} \qquad & \sum_i c_i \cdot \mathbb{IO}(i)
         \end{align*}
-        
-** Current Results
+
+** Results (Prior to this year)
   + Scheduling of IBM MASS Library Functions
   + 20% speedup on select functions
     #+ATTR_ORG: :width 800
    [[file:imgs/results.jpg]]
-   
-* Current Research Efforts: COCONUT Framework for Rapid Prototyping
+
+* Recap: COCONUT Framework for Rapid Prototyping
   #+ATTR_ORG: :width 800
   [[file:imgs/CoconutBetter2.png]]
    + Developed in Haskell
@@ -70,7 +70,7 @@ between heuristics by scaling
         r4 = add r2 r0
         r5 = mult r3 r4
       in (r4,r5)
-    #+END_SRC 
+    #+END_SRC
    + Supports code generation (to IBM Z and Power assembly), interpretation and
      hardware simulation
 
@@ -83,29 +83,18 @@ between heuristics by scaling
    + Printing
    + Scheduling Heuristics
    + Hardware Simulation
-     
-** Transitioning to Finally Tagless Form
-   + Old
-   #+BEGIN_SRC haskell :results value
-   class (Show (VR n),Show (GPR n) => ZType n where
-      data  VR n           -- vector register
-      data  GPR n          -- general purpose register
-      add    :: GPR n -> GPR n -> GPR n
-      mult   :: GPR n -> GPR n -> GPR n
-      addV   :: VR n -> VR n -> VR n
-      ...
-   #+END_SRC
-   + New
+
+** HOAS Domain Specific Language
    #+BEGIN_SRC haskell :results value
    data GPR
    data VR
-   
+
    class CoreISA repr where
      add   :: repr GPR -> repr GPR -> repr GPR
      mult  :: repr GPR -> repr GPR -> repr GPR
      addV  :: repr VR -> repr VR -> repr VR
      ...
-   
+
    class ExtendedISA repr where
      ...
    #+END_SRC
@@ -114,7 +103,7 @@ between heuristics by scaling
   + Code Graphs (Directed Acyclic HyperGraphs encoding basic blocks) are
     parameterized by a Hardware instance
     #+BEGIN_SRC haskell :results value
-    newtype Graph h r = Graph { ... } 
+    newtype Graph h r = Graph { ... }
 
     instance Hardware h => CoreISA (Graph h) where
       ...
@@ -123,34 +112,147 @@ between heuristics by scaling
      hardware architecture details for simulation / printing
     #+BEGIN_SRC haskell :results value
     class Hardware h where
-      data RegType h 
+      data RegType h
       data HardwareST h
       simInstruction :: Schedule h -> RegMap h -> Instruction -> SimState h Instuction
-      ... 
+      ...
     #+END_SRC
-   
-** Control Flow Arrangements
-   + Basic Blocks are encoded as Code Graphs (i.e. data flow graphs)
-     #+BEGIN_SRC haskell :results value
-     type CodeGraph h = HyperGraph NodeType (ResType h) (EdgeType h)
-     #+END_SRC
-     #+ATTR_ORG: :width 100
-     [[file:./imgs/dataflow.gif]]  
-   + Control Flow Arrangements use Code Graphs as edges, describe control flow
-     #+BEGIN_SRC haskell :results value
-     type ControlFlow h = HyperGraph NodeType (ResType0 h) (CodeGraph h)
-     #+END_SRC 
-     #+ATTR_ORG: :width 150
-     [[file:./imgs/controlflow.jpg]]
-    + The underlying Hyper Graph structure needs to be configured to be correct
-      by construction and provide easy means to pattern match
-     
-* Current Short Term Goals
-  + Finish getting COCONUT into working shape
-  + Generate schedules for new Z architecture
-  + Finish writing COCONUT paper
-    
+
+* Improvements This Year
+** Linear Optimization Algorithm
+   + Switched from IPOPT (Non-linear solver) to GLPK (linear solver)
+   + Focus on linear penalties to scale instruction difference
+\begin{align}
+    \color{navy}{\text{Hard Constraints }} \qquad & \forall i,j \cdot i \rightarrow j \qquad t_i + \epsilon \leq t_j  \\
+								 & 0 \leq t_i \leq b_i \leq \#\text{stages} \cdot \textrm{II}  \\
+								 & b_i + \epsilon \leq t_i + \textrm{II} \\
+    \color{navy}{\text{Objective Function }} \qquad   & \text{min} \sum_{i} t_i + \text{Penalties} \\
+    \color{navy}{\text{Stochastic Penalty}} \qquad   & \text{min} \sum_{i} s_i ( b_i - t_i)
+\end{align}
+
+   + where \[ s_i \] is a randomized variable
+   + shown to find the same range of schedules as the non-linear algorithm
+
+** Coconut Improvements: Data Flow Graph Composition
+   Created an API of combinators for composing/decomposing data flow graphs
+   (allowed implementing optimizations like generalized modulo scheduling)
+
+   + Composition
+    #+BEGIN_SRC haskell :results value
+    -- compose a graph (by tying together input/output node tags)
+    composeDFGraph :: forall h . Hardware h
+      => (String -> String -> Node)
+      -> DataFlowGraph h
+      -> DataFlowGraph h
+      -> DataFlowGraph h
+
+    -- merge graphs in parallel (for software pipelining)
+    parallelMergeDFGraph :: forall h . Hardware h
+      => (DataFlowGraph h,DataFlowGraph h)
+      -> DataFlowGraph h
+    #+END_SRC
+   + Decomposition
+    #+BEGIN_SRC haskell :results value
+    --  partition a graph by a given predicate
+    partitionDFGraph :: forall h . Hardware h
+      => DataFlowGraph h
+      -> (Node -> Bool)
+      -> (DataFlowGraph h,DataFlowGraph h)
+
+    -- iteratively apply partitionDFGraph into n stages
+    multiPartDFGraph :: forall h . Hardware h
+      => DataFlowGraph h
+      -> (Int -> Node -> Bool)
+      -> Int
+      -> [DataFlowGraph h]
+    #+END_SRC
+** Coconut Improvements: Control Flow Graph
+
+   [[file:controlflow.png]]
+
+
+   Added support for arbitrary control flow (previously only had ad-hoc support
+   for modulo loops) via Control Flow Graphs that contain Data Flow Graphs as
+   edges (inspired from work of Kahl/Anand)
+
+*** Type Safe Control Flow Interface
+    #+BEGIN_SRC haskell
+    -- | Type-safe composition of @Block@'s
+    -- Adds a new @ControlFlowGraph@ edge @CFCompose@ with implicitly
+    -- tied dataflow input/outputs in-order.
+    compose :: Block h (a,b) -> Block h (b,c) -> Block h (a,c)
+
+    -- | Type-safe branching of @Block@'s (i.e. if-then-else)
+    -- Adds two new edges to @ControlFlowGraph@ (i.e. @CFBranchEQ@ to
+    -- blockA and @CFBranchNE@ to blockB), a new @CFJoinNode@ node,
+    -- and finally two edges from blockA,blockB
+    branch :: BranchBlock h (a,b) -> Block h (b,c) -> Block h (b,c)
+           -> Block h (c,d) -> Block h (a,d)
+
+    -- | Type-safe looping
+    -- Adds a @CFLoopEQ@ edge from the end to the start of a
+    -- BranchBlock and a @CFLoopNE@ edge from the end of the
+    -- @BranchBlock@ to a post @Block@
+    doWhile :: BranchBlock h (a,a) -> Block h (a,c) -> Block h (a,c)
+    #+END_SRC
+
+*** Unsafe Control Flow Interface
+   Useful for reconstructing a code graph at runtime
+
+   #+BEGIN_SRC haskell
+   pipelinedLoop dfGraph = let
+      partDFGraphs :: [DataFlowGraph h]
+      partDFGraphs = multiPartDFGraph dfGraph withinStage numStages
+
+      kernel :: DataFlowGraph
+      kernel = parallelMergeDFGraph (map applyIncrement partDFGraphs)
+     in do block <- genBlock dfGraph
+           jumpCFS (\tag0 tag1 -> increment tag0 == tag1)
+                   (cfOut block)
+                   (cfIn block)
+   #+END_SRC
+
+** More (Improved) Benchmarks
+ | func   | new  cycles | old cycles | speedup  |
+ +----------------------------------------------+
+ | log    |        11.0 |       11.7 |    6.4%  |
+ | log2   |        8.51 |       9.78 |   14.9%  |
+ | vexp   |       11.86 |       13.4 |   13.0%  |
+ | expm1  |        14.1 |       18.1 |    28.0% |
+ | exp2m1 |        13.3 |       16.1 |    21.0% |
+ | log1p  |        10.6 |       12.8 |    21.0% |
+ | log21p |        8.89 |       10.3 |    16.0% |
+ | recip  |        9.10 |       10.2 |    12.0% |
+
 #+EXCLUDE_TAGS: noexport
+
+* Timeline
+
+   Dec 2022
+      - Write chapter on Detecting Sharing in EDSL (possibly submit to TFP)
+       - Work on scheduling remaining MASS functions
+       - Finish setting up Coconut to run on IBM's servers
+   Jan 2023
+      - Start chapter on Coconut Extensible EDSL describing how finally tagless and typeable gives us an extensible code generator and simulator (also possible paper)
+       - Also continue working on scheduling remaining MASS functions
+   Feb 2023
+      - Finish writing chapter on Coconut Extensible EDSL including a comparison to llvm's extensibility
+       - Finish scheduling remaining MASS functions
+   Mar 2023
+      - Write chapter on Tagged Data Flow Graphs / Control Flow graphs,
+        describing category theoretic attributes for verifying correct construction
+       - Find a way to benchmark our scheduler against a traditional scheduler
+   Apr 2023
+      - Start writing chapter on stochastic scheduling model, including comparison of linear and non-linear model
+   May 2023
+      - Finish chapter on stochastic scheduling model and write background of different work in stochastic scheduling, including stanford and kriston's work (possible paper)
+   June 2023
+      - Write chapter on encoding heuristics as penalties, including final experimentation / generating new schedules for all MASS functions
+   July 2023
+      - Write chapter on analysis of schedule space span-able by optimization problem, including proof model can span all possible schedules
+   Aug 2023
+      - Finish final chapters (conclusion/tidying up) and defend
+
 * LocalWords                                                       :noexport:
 #  LocalWords:  Recap Co COCONUT's DSL LocalWords HyperGraphs Recap CodeGraphs
-#  LocalWords:  hypergraphs
+#  LocalWords:  hypergraphs kahl anand func vexp expm recip exp IPOPT GLPK

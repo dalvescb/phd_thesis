@@ -1,0 +1,91 @@
+#+Title: Ph.D Committee Meeting
+#+DATE: 2022-11-22
+#+EMAIL: curtis.dalves@gmail.com
+#+AUTHOR: Curtis D'Alves
+
+* Completed Degrees
+  Honours B.Sc Computer Science (2014), M.Sc. Computer Science (2016)
+ In progress: Ph.D Engineering (Computer Science)
+
+* Courses taken during Ph.D Engineering (Started Fall 2017)
+  Comprehensive Part1 Completed 2017/05/26
+  Comprehensive Part 2 Completed 2020/01/06
+  CAS 781 (Adv Top CAS) A+
+  CAS 705 (Computability and Complexity) B+
+  STATS 780 (Data Science) A
+  CAS 750 Pending
+
+* Thesis Related Work Experience
+  IBM CAS Project 1006 - Exploring Stochastic Algorithms for Instruction Scheduling  (2017-present)
+
+* Progress Since Last Meeting (2021/11/22)
+
+ * Work on COCONUT (development environment needed for thesis research)
+   - Added an interface for arbitrary control flow in code graphs (crucial for
+     experimenting with global, i.e. beyond basic block, scheduling algorithms)
+   - Added generalized staging for modulo scheduling (crucial for performing
+     analysis of how the algorithm can take advantage of more software pipelining)
+   - Created API for generalized Code Graph composition (needed for modulo
+     scheduling and code graph optimization)
+   - Updated graph construction to handle larger graphs that weren't scaling
+     properly due to lack of sharing in the EDSL
+   - Added support for linear optimization via GLPK
+   - Corrected bugs in many functions used for benchmarking (i.e.,
+     reciprocal,sqrt,tan,log,exp)
+
+ * Work on Scheduling Algorithm
+   - Added a linear model that is able to achieve comparable schedules to the
+     non-linear algorithm
+   - Performed an analysis of how many stochastic schedules are needed to
+     achieve near-upper and lower bounds
+
+ * New Bench Marks (improved speedup from previous year)
+   func       best              old
+           sched   cycles    cycles     speedup
+   log        100    11.0     11.7     6.4%
+   log2       113    8.51     9.78     14.9%
+   vexp       66     11.86    13.4     13.0%
+   expm1     110     14.1     18.1     1.28
+   exp2m1     87     13.3     16.1     1.21
+   log1p     192     10.6     12.8     1.21
+   log21p    108     8.89     10.3     1.16
+   recip      50     9.10     10.2     1.12
+
+ * Presentations
+   - Presented work on stochastic scheduling and new hardware instructions at
+     IBM Tech Connect '22
+
+* Planned Thesis contributions
+  My thesis will explore the use of stochastic algorithms for instruction
+  scheduling (notable work done in this area by Eric Schkufza, Rahul Sharma, and
+  Alex Aiken. “Stochastic Program Optimization”) and using generated schedules
+  to develop hyper-heuristics for scheduling (some work on using
+  hyper-heuristics in instruction scheduling done by Mark Stephenson et al.
+  “Genetic programming applied to compiler heuristic optimization” and Ricardo
+  Nabinger Sanchez et al. “Using machines to learn method-specific compilation
+  strategies”). If successful my research will provide not only a novel method
+  for training these hyper-heuristics via stochastic-ally generated schedules,
+  but also a means to perform analysis on the effectiveness of different
+  compiler heuristics.
+
+** Benchmarking
+  I am using IBM's MASS libraries as a testing bed, and will benchmark newly
+  generated schedules against previous iterations of the libraries release
+  (which have been scheduling both by hand and using a different stochastic
+  scheduling algorithm). So far I've achieved up to a 20% speedup on core MASS
+  library functions. To help generate these schedules, I've been actively
+  developing and maintaining a code generation library (known as COCONUT) and
+  optimization library (known as Hashed Expression).
+
+* New Timeline
+  - Generate new schedules for MASS (Nov 2021)
+  - Finish writing paper on Coconut for rapid prototyping and submit (Dec 2021)
+  - Experiment with training hyper-heuristics (Jan-Apr 2022)
+  - Write paper on Hyper Heuristics to submit to one of the big ML conferences:
+    ICML,IJCAL,etc (May 2022)
+  - Attempt to apply Hyper-Heuristic methods to reschedule MASS (June 2021)
+  - Defend Thesis (Summer 2023)
+
+
+
+#  LocalWords:  DSL Tagless codegraph Timeline Nov Apr

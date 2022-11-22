@@ -12,8 +12,8 @@
   CAS 781 (Adv Top CAS) A+
   CAS 705 (Computability and Complexity) B+
   STATS 780 (Data Science) A
-  CAS 750 Pending 
-  
+  CAS 750 Pending
+
 * Thesis Related Work Experience 
   IBM CAS Project 1006 - Exploring Stochastic Algorithms for Instruction Scheduling  (2017-present)
  
