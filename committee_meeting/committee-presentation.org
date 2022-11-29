@@ -224,24 +224,46 @@ between heuristics by scaling
  | log21p |        8.89 |       10.3 |    16.0% |
  | recip  |        9.10 |       10.2 |    12.0% |
 
+  cos
+  sin
+  sqrt
+
 #+EXCLUDE_TAGS: noexport
+
+MASS functions left to schedule
+coshLSCG,sinhLSCG,tanhLSCG,acoshLSCG,asinhLSCG,atanhLSCG,acosLSCG,asinLSCG,atanLSCG,atan2LSCG,cbrtLSCG,rcbrtLSCG,qdrtLSC,rqdrtLSCG
 
 * Timeline
 
    Dec 2022
-      - Write chapter on Detecting Sharing in EDSL (possibly submit to TFP)
-       - Work on scheduling remaining MASS functions
+       - Write chapter on Detecting Sharing in EDSL
+       - Submit draft paper TFP on Detecting Sharing in EDSL (Dec 16th)
+         - Abstract: Observable sharing in EDSL's is a longstanding problem,
+           with several solutions. Kiselyov's paper "Implementing Explicit and
+           Finding Implicit Sharing in Embedded DSLs" presents two workable
+           solutions for higher order abstract syntax languages. However,
+           further embedding into Haskell to allow functions to return container
+           types such as lists, tuples, etc, breaks this method. We present a
+           solution that allows for implicit sharing, even when using Haskell's
+           container types, allowing for a "deeper" embed higher order abstract
+           syntax DSL.
+       - Measure impact of sharing on generating 25 MASS code graphs (which
+         previously didn't generate)
+       - Re-add IO penalty to linear optimization problem
        - Finish setting up Coconut to run on IBM's servers
    Jan 2023
-      - Start chapter on Coconut Extensible EDSL describing how finally tagless and typeable gives us an extensible code generator and simulator (also possible paper)
-       - Also continue working on scheduling remaining MASS functions
+       - Write chapter on Coconut Extensible EDSL describing how finally tagless and typeable gives us an extensible code generator and simulator (also possible paper)
+       - Add register pressure heuristic to reduce need for spilling
+       - Measure impact of register pressure heuristic on 25 MASS functions (non-stochastic)
    Feb 2023
-      - Finish writing chapter on Coconut Extensible EDSL including a comparison to llvm's extensibility
-       - Finish scheduling remaining MASS functions
+      - Write paper for CASCON based on Coconut Extensible EDSL
+      - Add support for remaining MASS functions with multiple input/output pointers
+      - Add register spilling to Coconut
+      - Finish scheduling remaining MASS functions
    Mar 2023
       - Write chapter on Tagged Data Flow Graphs / Control Flow graphs,
         describing category theoretic attributes for verifying correct construction
-       - Find a way to benchmark our scheduler against a traditional scheduler
+      - Find a way to benchmark our scheduler against a traditional scheduler
    Apr 2023
       - Start writing chapter on stochastic scheduling model, including comparison of linear and non-linear model
    May 2023
