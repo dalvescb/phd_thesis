@@ -3,18 +3,6 @@
 #+EMAIL: curtis.dalves@gmail.com
 #+AUTHOR: Curtis D'Alves
 
-* Completed Degrees
-  Honours B.Sc Computer Science (2014), M.Sc. Computer Science (2016)
- In progress: Ph.D Engineering (Computer Science)
-
-* Courses taken during Ph.D Engineering (Started Fall 2017)
-  Comprehensive Part1 Completed 2017/05/26
-  Comprehensive Part 2 Completed 2020/01/06
-  CAS 781 (Adv Top CAS) A+
-  CAS 705 (Computability and Complexity) B+
-  STATS 780 (Data Science) A
-  CAS 750 Pending
-
 * Thesis Related Work Experience
   IBM CAS Project 1006 - Exploring Stochastic Algorithms for Instruction Scheduling  (2017-present)
 
@@ -42,14 +30,14 @@
  * New Bench Marks (improved speedup from previous year)
    func       best              old
            sched   cycles    cycles     speedup
-   log        100    11.0     11.7     6.4%
-   log2       113    8.51     9.78     14.9%
-   vexp       66     11.86    13.4     13.0%
-   expm1     110     14.1     18.1     1.28
-   exp2m1     87     13.3     16.1     1.21
-   log1p     192     10.6     12.8     1.21
-   log21p    108     8.89     10.3     1.16
-   recip      50     9.10     10.2     1.12
+  | log    | 100 |  11.0 | 11.7 |  6.4% |
+  | log2   | 113 |  8.51 | 9.78 | 14.9% |
+  | vexp   |  66 | 11.86 | 13.4 | 13.0% |
+  | expm1  | 110 |  14.1 | 18.1 |   28% |
+  | exp2m1 |  87 |  13.3 | 16.1 |   21% |
+  | log1p  | 192 |  10.6 | 12.8 |   21% |
+  | log21p | 108 |  8.89 | 10.3 |   16% |
+  | recip  |  50 |  9.10 | 10.2 |   12% |
 
  * Presentations
    - Presented work on stochastic scheduling and new hardware instructions at
@@ -57,34 +45,131 @@
 
 * Planned Thesis contributions
   My thesis will explore the use of stochastic algorithms for instruction
-  scheduling (notable work done in this area by Eric Schkufza, Rahul Sharma, and
-  Alex Aiken. “Stochastic Program Optimization”) and using generated schedules
-  to develop hyper-heuristics for scheduling (some work on using
-  hyper-heuristics in instruction scheduling done by Mark Stephenson et al.
-  “Genetic programming applied to compiler heuristic optimization” and Ricardo
-  Nabinger Sanchez et al. “Using machines to learn method-specific compilation
-  strategies”). If successful my research will provide not only a novel method
-  for training these hyper-heuristics via stochastic-ally generated schedules,
-  but also a means to perform analysis on the effectiveness of different
-  compiler heuristics.
+  scheduling. This will contain two distinct contributions.
 
-** Benchmarking
-  I am using IBM's MASS libraries as a testing bed, and will benchmark newly
-  generated schedules against previous iterations of the libraries release
-  (which have been scheduling both by hand and using a different stochastic
-  scheduling algorithm). So far I've achieved up to a 20% speedup on core MASS
-  library functions. To help generate these schedules, I've been actively
-  developing and maintaining a code generation library (known as COCONUT) and
-  optimization library (known as Hashed Expression).
+  The first is design of a rapid prototyping environment, that we call Coconut.
+  Coconut provides a high level assembly language, that can be used to generate
+  assembly code for various target architectures, similar to an IR language like
+  LLVM. Like LLVM, coconut is designed to be highly extensible, but as a Haskell
+  embedded DSL utilizes advanced functional programming features instead of the
+  common Object Oriented features such as inheritance to do so. We utilize the
+  work of Jacques Carette, Oleg Kiselyov "Finally Tagless, Partially Evaluated"
+  in implementing the language as a higher order syntax, and improve upon
+  solutions to known issues with sharing in EDSL outlined by Oleg Kiselyov
+  "Implementing Explicit and Finding Implicit Sharing in Embedded DSLs"
 
-* New Timeline
-  - Generate new schedules for MASS (Nov 2021)
-  - Finish writing paper on Coconut for rapid prototyping and submit (Dec 2021)
-  - Experiment with training hyper-heuristics (Jan-Apr 2022)
-  - Write paper on Hyper Heuristics to submit to one of the big ML conferences:
-    ICML,IJCAL,etc (May 2022)
-  - Attempt to apply Hyper-Heuristic methods to reschedule MASS (June 2021)
-  - Defend Thesis (Summer 2023)
+  The second contribution is a continuous optimization model (linear and
+  non-linear) that encodes scheduling heuristics as penalties, and uses
+  stochastically generated scaling parameters to adjust preference between
+  penalties. The use of a continuous optimization model stands in contrast to
+  previous work done in using stochastic algorithms for instruction scheduling
+  by Eric Schkufza, Rahul Sharma, and Alex Aiken. “Stochastic Program
+  Optimization”. In the later work, a discrete algorithm is used, the
+  iteratively updates a schedule, allowing the algorithm to temporarily break
+  instruction dependencies, so that the "space" of schedules can be more
+  thoroughly explore. We argue that a continuous model is able to thoroughly
+  span the space of schedules without the need for complex model correction to
+  eventually arrive at a valid schedule.
+
+* Reasons for delay
+  * Since the beginning of my Ph.D, I have been teaching two courses a year as a
+    sessional professor. Early in my Ph.D, I developed a course from scratch
+    (CS 1XA3) that I allowed to consume most of my time
+  * One of the tools that I needed to complete my research (a library called
+    HashedExpression) I developed in collaboration with a masters student, Nhan
+    Thai, who made the development of the tool the focus of his masters thesis.
+    The covid-19 pandemic separated us (he had to work remotely from his home in
+    Vietnam), which constrained our communication and delayed progress on
+    features of the tool necessary for my research
+  * I've encountered significant delays in full-filling my CAS student project
+    with IBM crucial to data collection needed for my thesis. Because our
+    contract with IBM has sharp time constraints in order to deliver products
+    and renew our contract, fixing bugs so we can deliver results has taken a
+    priority over writing.
+  * Unexpected bugs in the development of Coconut (needed to generate schedules
+    for IBM) have caused massive delays. These include bugs in the specific
+    functions that need to be productized for IBM (including assembly based
+    implementations of standard math functions including tan,sin,cos,exp,etc).
+    The complexity of these functions (which i did not write) has made fixing
+    these bugs extremely time consuming
+  * I also encountered completely unexpected issues with the performance of a
+    embedded domain specific language on functions that size. Overcoming those
+    issues proved exceedingly difficult, and I plan to make how I overcame them
+    a contribution to my thesis (i.e., the section of detection sharing in EDSLs)
+
+* Thesis Table of Contents and Pages (Thus Far)
+
+  - 1 Introduction
+    - 1.1 Background to Instruction Scheduling (7 pages)
+    - 1.2 Current State of the Art and Notable/Relevant Works in Instruction
+    - Scheduling (4 pages)
+  - 2 Coconut (Code Construction User Tool)
+    - 2.1 Coconut Embedded Domain Specific Language (2 pages)
+    - 2.2 Tagged Data Flow Graphs (2 pages)
+    - 2.3 Control Flow Graphs (2 pages)
+    - 2.4 Code Graph Construction (Detection of sharing in EDSLs) (1 page)
+  - 3 Stochastic Scheduling Model
+    - 3.1 Continuous Optimization Model for Scheduling (1 page)
+    - 3.2 Encoding Heuristics as Penalties (1 page)
+    - 3.3 Stochastic Scaling of Penalties (1 page)
+    - 3.4 Linear vs Non-Linear Model (1 page
+  - 4 Analysis of Schedule Space (0 pages)
+  - 5 Conclusion (0 pages)
+
+* Timeline
+
+   Dec 2022
+       - Write chapter on Detecting Sharing in EDSL
+       - Submit draft paper TFP on Detecting Sharing in EDSL (Dec 16th)
+         - Abstract: Observable sharing in EDSL's is a longstanding problem,
+           with several solutions. Kiselyov's paper "Implementing Explicit and
+           Finding Implicit Sharing in Embedded DSLs" presents two workable
+           solutions for higher order abstract syntax languages. However,
+           further embedding into Haskell to allow functions to return container
+           types such as lists, tuples, etc, breaks this method. We present a
+           solution that allows for implicit sharing, even when using Haskell's
+           container types, allowing for a "deeper" embedded higher order abstract
+           syntax DSL.
+       - Measure impact of sharing on generating 25 MASS code graphs (which
+         previously didn't generate)
+       - Re-add IO penalty to linear optimization problem
+       - Finish setting up Coconut to run on IBM's servers
+   Jan 2023
+       - Write chapter on Coconut Extensible EDSL describing how finally tagless and typeable gives us an extensible code generator and simulator (also possible paper)
+       - Add register pressure heuristic to reduce need for spilling
+       - Measure impact of register pressure heuristic on 25 MASS functions (non-stochastic)
+   Feb 2023
+      - Write paper for ICFP based on Coconut Extensible EDSL
+         Abstract: One challenge to designing an intermediate assembly language such as
+         llvm is the need to support many different target architectures, and thus
+         the need to design the language to be highly extensible. The llvm
+         language development library is written primarily in C++ and exploits
+         common Object Oriented techniques such as inheritance to allow
+         extending the core language to add new intrinsics, types or whole
+         instructions. We present a functional typed assembly language, Coconut,
+         that is embedded in Haskell and, similar to llvm, serves as a high
+         level assembly language with multiple target architectures. We
+         discuss the advantages / disadvantages to use functional programming
+         techniques in Haskell (such as type classes) to extend the language,
+         and argue for the greater overall ease of extending Coconut for new
+         instructions and types vs the object oriented approach in llvm.
+      - Add support for remaining MASS functions with multiple input/output pointers
+      - Finish scheduling remaining MASS functions
+   Mar 2023
+      - Complete section on Tagged Data Flow Graphs / Control Flow graphs,
+        describing category theoretic attributes for verifying correct construction
+      - Find a way to benchmark our scheduler against a traditional scheduler
+      - Complete section on continuous optimization based scheduling model
+   Apr 2023
+      - Write comparison of linear and non-linear model
+      - Write section on encoding heuristics as penalties, including final experimentation / generating new schedules for all MASS functions
+      - Complete section on stochastic scheduling model and write background of different work in stochastic scheduling, including stanford and kriston's work (possible paper)
+   May 2023
+      - Write chapter on analysis of schedule space span-able by optimization problem, including proof model can span all possible schedules
+      - Finish final chapters (conclusion/tidying up)
+      - Scheduling cryptographic kernels for IBM
+      - Write third paper on stochastic scheduling (venue TBD)
+      - defend
 
 
 
