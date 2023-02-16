@@ -2088,6 +2088,9 @@ or small number to scale a penalty function we can prioritize a schedule.
    :PUBLISHER: MacSphere
    :END:
 *** COMMENT [[https://macsphere.mcmaster.ca/bitstream/11375/18865/2/costa_kriston_p_201602_msc.pdf][Approximation Algorithm based Approach Instruction Scheduling]] (Kriston's thesis)
+* COMMENT TODOS                                                      :ignore:
+  - add section spilling
+  - when spilling can be beneficial for modulo scheduling
 * COMMENT footer                                                     :ignore:
 
 # Local Variables:
